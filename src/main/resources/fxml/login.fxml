@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml">
+
+    <VBox alignment="CENTER"
+          spacing="15"
+          maxWidth="350">
+
+        <padding>
+            <Insets top="30" right="30" bottom="30" left="30"/>
+        </padding>
+
+        <Label text="Loan Management System"
+               style="-fx-font-size:24px; -fx-font-weight:bold;" />
+
+        <TextField
+                fx:id="emailField"
+                promptText="Email" />
+
+        <PasswordField
+                fx:id="passwordField"
+                promptText="Password" />
+
+        <Button
+                text="Login"
+                prefWidth="150"/>
+
+        <Hyperlink
+                text="Create New Account"/>
+
+    </VBox>
+
+</StackPane>
