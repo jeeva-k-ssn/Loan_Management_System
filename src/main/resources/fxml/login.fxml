@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.geometry.Pos?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.loanmanagement.controller.LoginController">
 
     <VBox alignment="CENTER"
           spacing="15"
@@ -20,18 +21,21 @@
 
         <TextField
                 fx:id="emailField"
-                promptText="Email" />
+                promptText="Email"/>
 
         <PasswordField
                 fx:id="passwordField"
-                promptText="Password" />
+                promptText="Password"/>
 
         <Button
+                fx:id="loginButton"
                 text="Login"
-                prefWidth="150"/>
+                prefWidth="150"
+                onAction="#loginUser"/>
 
         <Hyperlink
-                text="Create New Account"/>
+                text="Create New Account"
+                onAction="#openRegister"/>
 
     </VBox>
 

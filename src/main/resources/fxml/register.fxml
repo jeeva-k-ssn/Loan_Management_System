@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.VBox?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.loanmanagement.controller.LoginController">
+           fx:controller="com.loanmanagement.controller.RegisterController">
 
     <VBox alignment="CENTER"
           spacing="15"
@@ -16,8 +16,12 @@
             <Insets top="30" right="30" bottom="30" left="30"/>
         </padding>
 
-        <Label text="Loan Management System"
+        <Label text="Create Account"
                style="-fx-font-size:24px; -fx-font-weight:bold;" />
+
+        <TextField
+                fx:id="nameField"
+                promptText="Full Name"/>
 
         <TextField
                 fx:id="emailField"
@@ -27,15 +31,19 @@
                 fx:id="passwordField"
                 promptText="Password"/>
 
+        <PasswordField
+                fx:id="confirmPasswordField"
+                promptText="Confirm Password"/>
+
         <Button
-                fx:id="loginButton"
-                text="Login"
-                prefWidth="150"
-                onAction="#loginUser"/>
+        fx:id="registerButton"
+        text="Register"
+        prefWidth="150"
+        onAction="#registerUser"/>
 
         <Hyperlink
-                text="Create New Account"
-                onAction="#openRegister"/>
+                text="Back to Login"
+                onAction="#openLogin"/>
 
     </VBox>
 
