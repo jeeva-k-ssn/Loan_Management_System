@@ -1,0 +1,177 @@
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: #eef2f8;
+}
+
+.login-root {
+    -fx-background-color: linear-gradient(to bottom right, #e9eef7, #f7f9fc);
+}
+
+.login-shell {
+    -fx-background-color: white;
+    -fx-background-radius: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(19, 36, 68, 0.18), 28, 0.18, 0, 10);
+}
+
+.brand-panel {
+    -fx-background-color: linear-gradient(to bottom right, #162b65, #2557d6);
+    -fx-background-radius: 22px 0 0 22px;
+}
+
+.logo-mark {
+    -fx-background-color: rgba(255,255,255,0.16);
+    -fx-background-radius: 14px;
+    -fx-border-color: rgba(255,255,255,0.25);
+    -fx-border-radius: 14px;
+}
+
+.logo-symbol {
+    -fx-text-fill: white;
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+}
+
+.brand-name {
+    -fx-text-fill: white;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1px;
+}
+
+.brand-name-secondary {
+    -fx-text-fill: #b9c9ff;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 2px;
+}
+
+.hero-title {
+    -fx-text-fill: white;
+    -fx-font-size: 39px;
+    -fx-font-weight: bold;
+    -fx-line-spacing: 2px;
+}
+
+.hero-subtitle {
+    -fx-text-fill: #d9e2ff;
+    -fx-font-size: 15px;
+    -fx-line-spacing: 5px;
+}
+
+.feature-pill {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 12px;
+    -fx-padding: 10px 14px;
+}
+
+.feature-icon {
+    -fx-text-fill: #bfe0ff;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.feature-text {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.brand-footer {
+    -fx-text-fill: #b9c9ff;
+    -fx-font-size: 11px;
+}
+
+.form-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 0 22px 22px 0;
+}
+
+.form-title {
+    -fx-text-fill: #172033;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.form-subtitle {
+    -fx-text-fill: #7c879a;
+    -fx-font-size: 14px;
+}
+
+.field-label {
+    -fx-text-fill: #273247;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.input-field,
+.role-combo {
+    -fx-background-color: #f8faff;
+    -fx-border-color: #d8dfeb;
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 0 14px;
+    -fx-pref-height: 48px;
+    -fx-font-size: 14px;
+}
+
+.input-field:focused,
+.role-combo:focused {
+    -fx-background-color: white;
+    -fx-border-color: #2f66e5;
+    -fx-effect: dropshadow(gaussian, rgba(47,102,229,0.16), 8, 0.1, 0, 2);
+}
+
+.role-combo .list-cell {
+    -fx-text-fill: #273247;
+    -fx-font-size: 14px;
+}
+
+.primary-button {
+    -fx-background-color: #2f66e5;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+    -fx-padding: 10px;
+}
+
+.primary-button:hover {
+    -fx-background-color: #2458d1;
+    -fx-effect: dropshadow(gaussian, rgba(47,102,229,0.25), 12, 0.15, 0, 3);
+}
+
+.primary-button:pressed {
+    -fx-background-color: #1d4dbb;
+}
+
+.register-row {
+    -fx-padding: 8px 0 0 0;
+}
+
+.muted-text,
+.security-text {
+    -fx-text-fill: #8791a3;
+    -fx-font-size: 12px;
+}
+
+.register-link {
+    -fx-text-fill: #2f66e5;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-border-color: transparent;
+}
+
+.register-link:hover {
+    -fx-text-fill: #1749b5;
+}
+
+.security-row {
+    -fx-padding: 10px 0 0 0;
+}
+
+.security-dot {
+    -fx-text-fill: #35a36b;
+    -fx-font-size: 9px;
+}

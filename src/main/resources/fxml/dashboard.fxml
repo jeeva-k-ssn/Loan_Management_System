@@ -1,26 +1,219 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml"
-fx:controller="com.loanmanagement.controller.DashboardController">
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.loanmanagement.controller.DashboardController"
+            stylesheets="@../css/dashboard.css">
 
-    <VBox alignment="CENTER" spacing="20">
+    <!-- ================= SIDEBAR ================= -->
 
-        <padding>
-            <Insets top="30" right="30" bottom="30" left="30"/>
-        </padding>
+    <left>
 
-        <Label text="Loan Management System"
-               style="-fx-font-size:28px;-fx-font-weight:bold;"/>
+        <VBox styleClass="sidebar"
+              spacing="15">
 
-        <Label text="Welcome"/>
+            <padding>
+                <Insets top="25"
+                        right="15"
+                        bottom="25"
+                        left="15"/>
+            </padding>
 
-        <Button text="Logout"
-                onAction="#logout"/>
+            <Label text="LOAN SYSTEM"
+                   styleClass="logo"/>
 
-    </VBox>
+            <Button text="Dashboard"
+                    styleClass="nav-button"/>
 
-</StackPane>
+            <Button text="Customers"
+                    styleClass="nav-button"/>
+
+            <Button text="Loans"
+                    styleClass="nav-button"/>
+
+            <Button text="Payments"
+                    styleClass="nav-button"/>
+
+            <Button text="Reports"
+                    styleClass="nav-button"/>
+
+            <VBox VBox.vgrow="ALWAYS"/>
+
+            <Button text="Logout"
+                    styleClass="logout-button"
+                    onAction="#logout"/>
+
+        </VBox>
+
+    </left>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <center>
+
+        <VBox styleClass="main-content"
+              spacing="25">
+
+            <padding>
+                <Insets top="30"
+                        right="30"
+                        bottom="30"
+                        left="30"/>
+            </padding>
+
+
+            <!-- ================= HEADER ================= -->
+
+            <HBox alignment="CENTER_LEFT">
+
+                <VBox HBox.hgrow="ALWAYS"
+                      spacing="5">
+
+                    <Label text="Dashboard"
+                           styleClass="page-title"/>
+
+                    <Label text="Welcome to Loan Management System"
+                           styleClass="subtitle"/>
+
+                </VBox>
+
+                <VBox alignment="CENTER_RIGHT"
+                      spacing="3">
+
+                    <Label text="Administrator"
+                           styleClass="username"/>
+
+                    <Label text="System User"
+                           styleClass="user-role"/>
+
+                </VBox>
+
+            </HBox>
+
+
+            <!-- ================= STATISTICS ================= -->
+
+            <GridPane hgap="20"
+                      vgap="20">
+
+                <!-- CUSTOMERS -->
+
+                <VBox GridPane.columnIndex="0"
+                      styleClass="stat-card"
+                      spacing="8">
+
+                    <Label text="CUSTOMERS"
+                           styleClass="card-title"/>
+
+                    <Label fx:id="customerCountLabel"
+                           text="0"
+                           styleClass="card-value"/>
+
+                </VBox>
+
+
+                <!-- ACTIVE LOANS -->
+
+                <VBox GridPane.columnIndex="1"
+                      styleClass="stat-card"
+                      spacing="8">
+
+                    <Label text="ACTIVE LOANS"
+                           styleClass="card-title"/>
+
+                    <Label fx:id="activeLoanCountLabel"
+                           text="0"
+                           styleClass="card-value"/>
+
+                </VBox>
+
+
+                <!-- PENDING APPLICATIONS -->
+
+                <VBox GridPane.columnIndex="2"
+                      styleClass="stat-card"
+                      spacing="8">
+
+                    <Label text="PENDING"
+                           styleClass="card-title"/>
+
+                    <Label fx:id="pendingApplicationCountLabel"
+                           text="0"
+                           styleClass="card-value"/>
+
+                </VBox>
+
+
+                <!-- PAYMENTS -->
+
+                <VBox GridPane.columnIndex="3"
+                      styleClass="stat-card"
+                      spacing="8">
+
+                    <Label text="PAYMENTS"
+                           styleClass="card-title"/>
+
+                    <Label fx:id="totalPaymentLabel"
+                           text="₹ 0"
+                           styleClass="card-value"/>
+
+                </VBox>
+
+            </GridPane>
+
+
+            <!-- ================= RECENT LOAN ACTIVITY ================= -->
+
+            <VBox styleClass="section-card"
+                  spacing="15">
+
+                <Label text="Recent Loan Activity"
+                       styleClass="section-title"/>
+
+
+                <!-- TABLE HEADER -->
+
+                <HBox styleClass="table-header"
+                      spacing="10">
+
+                    <Label text="Loan ID"
+                           HBox.hgrow="ALWAYS"/>
+
+                    <Label text="Customer"
+                           HBox.hgrow="ALWAYS"/>
+
+                    <Label text="Amount"
+                           HBox.hgrow="ALWAYS"/>
+
+                    <Label text="Status"
+                           HBox.hgrow="ALWAYS"/>
+
+                </HBox>
+
+
+                <!-- LOAN RECORDS -->
+
+                <VBox fx:id="recentLoanContainer"
+                      spacing="8">
+
+                    <Label text="No recent loan activity"
+                           styleClass="empty-message"/>
+
+                </VBox>
+
+            </VBox>
+
+        </VBox>
+
+    </center>
+
+</BorderPane>
