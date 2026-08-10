@@ -1,208 +1,341 @@
 /* =========================================================
-   ROOT
+   LOANFLOW DASHBOARD
    ========================================================= */
 
-.root {
+.dashboard-root {
+    -fx-background-color: #F4F7FA;
     -fx-font-family: "Segoe UI";
-    -fx-background-color: #f4f6f9;
 }
 
 
 /* =========================================================
-   SIDEBAR
+   TOP BAR
    ========================================================= */
 
-.sidebar {
-    -fx-background-color: #172033;
-    -fx-pref-width: 210px;
+.top-bar {
+    -fx-background-color: white;
+    -fx-border-color: #E2E8F0;
+    -fx-border-width: 0 0 1 0;
 }
 
 
-/* LOGO */
-
-.logo {
-    -fx-text-fill: white;
-    -fx-font-size: 22px;
+.dashboard-logo {
+    -fx-text-fill: #087E8B;
+    -fx-font-size: 21px;
     -fx-font-weight: bold;
-    -fx-padding: 0 0 25px 5px;
 }
 
 
-/* NAVIGATION BUTTONS */
+.dashboard-subtitle {
+    -fx-text-fill: #94A3B8;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+}
 
-.nav-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #d8dee9;
-    -fx-font-size: 14px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-pref-width: 180px;
-    -fx-pref-height: 42px;
-    -fx-background-radius: 8px;
+
+.welcome-label {
+    -fx-text-fill: #17324D;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+
+.role-label {
+    -fx-text-fill: #087E8B;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+
+/* =========================================================
+   TOP BUTTONS
+   ========================================================= */
+
+.refresh-button {
+    -fx-background-color: #EAF7F8;
+    -fx-text-fill: #087E8B;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 9px;
+    -fx-border-color: #CBE9EC;
+    -fx-border-radius: 9px;
+    -fx-padding: 9px 15px;
     -fx-cursor: hand;
 }
 
 
-/* NAVIGATION HOVER */
-
-.nav-button:hover {
-    -fx-background-color: #263451;
-    -fx-text-fill: white;
+.refresh-button:hover {
+    -fx-background-color: #D7F0F2;
 }
 
-
-/* LOGOUT BUTTON */
 
 .logout-button {
-    -fx-background-color: #c0392b;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-pref-width: 180px;
-    -fx-pref-height: 42px;
-    -fx-background-radius: 8px;
+    -fx-background-color: #FFF1F0;
+    -fx-text-fill: #C0392B;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 9px;
+    -fx-border-color: #F2D0CC;
+    -fx-border-radius: 9px;
+    -fx-padding: 9px 16px;
     -fx-cursor: hand;
 }
 
 
-/* LOGOUT HOVER */
-
 .logout-button:hover {
-    -fx-background-color: #e74c3c;
+    -fx-background-color: #FFE2DF;
 }
 
 
 /* =========================================================
-   MAIN CONTENT
+   SCROLL AREA
    ========================================================= */
 
-.main-content {
-    -fx-background-color: #f4f6f9;
+.dashboard-scroll {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
 }
 
 
-/* PAGE TITLE */
-
-.page-title {
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #172033;
+.dashboard-scroll > .viewport {
+    -fx-background-color: #F4F7FA;
 }
 
 
-/* SUBTITLE */
-
-.subtitle {
-    -fx-font-size: 14px;
-    -fx-text-fill: #7b8494;
+.dashboard-scroll .scroll-bar:vertical {
+    -fx-background-color: transparent;
 }
 
 
-/* USERNAME */
-
-.username {
-    -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #172033;
-}
-
-
-/* USER ROLE */
-
-.user-role {
-    -fx-font-size: 12px;
-    -fx-text-fill: #7b8494;
+.dashboard-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #CBD5E1;
+    -fx-background-radius: 10px;
 }
 
 
 /* =========================================================
-   STATISTICS CARDS
+   PAGE HEADER
+   ========================================================= */
+
+.page-title {
+    -fx-text-fill: #102A43;
+    -fx-font-size: 29px;
+    -fx-font-weight: bold;
+}
+
+
+.page-description {
+    -fx-text-fill: #8291A5;
+    -fx-font-size: 13px;
+}
+
+
+/* =========================================================
+   STAT CARDS
    ========================================================= */
 
 .stat-card {
     -fx-background-color: white;
-    -fx-background-radius: 12px;
-    -fx-padding: 20px;
-    -fx-pref-width: 190px;
-    -fx-pref-height: 130px;
+    -fx-background-radius: 15px;
+    -fx-border-color: #E1E8EF;
+    -fx-border-radius: 15px;
+    -fx-pref-width: 250px;
+    -fx-min-height: 145px;
 
     -fx-effect: dropshadow(
         gaussian,
-        rgba(0,0,0,0.08),
-        10,
+        rgba(15, 23, 42, 0.07),
+        14,
         0,
         0,
-        3
+        4
     );
 }
 
 
-/* CARD TITLE */
-
-.card-title {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #7b8494;
+.stat-card:hover {
+    -fx-effect: dropshadow(
+        gaussian,
+        rgba(8, 126, 139, 0.16),
+        18,
+        0,
+        0,
+        5
+    );
 }
 
 
-/* CARD VALUE */
+.card-label {
+    -fx-text-fill: #8291A5;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
 
 .card-value {
-    -fx-font-size: 25px;
+    -fx-text-fill: #102A43;
+    -fx-font-size: 32px;
     -fx-font-weight: bold;
-    -fx-text-fill: #172033;
+}
+
+
+.card-description {
+    -fx-text-fill: #9AA9B7;
+    -fx-font-size: 11px;
 }
 
 
 /* =========================================================
-   RECENT ACTIVITY
+   CONTENT CARDS
    ========================================================= */
 
-.section-card {
+.content-card {
     -fx-background-color: white;
-    -fx-background-radius: 12px;
-    -fx-padding: 20px;
+    -fx-background-radius: 15px;
+    -fx-border-color: #E1E8EF;
+    -fx-border-radius: 15px;
 
     -fx-effect: dropshadow(
         gaussian,
-        rgba(0,0,0,0.06),
-        10,
+        rgba(15, 23, 42, 0.06),
+        14,
         0,
         0,
-        3
+        4
     );
 }
 
 
-/* SECTION TITLE */
-
 .section-title {
-    -fx-font-size: 18px;
+    -fx-text-fill: #183B56;
+    -fx-font-size: 17px;
     -fx-font-weight: bold;
-    -fx-text-fill: #172033;
 }
 
 
-/* TABLE HEADER */
-
-.table-header {
-    -fx-background-color: #f4f6f9;
-    -fx-padding: 12px;
-    -fx-background-radius: 6px;
+.section-description {
+    -fx-text-fill: #94A3B3;
+    -fx-font-size: 11px;
 }
 
 
-/* TABLE HEADER LABELS */
+/* =========================================================
+   ACTIVITY
+   ========================================================= */
 
-.table-header .label {
+.activity-container {
+    -fx-padding: 18px 0 0 0;
+}
+
+
+.empty-label {
+    -fx-text-fill: #A0AEBB;
+    -fx-font-size: 12px;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+   ========================================================= */
+
+.action-button {
+    -fx-background-color: linear-gradient(
+        to right,
+        #087E8B,
+        #1496A5
+    );
+
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 9px;
+    -fx-cursor: hand;
+}
+
+
+.action-button:hover {
+    -fx-background-color: #066C77;
+}
+
+
+.secondary-action-button {
+    -fx-background-color: #F6F9FB;
+    -fx-text-fill: #31556D;
+
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 9px;
+
+    -fx-border-color: #DCE5EC;
+    -fx-border-radius: 9px;
+
+    -fx-cursor: hand;
+}
+
+
+.secondary-action-button:hover {
+    -fx-background-color: #EAF3F7;
+}
+
+
+/* =========================================================
+   SMALL REFRESH
+   ========================================================= */
+
+.small-refresh-button {
+    -fx-background-color: #EEF8FA;
+    -fx-text-fill: #087E8B;
+
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+
+    -fx-background-radius: 8px;
+
+    -fx-padding: 5px 10px;
+
+    -fx-cursor: hand;
+}
+
+
+.small-refresh-button:hover {
+    -fx-background-color: #DDF1F4;
+}
+
+
+/* =========================================================
+   ACTIVITY BOX CREATED BY CONTROLLER
+   ========================================================= */
+
+.activity-container > VBox {
+    -fx-background-color: #F7FAFC;
+    -fx-background-radius: 10px;
+}
+
+
+/* =========================================================
+   QUOTE
+   ========================================================= */
+
+.quote-card {
+    -fx-background-color: #EAF7F8;
+    -fx-background-radius: 14px;
+    -fx-border-color: #D2ECEF;
+    -fx-border-radius: 14px;
+    -fx-padding: 16px;
+}
+
+
+.quote-main {
+    -fx-text-fill: #31556D;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
-    -fx-text-fill: #555f70;
+    -fx-font-style: italic;
 }
 
 
-/* EMPTY MESSAGE */
-
-.empty-message {
-    -fx-text-fill: #9aa2af;
-    -fx-padding: 20px;
+.quote-sub {
+    -fx-text-fill: #8299A8;
+    -fx-font-size: 10px;
 }

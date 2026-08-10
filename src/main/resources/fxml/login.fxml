@@ -1,42 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.loanmanagement.controller.LoginController">
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.loanmanagement.controller.LoginController"
+           stylesheets="@../css/login.css"
+           styleClass="login-root">
 
-    <VBox alignment="CENTER"
-          spacing="15"
-          maxWidth="350">
+    <HBox maxWidth="1020"
+          maxHeight="600"
+          styleClass="login-shell">
 
-        <padding>
-            <Insets top="30" right="30" bottom="30" left="30"/>
-        </padding>
+        <!-- LEFT BRAND SECTION -->
+        <VBox prefWidth="470"
+              alignment="CENTER_LEFT"
+              spacing="20"
+              styleClass="brand-panel">
 
-        <Label text="Loan Management System"
-               style="-fx-font-size:24px; -fx-font-weight:bold;" />
+            <padding>
+                <Insets top="55"
+                        right="55"
+                        bottom="55"
+                        left="55"/>
+            </padding>
 
-        <TextField
-                fx:id="emailField"
-                promptText="Email"/>
+            <Label text="LOANFLOW"
+                   styleClass="brand-logo"/>
 
-        <PasswordField
-                fx:id="passwordField"
-                promptText="Password"/>
+            <Label text="Smarter Loans,&#10;Better Future."
+                   styleClass="brand-heading"
+                   wrapText="true"/>
 
-        <Button
-                fx:id="loginButton"
-                text="Login"
-                prefWidth="150"
-                onAction="#loginUser"/>
+            <Label text="A modern loan management platform designed to simplify applications, approvals, loans and payments."
+                   styleClass="brand-description"
+                   wrapText="true"/>
 
-        <Hyperlink
-                text="Create New Account"
-                onAction="#openRegister"/>
+            <Region prefHeight="5"/>
 
-    </VBox>
+            <!-- FINANCIAL QUOTE -->
+            <VBox spacing="10"
+                  styleClass="quote-box">
+
+                <Label text="“"
+                       styleClass="quote-mark"/>
+
+                <Label text="Financial freedom begins with smart decisions today."
+                       styleClass="quote-text"
+                       wrapText="true"/>
+
+                <Label text="— Plan wisely. Borrow smartly. Repay proudly."
+                       styleClass="quote-author"
+                       wrapText="true"/>
+
+            </VBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Label text="LOAN MANAGEMENT SYSTEM • 2026"
+                   styleClass="brand-footer"/>
+
+        </VBox>
+
+
+        <!-- RIGHT LOGIN SECTION -->
+        <VBox prefWidth="550"
+              alignment="CENTER"
+              spacing="18"
+              styleClass="login-panel">
+
+            <padding>
+                <Insets top="55"
+                        right="70"
+                        bottom="55"
+                        left="70"/>
+            </padding>
+
+            <Label text="Welcome back"
+                   styleClass="login-heading"/>
+
+            <Label text="Sign in to access your LoanFlow workspace"
+                   styleClass="login-subtitle"/>
+
+
+            <!-- EMAIL -->
+            <VBox spacing="8"
+                  maxWidth="390">
+
+                <Label text="EMAIL ADDRESS"
+                       styleClass="field-label"/>
+
+                <TextField fx:id="emailField"
+                           promptText="you@example.com"
+                           styleClass="modern-field"/>
+
+            </VBox>
+
+
+            <!-- PASSWORD -->
+            <VBox spacing="8"
+                  maxWidth="390">
+
+                <Label text="PASSWORD"
+                       styleClass="field-label"/>
+
+                <PasswordField fx:id="passwordField"
+                               promptText="Enter your password"
+                               styleClass="modern-field"/>
+
+            </VBox>
+
+
+            <!-- ROLE -->
+            <VBox spacing="8"
+                  maxWidth="390">
+
+                <Label text="LOGIN AS"
+                       styleClass="field-label"/>
+
+                <ComboBox fx:id="roleComboBox"
+                          maxWidth="Infinity"
+                          styleClass="modern-combo"/>
+
+            </VBox>
+
+
+            <!-- LOGIN BUTTON -->
+            <Button text="Sign In   →"
+                    maxWidth="390"
+                    prefHeight="50"
+                    styleClass="primary-button"
+                    onAction="#loginUser"/>
+
+
+            <!-- REGISTER -->
+            <HBox alignment="CENTER"
+                  spacing="6">
+
+                <Label text="New to LoanFlow?"
+                       styleClass="small-text"/>
+
+                <Hyperlink text="Create Customer Account"
+                           styleClass="register-link"
+                           onAction="#openRegister"/>
+
+            </HBox>
+
+        </VBox>
+
+    </HBox>
 
 </StackPane>

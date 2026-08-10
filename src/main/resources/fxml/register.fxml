@@ -1,50 +1,119 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+
+<?import javafx.scene.control.Button?>
+
+<?import javafx.scene.control.Hyperlink?>
+
+<?import javafx.scene.control.Label?>
+
+<?import javafx.scene.control.PasswordField?>
+
+<?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.layout.HBox?>
+
 <?import javafx.scene.layout.StackPane?>
+
 <?import javafx.scene.layout.VBox?>
 
-<StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.loanmanagement.controller.RegisterController">
+<StackPane xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="com.loanmanagement.controller.RegisterController"
+        stylesheets="@../css/login.css"
+        styleClass="login-root">
 
-    <VBox alignment="CENTER"
-          spacing="15"
-          maxWidth="350">
 
-        <padding>
-            <Insets top="30" right="30" bottom="30" left="30"/>
-        </padding>
+<VBox maxWidth="560"
+      maxHeight="650"
+      spacing="18"
+      styleClass="register-card">
 
-        <Label text="Create Account"
-               style="-fx-font-size:24px; -fx-font-weight:bold;" />
+    <padding>
+        <Insets top="42"
+                right="55"
+                bottom="42"
+                left="55"/>
+    </padding>
 
-        <TextField
-                fx:id="nameField"
-                promptText="Full Name"/>
+    <Label text="LOANFLOW"
+           styleClass="brand-logo-small"/>
 
-        <TextField
-                fx:id="emailField"
-                promptText="Email"/>
+    <Label text="Create your account"
+           styleClass="login-heading"/>
 
-        <PasswordField
-                fx:id="passwordField"
-                promptText="Password"/>
+    <Label text="Join LoanFlow and manage your loan journey from one place."
+           styleClass="login-subtitle"
+           wrapText="true"/>
 
-        <PasswordField
-                fx:id="confirmPasswordField"
-                promptText="Confirm Password"/>
+    <VBox spacing="8">
 
-        <Button
-        fx:id="registerButton"
-        text="Register"
-        prefWidth="150"
-        onAction="#registerUser"/>
+        <Label text="FULL NAME"
+               styleClass="field-label"/>
 
-        <Hyperlink
-                text="Back to Login"
-                onAction="#openLogin"/>
+        <TextField fx:id="nameField"
+                   promptText="Enter your full name"
+                   styleClass="modern-field"/>
 
     </VBox>
+
+    <VBox spacing="8">
+
+        <Label text="EMAIL ADDRESS"
+               styleClass="field-label"/>
+
+        <TextField fx:id="emailField"
+                   promptText="you@example.com"
+                   styleClass="modern-field"/>
+
+    </VBox>
+
+    <VBox spacing="8">
+
+        <Label text="PASSWORD"
+               styleClass="field-label"/>
+
+        <PasswordField fx:id="passwordField"
+                       promptText="Minimum 6 characters"
+                       styleClass="modern-field"/>
+
+    </VBox>
+
+    <VBox spacing="8">
+
+        <Label text="CONFIRM PASSWORD"
+               styleClass="field-label"/>
+
+        <PasswordField fx:id="confirmPasswordField"
+                       promptText="Re-enter your password"
+                       styleClass="modern-field"/>
+
+    </VBox>
+
+    <Label text="Customer accounts can be created here. Administrator and Loan Officer accounts are managed separately."
+           styleClass="registration-note"
+           wrapText="true"/>
+
+    <Button text="Create Account   →"
+            maxWidth="Infinity"
+            prefHeight="50"
+            styleClass="primary-button"
+            onAction="#registerUser"/>
+
+    <HBox alignment="CENTER"
+          spacing="6">
+
+        <Label text="Already have an account?"
+               styleClass="small-text"/>
+
+        <Hyperlink text="Back to Login"
+                   styleClass="register-link"
+                   onAction="#openLogin"/>
+
+    </HBox>
+
+</VBox>
+
 
 </StackPane>

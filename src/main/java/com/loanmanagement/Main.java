@@ -1,6 +1,7 @@
 package com.loanmanagement;
 
 import com.loanmanagement.database.DatabaseConnection;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,28 +11,56 @@ import java.sql.Connection;
 
 public class Main extends Application {
 
-    @Override
-    public void start(Stage stage) throws Exception {
+@Override
+public void start(Stage stage) throws Exception {
 
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/fxml/login.fxml"));
+    FXMLLoader loader =
+            new FXMLLoader(
+                    getClass().getResource(
+                            "/fxml/login.fxml"
+                    )
+            );
 
-        Scene scene = new Scene(loader.load(), 500, 400);
+    Scene scene =
+            new Scene(
+                    loader.load(),
+                    1100,
+                    700
+            );
 
-        stage.setTitle("Loan Management System");
-        stage.setScene(scene);
-        stage.show();
-    }
+    stage.setTitle(
+            "LoanFlow - Loan Management System"
+    );
 
-    public static void main(String[] args) {
+    stage.setScene(scene);
 
-        // Test Oracle Database Connection
-        Connection connection = DatabaseConnection.getConnection();
+    stage.setMinWidth(950);
+    stage.setMinHeight(620);
 
-        if (connection != null) {
-            System.out.println("Connected to Oracle Database!");
+    stage.centerOnScreen();
+
+    stage.show();
+}
+
+public static void main(String[] args) {
+
+    Connection connection =
+            DatabaseConnection.getConnection();
+
+    if (connection != null) {
+
+        System.out.println(
+                "Connected to Oracle Database!"
+        );
+
+        try {
+            connection.close();
+        } catch (Exception ignored) {
         }
-
-        launch(args);
     }
+
+    launch(args);
+}
+
+
 }

@@ -1,7 +1,8 @@
 com\loanmanagement\util\AlertUtil.class
-com\loanmanagement\Main.class
 com\loanmanagement\service\LoginService.class
 com\loanmanagement\controller\DashboardController.class
 com\loanmanagement\controller\RegisterController.class
+com\loanmanagement\controller\LoginController.class
+com\loanmanagement\Main.class
 com\loanmanagement\model\User.class
 com\loanmanagement\database\DatabaseConnection.class

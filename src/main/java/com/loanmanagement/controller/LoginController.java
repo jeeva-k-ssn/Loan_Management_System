@@ -1,84 +1,221 @@
 package com.loanmanagement.controller;
 
+import com.loanmanagement.model.User;
 import com.loanmanagement.service.LoginService;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class LoginController {
 
-    @FXML
-    private TextField emailField;
 
-    @FXML
-    private PasswordField passwordField;
+@FXML
+private TextField emailField;
 
-    @FXML
-    
-    public void loginUser(){
+@FXML
+private PasswordField passwordField;
 
-    String email=emailField.getText();
-    String password=passwordField.getText();
+@FXML
+private ComboBox<String> roleComboBox;
 
-    LoginService service=new LoginService();
+@FXML
+public void initialize() {
 
-    if(service.loginUser(email,password)){
+    roleComboBox.getItems().clear();
 
-        try{
+    roleComboBox.getItems().addAll(
+            "Customer",
+            "Loan Officer",
+            "Administrator"
+    );
 
-            Parent root=FXMLLoader.load(getClass().getResource("/fxml/dashboard.fxml"));
-
-            Stage stage=(Stage)emailField.getScene().getWindow();
-
-            stage.setScene(new Scene(root));
-            stage.setTitle("Dashboard");
-
-        }catch(Exception e){
-
-            e.printStackTrace();
-
-        }
-
-    }else{
-
-        Alert alert=new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(null);
-        alert.setContentText("Invalid Email or Password");
-        alert.showAndWait();
-
-    }
-
+    roleComboBox.setValue("Customer");
 }
 
-    @FXML
-    public void openRegister(ActionEvent event) {
+@FXML
+public void loginUser() {
 
-        try {
+    String email = emailField.getText().trim();
+    String password = passwordField.getText();
+    String selectedRole = roleComboBox.getValue();
 
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/register.fxml"));
-
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            stage.setScene(new Scene(root));
-
-            stage.setTitle("Register");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    if (email.isEmpty()) {
+        showError(
+                "Missing Email",
+                "Please enter your email address."
+        );
+        emailField.requestFocus();
+        return;
     }
 
-    private void showAlert(String message) {
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    if (password.isEmpty()) {
+        showError(
+                "Missing Password",
+                "Please enter your password."
+        );
+        passwordField.requestFocus();
+        return;
     }
+
+    if (selectedRole == null) {
+        showError(
+                "Role Required",
+                "Please select how you want to login."
+        );
+        return;
+    }
+
+    String databaseRole =
+            convertRoleToDatabaseValue(selectedRole);
+
+    LoginService service = new LoginService();
+
+    User user =
+            service.loginUser(
+                    email,
+                    password,
+                    databaseRole
+            );
+
+    if (user != null) {
+
+        openDashboard(user);
+
+    } else {
+
+        showError(
+                "Login Failed",
+                "The email, password, or selected role is incorrect."
+        );
+    }
+}
+
+private String convertRoleToDatabaseValue(String role) {
+
+    switch (role) {
+
+        case "Administrator":
+            return "ADMIN";
+
+        case "Loan Officer":
+            return "LOAN_OFFICER";
+
+        case "Customer":
+            return "CUSTOMER";
+
+        default:
+            return "";
+    }
+}
+
+private void openDashboard(User user) {
+
+    try {
+
+        FXMLLoader loader =
+                new FXMLLoader(
+                        getClass().getResource(
+                                "/fxml/dashboard.fxml"
+                        )
+                );
+
+        Parent root = loader.load();
+
+        DashboardController controller =
+                loader.getController();
+
+        controller.setCurrentUser(user);
+
+        Stage stage =
+                (Stage) emailField
+                        .getScene()
+                        .getWindow();
+
+        Scene scene =
+                new Scene(root, 1280, 760);
+
+        stage.setScene(scene);
+
+        stage.setTitle(
+                "LoanFlow - " + user.getDisplayRole()
+        );
+
+        stage.setMinWidth(1100);
+        stage.setMinHeight(680);
+
+        stage.centerOnScreen();
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        showError(
+                "Dashboard Error",
+                "Unable to open the dashboard."
+        );
+    }
+}
+
+@FXML
+public void openRegister(ActionEvent event) {
+
+    try {
+
+        FXMLLoader loader =
+                new FXMLLoader(
+                        getClass().getResource(
+                                "/fxml/register.fxml"
+                        )
+                );
+
+        Parent root = loader.load();
+
+        Stage stage =
+                (Stage)
+                ((javafx.scene.Node) event.getSource())
+                        .getScene()
+                        .getWindow();
+
+        stage.setScene(
+                new Scene(root, 1050, 700)
+        );
+
+        stage.setTitle(
+                "LoanFlow - Create Account"
+        );
+
+        stage.centerOnScreen();
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        showError(
+                "Navigation Error",
+                "Unable to open the registration page."
+        );
+    }
+}
+
+private void showError(String title, String message) {
+
+    Alert alert =
+            new Alert(Alert.AlertType.ERROR);
+
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+
+    alert.showAndWait();
+}
+
+
 }
