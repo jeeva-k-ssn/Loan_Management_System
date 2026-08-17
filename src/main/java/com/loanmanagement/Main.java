@@ -38,7 +38,7 @@ public void start(Stage stage) throws Exception {
     stage.setMinHeight(620);
 
     stage.centerOnScreen();
-
+    stage.setMaximized(true);
     stage.show();
 }
 

@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.loanmanagement.controller.PendingApplicationsController"
+            stylesheets="@../css/pending-applications.css"
+            styleClass="pending-root">
+
+    <top>
+
+        <HBox alignment="CENTER_LEFT"
+              spacing="18"
+              styleClass="pending-top-bar">
+
+            <padding>
+                <Insets top="18"
+                        right="28"
+                        bottom="18"
+                        left="28"/>
+            </padding>
+
+            <VBox spacing="3">
+
+                <Label text="LOANFLOW"
+                       styleClass="dashboard-logo"/>
+
+                <Label text="LOAN MANAGEMENT SYSTEM"
+                       styleClass="dashboard-subtitle"/>
+
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Button text="←  Back to Dashboard"
+                    styleClass="back-button"
+                    onAction="#backToDashboard"/>
+
+        </HBox>
+
+    </top>
+
+
+    <center>
+
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="true"
+                    hbarPolicy="NEVER"
+                    styleClass="pending-scroll">
+
+            <VBox spacing="22">
+
+                <padding>
+                    <Insets top="30"
+                            right="35"
+                            bottom="35"
+                            left="35"/>
+                </padding>
+
+
+                <!-- PAGE HEADER -->
+
+                <VBox spacing="5">
+
+                    <Label text="Pending Loan Applications"
+                           styleClass="page-title"/>
+
+                    <Label text="Review customer applications and approve or reject them."
+                           styleClass="page-description"/>
+
+                </VBox>
+
+
+                <!-- APPLICATION TABLE -->
+
+                <VBox spacing="12"
+                      styleClass="content-card">
+
+                    <padding>
+                        <Insets top="22"
+                                right="22"
+                                bottom="22"
+                                left="22"/>
+                    </padding>
+
+                    <Label text="Applications Awaiting Review"
+                           styleClass="section-title"/>
+
+                    <Label text="Select an application to view its complete details."
+                           styleClass="section-description"/>
+
+                    <TableView fx:id="applicationTable"
+                               prefHeight="300"
+                               VBox.vgrow="ALWAYS"
+                               styleClass="application-table">
+
+                        <columns>
+
+                            <TableColumn fx:id="applicationIdColumn"
+                                         text="ID"
+                                         prefWidth="65"/>
+
+                            <TableColumn fx:id="customerColumn"
+                                         text="Customer"
+                                         prefWidth="140"/>
+
+                            <TableColumn fx:id="loanTypeColumn"
+                                         text="Loan Type"
+                                         prefWidth="150"/>
+
+                            <TableColumn fx:id="amountColumn"
+                                         text="Amount"
+                                         prefWidth="120"/>
+
+                            <TableColumn fx:id="purposeColumn"
+                                         text="Purpose"
+                                         prefWidth="130"/>
+
+                            <TableColumn fx:id="tenureColumn"
+                                         text="Tenure"
+                                         prefWidth="85"/>
+
+                            <TableColumn fx:id="interestColumn"
+                                         text="Interest"
+                                         prefWidth="85"/>
+
+                            <TableColumn fx:id="emiColumn"
+                                         text="EMI"
+                                         prefWidth="120"/>
+
+                            <TableColumn fx:id="dateColumn"
+                                         text="Date"
+                                         prefWidth="105"/>
+
+                            <TableColumn fx:id="statusColumn"
+                                         text="Status"
+                                         prefWidth="100"/>
+
+                        </columns>
+
+                    </TableView>
+
+                </VBox>
+
+
+                <!-- DETAILS -->
+
+                <VBox spacing="15"
+                      styleClass="content-card">
+
+                    <padding>
+                        <Insets top="22"
+                                right="22"
+                                bottom="22"
+                                left="22"/>
+                    </padding>
+
+                    <VBox spacing="4">
+
+                        <Label text="Application Review"
+                               styleClass="section-title"/>
+
+                        <Label text="Review the selected application before taking action."
+                               styleClass="section-description"/>
+
+                    </VBox>
+
+
+                    <GridPane hgap="25"
+                              vgap="14">
+
+                        <VBox GridPane.columnIndex="0"
+                              GridPane.rowIndex="0"
+                              styleClass="detail-box">
+
+                            <Label text="Application ID"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="applicationIdLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="1"
+                              GridPane.rowIndex="0"
+                              styleClass="detail-box">
+
+                            <Label text="Customer"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="customerLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="2"
+                              GridPane.rowIndex="0"
+                              styleClass="detail-box">
+
+                            <Label text="Loan Type"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="loanTypeLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="3"
+                              GridPane.rowIndex="0"
+                              styleClass="detail-box">
+
+                            <Label text="Amount"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="amountLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="0"
+                              GridPane.rowIndex="1"
+                              styleClass="detail-box">
+
+                            <Label text="Purpose"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="purposeLabel"
+                                   text="-"
+                                   wrapText="true"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="1"
+                              GridPane.rowIndex="1"
+                              styleClass="detail-box">
+
+                            <Label text="Tenure"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="tenureLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="2"
+                              GridPane.rowIndex="1"
+                              styleClass="detail-box">
+
+                            <Label text="Interest Rate"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="interestLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="3"
+                              GridPane.rowIndex="1"
+                              styleClass="detail-box">
+
+                            <Label text="EMI"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="emiLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="0"
+                              GridPane.rowIndex="2"
+                              styleClass="detail-box">
+
+                            <Label text="Application Date"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="dateLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+
+                        <VBox GridPane.columnIndex="1"
+                              GridPane.rowIndex="2"
+                              styleClass="detail-box">
+
+                            <Label text="Current Status"
+                                   styleClass="detail-title"/>
+
+                            <Label fx:id="statusLabel"
+                                   text="-"
+                                   styleClass="detail-value"/>
+
+                        </VBox>
+
+                    </GridPane>
+
+
+                    <!-- ACTION BUTTONS -->
+
+                    <HBox alignment="CENTER_RIGHT"
+                          spacing="12">
+
+                        <Button fx:id="rejectButton"
+                                text="✕  Reject Application"
+                                prefHeight="44"
+                                styleClass="reject-button"
+                                onAction="#rejectApplication"/>
+
+                        <Button fx:id="approveButton"
+                                text="✓  Approve Application"
+                                prefHeight="44"
+                                styleClass="approve-button"
+                                onAction="#approveApplication"/>
+
+                    </HBox>
+
+                </VBox>
+
+            </VBox>
+
+        </ScrollPane>
+
+    </center>
+
+</BorderPane>

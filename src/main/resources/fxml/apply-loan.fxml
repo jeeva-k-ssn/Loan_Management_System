@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.loanmanagement.controller.LoanApplicationController"
+            stylesheets="@../css/apply-loan.css"
+            styleClass="apply-root">
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <top>
+        <HBox alignment="CENTER_LEFT"
+              spacing="20"
+              styleClass="top-header">
+
+            <VBox spacing="2">
+
+                <Label text="LOANFLOW"
+                       styleClass="logo-text"/>
+
+                <Label text="LOAN MANAGEMENT SYSTEM"
+                       styleClass="logo-subtitle"/>
+
+            </VBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Label text="NEW LOAN APPLICATION"
+                   styleClass="header-right-text"/>
+
+        </HBox>
+    </top>
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <center>
+
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="main-scroll">
+
+            <VBox spacing="22"
+                  styleClass="main-content">
+
+                <padding>
+                    <Insets top="35"
+                            right="45"
+                            bottom="40"
+                            left="45"/>
+                </padding>
+
+
+                <!-- PAGE TITLE -->
+
+                <VBox spacing="5">
+
+                    <Label text="Apply for a Loan"
+                           styleClass="page-title"/>
+
+                    <Label text="Complete the details below to submit your loan application."
+                           styleClass="page-description"/>
+
+                </VBox>
+
+
+                <!-- =================================================
+                     TWO COLUMN AREA
+                     ================================================= -->
+
+                <HBox spacing="25"
+                      alignment="TOP_CENTER">
+
+
+                    <!-- =================================================
+                         LEFT FORM CARD
+                         ================================================= -->
+
+                    <VBox spacing="0"
+                          HBox.hgrow="ALWAYS"
+                          styleClass="loan-card">
+
+
+                        <!-- CARD HEADER -->
+
+                        <HBox alignment="CENTER_LEFT"
+                              styleClass="card-header">
+
+                            <VBox spacing="4">
+
+                                <Label text="Loan Details"
+                                       styleClass="card-title"/>
+
+                                <Label text="Tell us about the loan you would like to apply for."
+                                       styleClass="card-description"/>
+
+                            </VBox>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Label text="STEP 1 OF 1"
+                                   styleClass="step-label"/>
+
+                        </HBox>
+
+
+                        <!-- FORM -->
+
+                        <VBox spacing="20">
+
+                            <padding>
+                                <Insets top="25"
+                                        right="28"
+                                        bottom="28"
+                                        left="28"/>
+                            </padding>
+
+
+                            <!-- APPLICANT -->
+
+                            <VBox spacing="7">
+
+                                <Label text="Applicant"
+                                       styleClass="field-label"/>
+
+                                <TextField fx:id="customerNameField"
+                                           editable="false"
+                                           maxWidth="Infinity"
+                                           prefHeight="46"
+                                           styleClass="readonly-field"/>
+
+                            </VBox>
+
+
+                            <!-- TWO COLUMN FORM -->
+
+                            <GridPane hgap="22"
+                                      vgap="18">
+
+                                <columnConstraints>
+
+                                    <ColumnConstraints percentWidth="50"
+                                                       hgrow="ALWAYS"/>
+
+                                    <ColumnConstraints percentWidth="50"
+                                                       hgrow="ALWAYS"/>
+
+                                </columnConstraints>
+
+
+                                <!-- LOAN TYPE -->
+
+                                <VBox GridPane.columnIndex="0"
+                                      GridPane.rowIndex="0"
+                                      spacing="7">
+
+                                    <Label text="Loan Type *"
+                                           styleClass="field-label"/>
+
+                                    <ComboBox fx:id="loanTypeComboBox"
+                                              maxWidth="Infinity"
+                                              prefHeight="46"
+                                              promptText="Select loan type"
+                                              styleClass="form-combo"/>
+
+                                </VBox>
+
+
+                                <!-- LOAN AMOUNT -->
+
+                                <VBox GridPane.columnIndex="1"
+                                      GridPane.rowIndex="0"
+                                      spacing="7">
+
+                                    <Label text="Loan Amount *"
+                                           styleClass="field-label"/>
+
+                                    <TextField fx:id="loanAmountField"
+                                               maxWidth="Infinity"
+                                               prefHeight="46"
+                                               promptText="Enter loan amount"
+                                               styleClass="form-field"/>
+
+                                </VBox>
+
+
+                                <!-- PURPOSE -->
+
+                                <VBox GridPane.columnIndex="0"
+                                      GridPane.rowIndex="1"
+                                      spacing="7">
+
+                                    <Label text="Loan Purpose *"
+                                           styleClass="field-label"/>
+
+                                    <TextArea fx:id="loanPurposeField"
+                                              maxWidth="Infinity"
+                                              prefHeight="110"
+                                              promptText="Explain why you need this loan..."
+                                              wrapText="true"
+                                              styleClass="form-textarea"/>
+
+                                </VBox>
+
+
+                                <!-- TENURE -->
+
+                                <VBox GridPane.columnIndex="1"
+                                      GridPane.rowIndex="1"
+                                      spacing="7">
+
+                                    <Label text="Loan Tenure *"
+                                           styleClass="field-label"/>
+
+                                    <ComboBox fx:id="tenureComboBox"
+                                              maxWidth="Infinity"
+                                              prefHeight="46"
+                                              promptText="Select tenure"
+                                              styleClass="form-combo"/>
+
+                                </VBox>
+
+
+                                <!-- INTEREST RATE -->
+
+                                <VBox GridPane.columnIndex="0"
+                                      GridPane.rowIndex="2"
+                                      spacing="7">
+
+                                    <Label text="Interest Rate *"
+                                           styleClass="field-label"/>
+
+                                    <TextField fx:id="interestRateField"
+                                               maxWidth="Infinity"
+                                               prefHeight="46"
+                                               promptText="Enter interest rate"
+                                               styleClass="form-field"/>
+
+                                </VBox>
+
+
+                                <!-- EMI -->
+
+                                <VBox GridPane.columnIndex="1"
+                                      GridPane.rowIndex="2"
+                                      spacing="7">
+
+                                    <Label text="Estimated Monthly EMI"
+                                           styleClass="field-label"/>
+
+                                    <TextField fx:id="emiField"
+                                               editable="false"
+                                               maxWidth="Infinity"
+                                               prefHeight="46"
+                                               promptText="Calculate EMI"
+                                               styleClass="emi-field"/>
+
+                                </VBox>
+
+                            </GridPane>
+
+
+                            <!-- CALCULATE -->
+
+                            <HBox alignment="CENTER_RIGHT">
+
+                                <Button text="Calculate EMI  →"
+                                        onAction="#calculateEMI"
+                                        prefWidth="190"
+                                        prefHeight="45"
+                                        styleClass="calculate-button"/>
+
+                            </HBox>
+
+
+                            <!-- VALIDATION -->
+
+                            <Label fx:id="validationLabel"
+                                   wrapText="true"
+                                   styleClass="validation-label"/>
+
+
+                            <!-- ACTION AREA -->
+
+                            <HBox alignment="CENTER_RIGHT"
+                                  spacing="14"
+                                  styleClass="action-area">
+
+                                <Button text="←  Back to Dashboard"
+                                        onAction="#handleBack"
+                                        prefWidth="190"
+                                        prefHeight="46"
+                                        styleClass="back-button"/>
+
+                                <Button fx:id="submitButton"
+                                        text="Submit Application  →"
+                                        onAction="#submitApplication"
+                                        prefWidth="220"
+                                        prefHeight="46"
+                                        disable="true"
+                                        styleClass="submit-button"/>
+
+                            </HBox>
+
+                        </VBox>
+
+                    </VBox>
+
+
+                    <!-- =================================================
+                         RIGHT SUMMARY CARD
+                         ================================================= -->
+
+                    <VBox spacing="24"
+                          prefWidth="285"
+                          maxWidth="285">
+
+
+                        <!-- SUMMARY -->
+
+                        <VBox spacing="12"
+                              styleClass="summary-card">
+
+                            <Label text="YOUR LOAN SUMMARY"
+                                   styleClass="summary-title"/>
+
+                            <Label text="Estimated Monthly EMI"
+                                   styleClass="summary-label"/>
+
+                            <Label fx:id="summaryEmiLabel"
+                                   text="₹ 0.00"
+                                   styleClass="summary-amount"/>
+
+                            <Label text="Calculate EMI to see your estimated monthly repayment."
+                                   wrapText="true"
+                                   styleClass="summary-description"/>
+
+                        </VBox>
+
+
+                        <!-- PROCESS -->
+
+                        <VBox spacing="14"
+                              styleClass="process-card">
+
+                            <Label text="Application Process"
+                                   styleClass="process-title"/>
+
+
+                            <VBox spacing="5">
+
+                                <HBox spacing="14">
+
+                                    <Label text="01"
+                                           styleClass="process-number"/>
+
+                                    <VBox spacing="2">
+
+                                        <Label text="Submit Application"
+                                               styleClass="process-step-title"/>
+
+                                        <Label text="Provide your loan details"
+                                               styleClass="process-step-description"/>
+
+                                    </VBox>
+
+                                </HBox>
+
+
+                                <HBox spacing="14">
+
+                                    <Label text="02"
+                                           styleClass="process-number"/>
+
+                                    <VBox spacing="2">
+
+                                        <Label text="Loan Officer Review"
+                                               styleClass="process-step-title"/>
+
+                                        <Label text="Your application is verified"
+                                               styleClass="process-step-description"/>
+
+                                    </VBox>
+
+                                </HBox>
+
+
+                                <HBox spacing="14">
+
+                                    <Label text="03"
+                                           styleClass="process-number"/>
+
+                                    <VBox spacing="2">
+
+                                        <Label text="Approval"
+                                               styleClass="process-step-title"/>
+
+                                        <Label text="Decision on your application"
+                                               styleClass="process-step-description"/>
+
+                                    </VBox>
+
+                                </HBox>
+
+                            </VBox>
+
+                        </VBox>
+
+
+                        <!-- SECURITY -->
+
+                        <VBox spacing="8"
+                              styleClass="security-card">
+
+                            <Label text="🔒  Secure Application"
+                                   styleClass="security-title"/>
+
+                            <Label text="Your application details are securely stored and will only be accessed by authorized personnel."
+                                   wrapText="true"
+                                   styleClass="security-description"/>
+
+                        </VBox>
+
+                    </VBox>
+
+                </HBox>
+
+
+                <!-- FOOTER -->
+
+                <HBox alignment="CENTER"
+                      styleClass="footer-area">
+
+                    <Label text="Your application will be reviewed by our loan officer before approval."
+                           styleClass="footer-text"/>
+
+                </HBox>
+
+            </VBox>
+
+        </ScrollPane>
+
+    </center>
+
+</BorderPane>
