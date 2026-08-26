@@ -58,3 +58,10 @@
 .tab-pane .tab .tab-label { -fx-text-fill: #31556D; -fx-font-weight: bold; }
 .modern-field, .modern-combo { -fx-background-color: #F7FAFC; -fx-border-color: #D4E0E9; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 0 12px; -fx-pref-height: 42px; -fx-font-size: 13px; }
 .modern-field:focused, .modern-combo:focused { -fx-background-color: #FFFFFF; -fx-border-color: #168B8B; -fx-effect: dropshadow(gaussian, rgba(22,139,139,0.16), 8, 0, 0, 2); }
+.combo-box { -fx-background-color: #F7FAFC; -fx-border-color: #D4E0E9; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 0 10px; -fx-pref-height: 40px; }
+.combo-box:focused, .combo-box:hover { -fx-border-color: #168B8B; }
+.combo-box .list-cell { -fx-text-fill: #31556D; -fx-font-size: 12px; }
+.button:focused { -fx-border-color: #72D3D0; -fx-border-width: 2px; }
+.table-view .filler, .table-view .corner { -fx-background-color: #163753; }
+.table-view .scroll-bar:vertical, .table-view .scroll-bar:horizontal { -fx-background-color: transparent; }
+.table-view .scroll-bar .thumb { -fx-background-color: #B7C7D6; -fx-background-radius: 8px; }
