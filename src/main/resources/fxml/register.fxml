@@ -11,6 +11,8 @@
 <?import javafx.scene.control.PasswordField?>
 
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <?import javafx.scene.layout.HBox?>
 
@@ -25,6 +27,14 @@
         styleClass="login-root">
 
 
+<HBox maxWidth="1040" maxHeight="680" styleClass="register-shell" spacing="0">
+<StackPane prefWidth="430" styleClass="register-visual">
+    <ImageView fitWidth="430" fitHeight="680" preserveRatio="false"><image><Image url="@../images/login-hero-2.png"/></image></ImageView>
+    <VBox alignment="TOP_LEFT" prefWidth="430" prefHeight="680" styleClass="register-overlay"><padding><Insets top="38" right="38" bottom="38" left="38"/></padding>
+        <Label text="LOANFLOW" styleClass="brand-logo"/>
+        <VBox VBox.vgrow="ALWAYS" alignment="BOTTOM_LEFT" spacing="10"><Label text="Start with a smarter plan." styleClass="hero-caption" wrapText="true"/><Label text="Create your account and keep every step of your loan journey in one place." styleClass="hero-subtitle" wrapText="true"/></VBox>
+    </VBox>
+</StackPane>
 <VBox maxWidth="560"
       maxHeight="650"
       spacing="18"
@@ -114,6 +124,7 @@
     </HBox>
 
 </VBox>
+</HBox>
 
 
 </StackPane>
