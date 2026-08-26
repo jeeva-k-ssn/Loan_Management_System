@@ -52,6 +52,10 @@
 .table-view .table-row-cell:selected .text { -fx-fill: #0B4E55; -fx-font-weight: bold; }
 .table-view .table-cell { -fx-text-fill: #31556D; -fx-font-size: 12px; -fx-padding: 0 9px; -fx-border-color: transparent; }
 .table-view .placeholder .label { -fx-text-fill: #98A8B8; -fx-font-size: 12px; }
+.table-view .placeholder { -fx-background-color: #F8FBFC; -fx-padding: 22px; }
+.table-view .placeholder .empty-title { -fx-text-fill: #31556D; -fx-font-size: 14px; -fx-font-weight: bold; }
+.payment-table .table-cell:nth-child(3) { -fx-font-weight: bold; -fx-text-fill: #0D6F72; }
+.loan-table .table-row-cell:selected, .application-table .table-row-cell:selected, .payment-table .table-row-cell:selected { -fx-background-color: #CFEDEC; }
 .tab-pane .tab-header-area { -fx-padding: 0 0 8px 0; }
 .tab-pane .tab { -fx-background-color: #E8EEF3; -fx-background-radius: 8px 8px 0 0; -fx-padding: 9px 18px; }
 .tab-pane .tab:selected { -fx-background-color: #FFFFFF; }
