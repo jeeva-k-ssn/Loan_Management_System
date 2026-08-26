@@ -284,7 +284,7 @@
 
                             <HBox alignment="CENTER_RIGHT">
 
-                                <Button text="Calculate EMI  →"
+                                <Button text="Calculate EMI"
                                         onAction="#calculateEMI"
                                         prefWidth="190"
                                         prefHeight="45"
@@ -313,7 +313,7 @@
                                         styleClass="back-button"/>
 
                                 <Button fx:id="submitButton"
-                                        text="Submit Application  →"
+                                        text="Submit Application"
                                         onAction="#submitApplication"
                                         prefWidth="220"
                                         prefHeight="46"
@@ -348,7 +348,7 @@
                                    styleClass="summary-label"/>
 
                             <Label fx:id="summaryEmiLabel"
-                                   text="₹ 0.00"
+                                   text="0.00"
                                    styleClass="summary-amount"/>
 
                             <Label text="Calculate EMI to see your estimated monthly repayment."
@@ -432,7 +432,7 @@
                         <VBox spacing="8"
                               styleClass="security-card">
 
-                            <Label text="🔒  Secure Application"
+                            <Label text="Secure Application"
                                    styleClass="security-title"/>
 
                             <Label text="Your application details are securely stored and will only be accessed by authorized personnel."

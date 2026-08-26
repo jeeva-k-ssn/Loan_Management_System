@@ -72,7 +72,7 @@
 
             <!-- REFRESH -->
 
-            <Button text="↻  Refresh"
+            <Button text="Refresh"
                     styleClass="refresh-button"
                     onAction="#refreshDashboard"/>
 
@@ -128,8 +128,8 @@
 
                 <HBox styleClass="dashboard-hero" spacing="20" alignment="CENTER_LEFT">
                     <VBox spacing="8" HBox.hgrow="ALWAYS">
-                        <Label text="Your financial journey, simplified." styleClass="hero-title" wrapText="true"/>
-                        <Label text="Stay on top of applications, active loans and repayments from one calm, clear workspace." styleClass="hero-description" wrapText="true"/>
+                        <Label text="Your loan overview" styleClass="hero-title" wrapText="true"/>
+                        <Label text="Review applications, active loans and repayments in one place." styleClass="hero-description" wrapText="true"/>
                     </VBox>
                     <ImageView fitWidth="235" fitHeight="118" preserveRatio="false"><image><Image url="@../images/login-hero-3.png"/></image></ImageView>
                 </HBox>
@@ -306,7 +306,7 @@
                             <Region HBox.hgrow="ALWAYS"/>
 
 
-                            <Button text="↻"
+                            <Button text="Refresh"
                                     styleClass="small-refresh-button"
                                     onAction="#refreshDashboard"/>
 
@@ -368,7 +368,7 @@
                         <!-- ================================================= -->
 
                         <Button fx:id="viewLoansButton"
-                                text="▣  View Loans"
+                                text="View Loans"
                                 maxWidth="Infinity"
                                 prefHeight="44"
                                 styleClass="secondary-action-button"
@@ -380,7 +380,7 @@
                         <!-- ================================================= -->
 
                         <Button fx:id="viewPaymentsButton"
-                                text="₹  Payment History"
+                                text="Payment History"
                                 maxWidth="Infinity"
                                 prefHeight="44"
                                 styleClass="secondary-action-button"
@@ -392,7 +392,7 @@
                         <!-- ================================================= -->
 
                         <Button fx:id="pendingApplicationsButton"
-                                text="▣  Pending Applications"
+                                text="Pending Applications"
                                 maxWidth="Infinity"
                                 prefHeight="44"
                                 styleClass="secondary-action-button"
@@ -424,7 +424,7 @@
                 <HBox alignment="CENTER"
                       styleClass="dashboard-quote">
 
-                    <Label text="“Plan wisely. Borrow smartly. Build your future.”"
+                    <Label text="Keep your borrowing clear and manageable."
                            styleClass="quote-label"/>
 
                 </HBox>

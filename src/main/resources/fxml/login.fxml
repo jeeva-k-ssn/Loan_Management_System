@@ -17,7 +17,7 @@
    <VBox spacing="8" maxWidth="400"><Label text="EMAIL ADDRESS" styleClass="field-label"/><TextField fx:id="emailField" promptText="you@example.com" styleClass="modern-field"/></VBox>
    <VBox spacing="8" maxWidth="400"><Label text="PASSWORD" styleClass="field-label"/><PasswordField fx:id="passwordField" promptText="Enter your password" styleClass="modern-field"/></VBox>
    <VBox spacing="8" maxWidth="400"><Label text="LOGIN AS" styleClass="field-label"/><ComboBox fx:id="roleComboBox" maxWidth="Infinity" styleClass="modern-combo"/></VBox>
-   <Button text="Sign in   →" maxWidth="400" prefHeight="52" styleClass="primary-button" onAction="#loginUser"/>
+   <Button text="Sign in" maxWidth="400" prefHeight="52" styleClass="primary-button" onAction="#loginUser"/>
    <HBox alignment="CENTER_LEFT" spacing="6"><Label text="New to LoanFlow?" styleClass="small-text"/><Hyperlink text="Create Customer Account" styleClass="register-link" onAction="#openRegister"/></HBox>
    <Label text="Protected by secure account verification" styleClass="security-note"/>
   </VBox>
