@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="900" viewBox="0 0 760 900">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#073b4c"/><stop offset="1" stop-color="#168b8b"/></linearGradient></defs>
+  <rect width="760" height="900" fill="url(#g)"/><path d="M0 170 Q210 40 420 180 T760 120" fill="none" stroke="#f7c948" stroke-width="70" opacity=".75"/>
+  <path d="M0 760 Q180 590 380 720 T760 650 V900 H0Z" fill="#071a2b" opacity=".8"/><circle cx="580" cy="330" r="120" fill="#fff" opacity=".1"/>
+  <text x="86" y="480" fill="#fff" font-family="Arial" font-size="50" font-weight="700">Plans that move</text><text x="86" y="540" fill="#72d3d0" font-family="Arial" font-size="50" font-weight="700">with you.</text>
+</svg>

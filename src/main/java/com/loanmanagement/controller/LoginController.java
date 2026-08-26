@@ -12,9 +12,21 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 public class LoginController {
+
+@FXML private ImageView heroImage;
+@FXML private Label heroCaption;
+@FXML private HBox heroDots;
+private Timeline heroCarousel;
 
 
 @FXML
@@ -38,6 +50,28 @@ public void initialize() {
     );
 
     roleComboBox.setValue("Customer");
+
+    startHeroCarousel();
+}
+
+private void startHeroCarousel() {
+    Image[] images = {
+            new Image(getClass().getResource("/images/login-hero-1.svg").toExternalForm()),
+            new Image(getClass().getResource("/images/login-hero-2.svg").toExternalForm()),
+            new Image(getClass().getResource("/images/login-hero-3.svg").toExternalForm())
+    };
+    String[] captions = {"Build your next chapter.", "Make room for what matters.", "Plans that move with you."};
+    heroCarousel = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
+        int next = (int) ((heroCarousel.getCurrentTime().toSeconds() / 5) % images.length);
+        heroImage.setImage(images[next]);
+        heroCaption.setText(captions[next]);
+        for (int i = 0; i < heroDots.getChildren().size(); i++) {
+            heroDots.getChildren().get(i).getStyleClass().remove("active");
+            if (i == next) heroDots.getChildren().get(i).getStyleClass().add("active");
+        }
+    }));
+    heroCarousel.setCycleCount(Timeline.INDEFINITE);
+    heroCarousel.play();
 }
 
 @FXML
