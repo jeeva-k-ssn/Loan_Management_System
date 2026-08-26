@@ -65,7 +65,13 @@ public class LoanManagementController {
         String sql = "SELECT l.LOAN_ID,l.APPLICATION_ID,c.FULL_NAME,l.LOAN_AMOUNT,l.INTEREST_RATE,l.TENURE_MONTHS,l.EMI_AMOUNT,TO_CHAR(l.START_DATE,'DD Mon YYYY') START_DATE,l.STATUS FROM LOAN l JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID=l.CUSTOMER_ID" + (hasRole("CUSTOMER") ? " WHERE c.USER_ID=?" : "") + " ORDER BY l.LOAN_ID DESC";
         try (Connection connection = DatabaseConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             if (hasRole("CUSTOMER")) statement.setInt(1, currentUser.getUserId());
-            try (ResultSet rs = statement.executeQuery()) { var rows = FXCollections.<LoanRow>observableArrayList(); while (rs.next()) rows.add(new LoanRow(rs.getInt("LOAN_ID"), rs.getInt("APPLICATION_ID"), rs.getString("FULL_NAME"), rs.getDouble("LOAN_AMOUNT"), rs.getDouble("INTEREST_RATE"), rs.getInt("TENURE_MONTHS"), rs.getDouble("EMI_AMOUNT"), rs.getString("START_DATE"), rs.getString("STATUS"))); loanTable.setItems(rows); }
+            try (ResultSet rs = statement.executeQuery()) {
+                var rows = FXCollections.<LoanRow>observableArrayList();
+                while (rs.next()) rows.add(new LoanRow(rs.getInt("LOAN_ID"), rs.getInt("APPLICATION_ID"), rs.getString("FULL_NAME"), rs.getDouble("LOAN_AMOUNT"), rs.getDouble("INTEREST_RATE"), rs.getInt("TENURE_MONTHS"), rs.getDouble("EMI_AMOUNT"), rs.getString("START_DATE"), rs.getString("STATUS")));
+                loanTable.setItems(rows);
+                if (!rows.isEmpty()) loanTable.getSelectionModel().selectFirst();
+                else { paymentTable.getItems().clear(); selectedLoanLabel.setText("No loan selected"); balanceLabel.setText("-"); }
+            }
         } catch (SQLException e) { showError("Loans unavailable", "Unable to load loan data right now."); }
     }
     private void loadApplications() {
