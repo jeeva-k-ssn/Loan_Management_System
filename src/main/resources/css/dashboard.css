@@ -150,6 +150,8 @@
         0,
         4
     );
+
+    -fx-min-width: 170px;
 }
 
 
@@ -338,4 +340,12 @@
 .quote-sub {
     -fx-text-fill: #8299A8;
     -fx-font-size: 10px;
+}
+
+.activity-item {
+    -fx-background-color: #F7FAFC;
+    -fx-background-radius: 9px;
+    -fx-padding: 12px 14px;
+    -fx-text-fill: #31556D;
+    -fx-font-size: 13px;
 }

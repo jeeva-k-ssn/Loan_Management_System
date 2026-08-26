@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -131,11 +132,19 @@
                 <GridPane hgap="18"
                           vgap="18">
 
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                        <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                        <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                        <ColumnConstraints percentWidth="25" hgrow="ALWAYS"/>
+                    </columnConstraints>
+
 
                     <!-- CUSTOMERS -->
 
                     <VBox GridPane.columnIndex="0"
                           GridPane.rowIndex="0"
+                          maxWidth="Infinity"
                           styleClass="stat-card">
 
                         <padding>
@@ -145,14 +154,16 @@
                                     left="22"/>
                         </padding>
 
-                        <Label text="CUSTOMERS"
+                        <Label fx:id="customersCardLabel"
+                               text="CUSTOMERS"
                                styleClass="card-label"/>
 
                         <Label fx:id="customersValueLabel"
                                text="0"
                                styleClass="card-value"/>
 
-                        <Label text="Registered customers"
+                        <Label fx:id="customersCardDescription"
+                               text="Registered customers"
                                styleClass="card-description"/>
 
                     </VBox>
@@ -162,6 +173,7 @@
 
                     <VBox GridPane.columnIndex="1"
                           GridPane.rowIndex="0"
+                          maxWidth="Infinity"
                           styleClass="stat-card">
 
                         <padding>
@@ -171,14 +183,16 @@
                                     left="22"/>
                         </padding>
 
-                        <Label text="APPLICATIONS"
+                        <Label fx:id="applicationsCardLabel"
+                               text="APPLICATIONS"
                                styleClass="card-label"/>
 
                         <Label fx:id="applicationsValueLabel"
                                text="0"
                                styleClass="card-value"/>
 
-                        <Label text="Loan applications"
+                        <Label fx:id="applicationsCardDescription"
+                               text="Loan applications"
                                styleClass="card-description"/>
 
                     </VBox>
@@ -188,6 +202,7 @@
 
                     <VBox GridPane.columnIndex="2"
                           GridPane.rowIndex="0"
+                          maxWidth="Infinity"
                           styleClass="stat-card">
 
                         <padding>
@@ -197,14 +212,16 @@
                                     left="22"/>
                         </padding>
 
-                        <Label text="ACTIVE LOANS"
+                        <Label fx:id="loansCardLabel"
+                               text="ACTIVE LOANS"
                                styleClass="card-label"/>
 
                         <Label fx:id="loansValueLabel"
                                text="0"
                                styleClass="card-value"/>
 
-                        <Label text="Currently active"
+                        <Label fx:id="loansCardDescription"
+                               text="Currently active"
                                styleClass="card-description"/>
 
                     </VBox>
@@ -214,6 +231,7 @@
 
                     <VBox GridPane.columnIndex="3"
                           GridPane.rowIndex="0"
+                          maxWidth="Infinity"
                           styleClass="stat-card">
 
                         <padding>
@@ -223,14 +241,16 @@
                                     left="22"/>
                         </padding>
 
-                        <Label text="PAYMENTS"
+                        <Label fx:id="paymentsCardLabel"
+                               text="PAYMENTS"
                                styleClass="card-label"/>
 
                         <Label fx:id="paymentsValueLabel"
                                text="0"
                                styleClass="card-value"/>
 
-                        <Label text="Recorded payments"
+                        <Label fx:id="paymentsCardDescription"
+                               text="Recorded payments"
                                styleClass="card-description"/>
 
                     </VBox>
