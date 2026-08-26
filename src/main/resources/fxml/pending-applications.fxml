@@ -68,6 +68,12 @@
                                prefHeight="360"
                                minHeight="260"
                                styleClass="application-table">
+                        <placeholder>
+                            <VBox alignment="CENTER" spacing="5">
+                                <Label text="No pending applications" styleClass="empty-title"/>
+                                <Label text="Applications awaiting review will appear here." styleClass="empty-label"/>
+                            </VBox>
+                        </placeholder>
                         <columns>
                             <TableColumn fx:id="applicationIdColumn" text="ID" prefWidth="65"/>
                             <TableColumn fx:id="customerColumn" text="Customer" prefWidth="125"/>

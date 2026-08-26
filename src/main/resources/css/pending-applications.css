@@ -88,6 +88,8 @@
     -fx-text-fill: #7890AA;
     -fx-font-size: 13px;
 }
+.empty-title { -fx-text-fill: #31556D; -fx-font-size: 15px; -fx-font-weight: bold; }
+.empty-label { -fx-text-fill: #98A8B8; -fx-font-size: 12px; }
 
 /* TABLE */
 .application-table {
