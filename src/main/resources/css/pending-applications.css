@@ -90,6 +90,7 @@
 }
 .empty-title { -fx-text-fill: #31556D; -fx-font-size: 15px; -fx-font-weight: bold; }
 .empty-label { -fx-text-fill: #98A8B8; -fx-font-size: 12px; }
+.application-table .placeholder .image-view { -fx-opacity: .55; }
 
 /* TABLE */
 .application-table {

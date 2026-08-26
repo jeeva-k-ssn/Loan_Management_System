@@ -11,6 +11,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -70,6 +72,7 @@
                                styleClass="application-table">
                         <placeholder>
                             <VBox alignment="CENTER" spacing="5">
+                                <ImageView fitWidth="110" fitHeight="78" preserveRatio="false"><image><Image url="@../images/login-hero-1.png"/></image></ImageView>
                                 <Label text="No pending applications" styleClass="empty-title"/>
                                 <Label text="Applications awaiting review will appear here." styleClass="empty-label"/>
                             </VBox>
