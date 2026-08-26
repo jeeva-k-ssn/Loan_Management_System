@@ -56,9 +56,9 @@ public void initialize() {
 
 private void startHeroCarousel() {
     Image[] images = {
-            new Image(getClass().getResource("/images/login-hero-1.svg").toExternalForm()),
-            new Image(getClass().getResource("/images/login-hero-2.svg").toExternalForm()),
-            new Image(getClass().getResource("/images/login-hero-3.svg").toExternalForm())
+            new Image(getClass().getResource("/images/login-hero-1.png").toExternalForm()),
+            new Image(getClass().getResource("/images/login-hero-2.png").toExternalForm()),
+            new Image(getClass().getResource("/images/login-hero-3.png").toExternalForm())
     };
     String[] captions = {"Build your next chapter.", "Make room for what matters.", "Plans that move with you."};
     heroCarousel = new Timeline(new KeyFrame(Duration.seconds(5), event -> {

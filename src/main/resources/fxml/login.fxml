@@ -6,7 +6,7 @@
 <StackPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.loanmanagement.controller.LoginController" stylesheets="@../css/login.css" styleClass="login-root">
  <HBox maxWidth="1180" maxHeight="680" styleClass="login-shell">
   <StackPane prefWidth="620" styleClass="hero-panel">
-   <ImageView fx:id="heroImage" fitWidth="620" fitHeight="680" preserveRatio="false"><image><Image url="@../images/login-hero-1.svg"/></image></ImageView>
+   <ImageView fx:id="heroImage" fitWidth="620" fitHeight="680" preserveRatio="false"><image><Image url="@../images/login-hero-1.png"/></image></ImageView>
    <VBox alignment="TOP_LEFT" prefWidth="620" prefHeight="680" styleClass="hero-overlay"><padding><Insets top="38" right="46" bottom="38" left="46"/></padding>
     <Label text="LOANFLOW" styleClass="brand-logo"/>
     <VBox VBox.vgrow="ALWAYS" alignment="BOTTOM_LEFT" spacing="12"><Label fx:id="heroCaption" text="Build your next chapter." styleClass="hero-caption" wrapText="true"/><Label text="Simple borrowing. Clear progress. A better way forward." styleClass="hero-subtitle" wrapText="true"/><HBox fx:id="heroDots" spacing="7" styleClass="hero-dots"><Label text="●" styleClass="hero-dot active"/><Label text="●" styleClass="hero-dot"/><Label text="●" styleClass="hero-dot"/></HBox></VBox>
