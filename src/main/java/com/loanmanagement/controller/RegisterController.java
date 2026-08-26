@@ -109,9 +109,13 @@ public void registerUser() {
 
     } else {
 
+        String message = service.getLastErrorMessage();
+
         showError(
                 "Registration Failed",
-                "This email may already be registered."
+                message == null
+                        ? "This email may already be registered."
+                        : message
         );
     }
 }

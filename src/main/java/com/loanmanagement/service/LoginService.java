@@ -11,8 +11,15 @@ import java.sql.SQLException;
 
 public class LoginService {
 
+private String lastErrorMessage;
+
+public String getLastErrorMessage() {
+    return lastErrorMessage;
+}
 
 public boolean registerUser(User user) {
+
+    lastErrorMessage = null;
 
     String sql =
             "INSERT INTO USERS " +
@@ -29,11 +36,14 @@ public boolean registerUser(User user) {
         return statement.executeUpdate() > 0;
 
     } catch (SQLException e) {
+        lastErrorMessage = toUserMessage(e);
         return false;
     }
 }
 
 public User loginUser(String email, String password, String role) {
+
+    lastErrorMessage = null;
 
     String sql =
             "SELECT USER_ID, FULL_NAME, EMAIL, PASSWORD, USER_ROLE " +
@@ -69,10 +79,19 @@ public User loginUser(String email, String password, String role) {
         }
 
     } catch (SQLException e) {
+        lastErrorMessage = toUserMessage(e);
         return null;
     }
 
     return null;
+}
+
+private String toUserMessage(SQLException exception) {
+    if (exception.getMessage() != null
+            && exception.getMessage().contains("LMS_DB_PASSWORD")) {
+        return exception.getMessage();
+    }
+    return "LoanFlow could not connect to the database. Please try again later.";
 }
 
 private void upgradeLegacyPassword(Connection connection, int userId, String password)

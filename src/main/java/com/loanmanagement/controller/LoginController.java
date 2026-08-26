@@ -91,9 +91,13 @@ public void loginUser() {
 
     } else {
 
+        String message = service.getLastErrorMessage();
+
         showError(
                 "Login Failed",
-                "The email, password, or selected role is incorrect."
+                message == null
+                        ? "The email, password, or selected role is incorrect."
+                        : message
         );
     }
 }
