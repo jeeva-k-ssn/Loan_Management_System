@@ -10,6 +10,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -123,6 +125,14 @@
                            styleClass="page-description"/>
 
                 </VBox>
+
+                <HBox styleClass="dashboard-hero" spacing="20" alignment="CENTER_LEFT">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Your financial journey, simplified." styleClass="hero-title" wrapText="true"/>
+                        <Label text="Stay on top of applications, active loans and repayments from one calm, clear workspace." styleClass="hero-description" wrapText="true"/>
+                    </VBox>
+                    <ImageView fitWidth="235" fitHeight="118" preserveRatio="false"><image><Image url="@../images/login-hero-3.png"/></image></ImageView>
+                </HBox>
 
 
                 <!-- ================================================= -->

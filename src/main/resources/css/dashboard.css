@@ -15,6 +15,9 @@
 .dashboard-scroll .scroll-bar:vertical .thumb { -fx-background-color: #B7C7D6; -fx-background-radius: 8px; }
 .page-title { -fx-text-fill: #102A43; -fx-font-size: 29px; -fx-font-weight: bold; }
 .page-description { -fx-text-fill: #71839A; -fx-font-size: 13px; }
+.dashboard-hero { -fx-background-color: linear-gradient(to right, #0B1F35, #145E70); -fx-background-radius: 16px; -fx-padding: 22px 24px; -fx-effect: dropshadow(gaussian, rgba(16,42,67,.16), 16, 0, 0, 5); }
+.hero-title { -fx-text-fill: #FFFFFF; -fx-font-size: 23px; -fx-font-weight: bold; }
+.hero-description { -fx-text-fill: #CBE7EA; -fx-font-size: 12px; -fx-line-spacing: 3px; }
 .stat-card, .content-card { -fx-background-color: #FFFFFF; -fx-background-radius: 14px; -fx-border-color: #DFE8F0; -fx-border-radius: 14px; -fx-effect: dropshadow(gaussian, rgba(16,42,67,0.08), 14, 0, 0, 4); }
 .stat-card { -fx-pref-width: 250px; -fx-min-width: 170px; -fx-min-height: 145px; }
 .stat-card:hover { -fx-border-color: #86C9C8; -fx-effect: dropshadow(gaussian, rgba(25,143,145,0.18), 18, 0, 0, 5); }
