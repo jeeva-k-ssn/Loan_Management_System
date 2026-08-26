@@ -24,7 +24,7 @@
                     <Tab text="Users">
                         <VBox spacing="14" styleClass="content-card">
                             <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
-                            <TableView fx:id="userTable" prefHeight="400" columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+                            <TableView fx:id="userTable" prefHeight="400">
                                 <columns><TableColumn fx:id="idColumn" text="ID"/><TableColumn fx:id="nameColumn" text="Full name"/><TableColumn fx:id="emailColumn" text="Email"/><TableColumn fx:id="roleColumn" text="Role"/></columns>
                             </TableView>
                             <HBox spacing="12" alignment="CENTER_LEFT"><Label fx:id="selectedLabel" text="No user selected" styleClass="section-description"/><Region HBox.hgrow="ALWAYS"/><ComboBox fx:id="roleCombo" prefWidth="180"/><Button fx:id="saveButton" text="Save role" onAction="#saveRole" styleClass="action-button"/></HBox>
@@ -34,7 +34,7 @@
                         <VBox spacing="14" styleClass="content-card">
                             <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
                             <Label text="All loan applications" styleClass="section-title"/>
-                            <TableView fx:id="applicationTable" prefHeight="445" columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+                            <TableView fx:id="applicationTable" prefHeight="445">
                                 <columns><TableColumn fx:id="applicationIdColumn" text="Application ID"/><TableColumn fx:id="applicationCustomerColumn" text="Customer"/><TableColumn fx:id="applicationTypeColumn" text="Loan type"/><TableColumn fx:id="applicationAmountColumn" text="Amount"/><TableColumn fx:id="applicationDateColumn" text="Applied on"/><TableColumn fx:id="applicationStatusColumn" text="Status"/></columns>
                             </TableView>
                         </VBox>

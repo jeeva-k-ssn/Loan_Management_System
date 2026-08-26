@@ -44,6 +44,9 @@ public class LoanManagementController {
     private User currentUser;
 
     @FXML public void initialize() {
+        applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        loanTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        paymentTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         loanIdColumn.setCellValueFactory(new PropertyValueFactory<>("loanId")); loanApplicationIdColumn.setCellValueFactory(new PropertyValueFactory<>("applicationId")); customerColumn.setCellValueFactory(new PropertyValueFactory<>("customerName")); amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount")); interestColumn.setCellValueFactory(new PropertyValueFactory<>("interest")); tenureColumn.setCellValueFactory(new PropertyValueFactory<>("tenure")); emiColumn.setCellValueFactory(new PropertyValueFactory<>("emi")); startColumn.setCellValueFactory(new PropertyValueFactory<>("startDate")); statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         paymentIdColumn.setCellValueFactory(new PropertyValueFactory<>("paymentId")); paymentDateColumn.setCellValueFactory(new PropertyValueFactory<>("paymentDate")); paymentAmountColumn.setCellValueFactory(new PropertyValueFactory<>("amount")); paymentMethodColumn.setCellValueFactory(new PropertyValueFactory<>("method")); paymentReferenceColumn.setCellValueFactory(new PropertyValueFactory<>("reference")); paymentStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         paymentMethodCombo.setItems(FXCollections.observableArrayList("UPI", "Bank Transfer", "Card", "Cash")); loanTable.getSelectionModel().selectedItemProperty().addListener((obs, oldLoan, loan) -> selectLoan(loan)); recordPaymentButton.setDisable(true);

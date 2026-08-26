@@ -138,7 +138,9 @@ public class PendingApplicationsController {
         if (user == null || !"LOAN_OFFICER".equalsIgnoreCase(user.getRole())) {
             applicationTable.setDisable(true);
             showError("Access Denied", "Only loan officers can review pending applications.");
+            return;
         }
+        loadPendingApplications();
     }
 
 
@@ -149,11 +151,11 @@ public class PendingApplicationsController {
     @FXML
     public void initialize() {
 
+        applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         setupTable();
 
         disableReviewButtons();
-
-        loadPendingApplications();
 
         applicationTable.setRowFactory(tableView -> {
 
