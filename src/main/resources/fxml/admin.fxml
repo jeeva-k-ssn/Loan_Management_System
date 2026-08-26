@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.loanmanagement.controller.AdminController"
+            stylesheets="@../css/dashboard.css" styleClass="dashboard-root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="top-bar">
+            <padding><Insets top="16" right="28" bottom="16" left="28"/></padding>
+            <VBox><Label text="LOANFLOW" styleClass="dashboard-logo"/><Label text="ADMINISTRATION" styleClass="dashboard-subtitle"/></VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Refresh" onAction="#refresh" styleClass="refresh-button"/>
+            <Button text="Back" onAction="#back" styleClass="logout-button"/>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="18">
+            <padding><Insets top="28" right="34" bottom="34" left="34"/></padding>
+            <VBox spacing="5"><Label text="Administration" styleClass="page-title"/><Label text="Monitor application activity and manage operational access." styleClass="page-description"/></VBox>
+            <TabPane tabClosingPolicy="UNAVAILABLE">
+                <tabs>
+                    <Tab text="Users">
+                        <VBox spacing="14" styleClass="content-card">
+                            <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+                            <TableView fx:id="userTable" prefHeight="400" columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+                                <columns><TableColumn fx:id="idColumn" text="ID"/><TableColumn fx:id="nameColumn" text="Full name"/><TableColumn fx:id="emailColumn" text="Email"/><TableColumn fx:id="roleColumn" text="Role"/></columns>
+                            </TableView>
+                            <HBox spacing="12" alignment="CENTER_LEFT"><Label fx:id="selectedLabel" text="No user selected" styleClass="section-description"/><Region HBox.hgrow="ALWAYS"/><ComboBox fx:id="roleCombo" prefWidth="180"/><Button fx:id="saveButton" text="Save role" onAction="#saveRole" styleClass="action-button"/></HBox>
+                        </VBox>
+                    </Tab>
+                    <Tab text="Applications">
+                        <VBox spacing="14" styleClass="content-card">
+                            <padding><Insets top="18" right="18" bottom="18" left="18"/></padding>
+                            <Label text="All loan applications" styleClass="section-title"/>
+                            <TableView fx:id="applicationTable" prefHeight="445" columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+                                <columns><TableColumn fx:id="applicationIdColumn" text="Application ID"/><TableColumn fx:id="applicationCustomerColumn" text="Customer"/><TableColumn fx:id="applicationTypeColumn" text="Loan type"/><TableColumn fx:id="applicationAmountColumn" text="Amount"/><TableColumn fx:id="applicationDateColumn" text="Applied on"/><TableColumn fx:id="applicationStatusColumn" text="Status"/></columns>
+                            </TableView>
+                        </VBox>
+                    </Tab>
+                </tabs>
+            </TabPane>
+        </VBox>
+    </center>
+</BorderPane>

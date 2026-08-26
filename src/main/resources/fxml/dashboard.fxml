@@ -388,6 +388,20 @@
                                 styleClass="secondary-action-button"
                                 onAction="#openPendingApplications"/>
 
+                        <Button fx:id="loanPortfolioButton"
+                                text="Loan Portfolio"
+                                maxWidth="Infinity"
+                                prefHeight="44"
+                                styleClass="secondary-action-button"
+                                onAction="#openLoanPortfolioPage"/>
+
+                        <Button fx:id="userManagementButton"
+                                text="User Management"
+                                maxWidth="Infinity"
+                                prefHeight="44"
+                                styleClass="secondary-action-button"
+                                onAction="#openUserManagement"/>
+
                     </VBox>
 
                 </HBox>

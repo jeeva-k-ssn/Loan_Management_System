@@ -42,6 +42,8 @@ public class DashboardController {
     @FXML private Button viewLoansButton;
     @FXML private Button viewPaymentsButton;
     @FXML private Button pendingApplicationsButton;
+    @FXML private Button loanPortfolioButton;
+    @FXML private Button userManagementButton;
 
     private User currentUser;
 
@@ -73,11 +75,14 @@ public class DashboardController {
             setCardCopy("PENDING", "Awaiting review", "APPROVED", "Approved applications",
                     "ACTIVE LOANS", "Open loan accounts", "PAYMENTS", "Payments received");
             showButton(pendingApplicationsButton);
+            showButton(loanPortfolioButton);
         } else if (hasRole("ADMIN")) {
             pageTitleLabel.setText("Administrative overview");
             pageDescriptionLabel.setText("Monitor customers, lending activity, and payment operations.");
             setCardCopy("CUSTOMERS", "Registered customers", "APPLICATIONS", "All applications",
                     "ACTIVE LOANS", "Currently active", "PAYMENTS", "Recorded payments");
+            showButton(loanPortfolioButton);
+            showButton(userManagementButton);
         }
     }
 
@@ -91,6 +96,8 @@ public class DashboardController {
     private void configureDefaultButtons() {
         hideButton(applyLoanButton); hideButton(viewLoansButton);
         hideButton(viewPaymentsButton); hideButton(pendingApplicationsButton);
+        hideButton(loanPortfolioButton);
+        hideButton(userManagementButton);
     }
 
     private void hideButton(Button button) {
@@ -181,8 +188,14 @@ public class DashboardController {
 
     @FXML private void refreshDashboard() { if (currentUser != null) loadDashboardData(); }
     @FXML private void applyLoan() { if (requireRole("CUSTOMER")) openLoanApplication(); }
-    @FXML private void viewLoans() { if (requireRole("CUSTOMER")) showInformation("Coming next", "Your loan list will be available in the Loan Management module."); }
-    @FXML private void viewPayments() { if (requireRole("CUSTOMER")) showInformation("Coming next", "Payment history will be available in the Payment Management module."); }
+    @FXML private void viewLoans() { if (requireRole("CUSTOMER")) openLoanPortfolio(); }
+    @FXML private void viewPayments() { if (requireRole("CUSTOMER")) openLoanPortfolio(); }
+    @FXML private void openLoanPortfolioPage() { if (currentUser != null) openLoanPortfolio(); }
+    @FXML private void openUserManagement() {
+        if (!requireRole("ADMIN")) return;
+        try { FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin.fxml")); Parent root = loader.load(); loader.<AdminController>getController().setCurrentUser(currentUser); replaceScene(root, "LoanFlow - User Management"); }
+        catch (Exception exception) { showError("Navigation Error", "Unable to open user management."); }
+    }
 
     @FXML
     private void openPendingApplications() {
@@ -208,6 +221,15 @@ public class DashboardController {
             loader.<LoanApplicationController>getController().setCurrentUser(currentUser);
             replaceScene(root, "LoanFlow - Apply for Loan");
         } catch (Exception exception) { showError("Navigation Error", "Unable to open the loan application page."); }
+    }
+
+    private void openLoanPortfolio() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/loans.fxml"));
+            Parent root = loader.load();
+            loader.<LoanManagementController>getController().setCurrentUser(currentUser);
+            replaceScene(root, "LoanFlow - Loans & Payments");
+        } catch (Exception exception) { showError("Navigation Error", "Unable to open the loan portfolio."); }
     }
 
     @FXML

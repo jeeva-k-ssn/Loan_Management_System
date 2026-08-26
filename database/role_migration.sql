@@ -1,24 +1,29 @@
--- Loan Management System - Role Based Login Migration
--- Run this once in Oracle SQL*Plus using the same schema that owns USERS.
+-- Safe, additive role migration for the current LoanFlow USERS table.
+-- Run this once only if USER_ROLE is not already present.
+DECLARE
+    v_column_count NUMBER;
+    v_constraint_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_column_count
+      FROM user_tab_columns
+     WHERE table_name = 'USERS' AND column_name = 'USER_ROLE';
 
-ALTER TABLE USERS ADD (
-    ROLE VARCHAR2(20) DEFAULT 'CUSTOMER' NOT NULL
-);
+    IF v_column_count = 0 THEN
+        EXECUTE IMMEDIATE
+            'ALTER TABLE USERS ADD (USER_ROLE VARCHAR2(20) DEFAULT ''CUSTOMER'' NOT NULL)';
+    END IF;
 
-ALTER TABLE USERS ADD CONSTRAINT CK_USERS_ROLE
-CHECK (ROLE IN ('CUSTOMER', 'LOAN_OFFICER', 'ADMIN'));
+    SELECT COUNT(*) INTO v_constraint_count
+      FROM user_constraints
+     WHERE table_name = 'USERS' AND constraint_name = 'CK_USERS_USER_ROLE';
 
--- Existing users become customers by default.
-UPDATE USERS SET ROLE = 'CUSTOMER' WHERE ROLE IS NULL;
+    IF v_constraint_count = 0 THEN
+        EXECUTE IMMEDIATE
+            'ALTER TABLE USERS ADD CONSTRAINT CK_USERS_USER_ROLE '
+            || 'CHECK (USER_ROLE IN (''CUSTOMER'', ''LOAN_OFFICER'', ''ADMIN''))';
+    END IF;
+END;
+/
+
+UPDATE USERS SET USER_ROLE = 'CUSTOMER' WHERE USER_ROLE IS NULL;
 COMMIT;
-
--- Create staff accounts only after changing the sample values below.
--- Never share real passwords in source code or Git.
---
--- INSERT INTO USERS (FULL_NAME, EMAIL, PASSWORD, ROLE)
--- VALUES ('System Administrator', 'admin@example.com', 'CHANGE_ME', 'ADMIN');
---
--- INSERT INTO USERS (FULL_NAME, EMAIL, PASSWORD, ROLE)
--- VALUES ('Loan Officer', 'officer@example.com', 'CHANGE_ME', 'LOAN_OFFICER');
---
--- COMMIT;

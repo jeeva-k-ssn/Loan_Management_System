@@ -1,5 +1,7 @@
 package com.loanmanagement.controller;
 
+import com.loanmanagement.database.DatabaseConnection;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,7 +19,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -134,6 +135,10 @@ public class PendingApplicationsController {
 
     public void setCurrentUser(com.loanmanagement.model.User user) {
         this.currentUser = user;
+        if (user == null || !"LOAN_OFFICER".equalsIgnoreCase(user.getRole())) {
+            applicationTable.setDisable(true);
+            showError("Access Denied", "Only loan officers can review pending applications.");
+        }
     }
 
 
@@ -539,6 +544,8 @@ public class PendingApplicationsController {
     @FXML
     private void approveApplication() {
 
+        if (!isLoanOfficer()) return;
+
         LoanApplication selectedApplication =
                 applicationTable
                         .getSelectionModel()
@@ -584,6 +591,8 @@ public class PendingApplicationsController {
 
     @FXML
     private void rejectApplication() {
+
+        if (!isLoanOfficer()) return;
 
         LoanApplication selectedApplication =
                 applicationTable
@@ -1063,27 +1072,15 @@ public class PendingApplicationsController {
     private Connection getConnection()
             throws SQLException {
 
-        String password =
-                System.getenv(
-                        "LMS_DB_PASSWORD"
-                );
+        return DatabaseConnection.getConnection();
+    }
 
-
-        if (password == null || password.isBlank()) {
-
-            throw new SQLException(
-                    "Database password is not configured.\n"
-                            + "Please set the LMS_DB_PASSWORD "
-                            + "environment variable."
-            );
+    private boolean isLoanOfficer() {
+        if (currentUser != null && "LOAN_OFFICER".equalsIgnoreCase(currentUser.getRole())) {
+            return true;
         }
-
-
-        return DriverManager.getConnection(
-                "jdbc:oracle:thin:@localhost:1521:xe",
-                "system",
-                password
-        );
+        showError("Access Denied", "Only loan officers can review pending applications.");
+        return false;
     }
 
 

@@ -29,11 +29,34 @@ public boolean registerUser(User user) {
     try (Connection connection = DatabaseConnection.getConnection();
          PreparedStatement statement = connection.prepareStatement(sql)) {
 
+        connection.setAutoCommit(false);
+
         statement.setString(1, user.getFullName());
         statement.setString(2, user.getEmail());
         statement.setString(3, PasswordUtil.hash(user.getPassword()));
 
-        return statement.executeUpdate() > 0;
+        if (statement.executeUpdate() != 1) {
+            connection.rollback();
+            return false;
+        }
+
+        String customerSql =
+                "INSERT INTO LMS_CUSTOMER (USER_ID, FULL_NAME, EMAIL) "
+                        + "SELECT USER_ID, FULL_NAME, EMAIL FROM USERS WHERE EMAIL = ?";
+
+        try (PreparedStatement customerStatement =
+                     connection.prepareStatement(customerSql)) {
+            customerStatement.setString(1, user.getEmail());
+
+            if (customerStatement.executeUpdate() != 1) {
+                connection.rollback();
+                lastErrorMessage = "Your customer profile could not be created.";
+                return false;
+            }
+        }
+
+        connection.commit();
+        return true;
 
     } catch (SQLException e) {
         lastErrorMessage = toUserMessage(e);

@@ -65,8 +65,9 @@
                            styleClass="section-description"/>
 
                     <TableView fx:id="applicationTable"
-                               prefHeight="100"
-                               minHeight="70"
+                               prefHeight="360"
+                               minHeight="260"
+                               columnResizePolicy="CONSTRAINED_RESIZE_POLICY"
                                styleClass="application-table">
                         <columns>
                             <TableColumn fx:id="applicationIdColumn" text="ID" prefWidth="65"/>

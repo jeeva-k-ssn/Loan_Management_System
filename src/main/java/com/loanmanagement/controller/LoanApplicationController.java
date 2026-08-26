@@ -1,6 +1,7 @@
 package com.loanmanagement.controller;
 
 import com.loanmanagement.model.User;
+import com.loanmanagement.database.DatabaseConnection;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -16,10 +17,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Locale;
 
 public class LoanApplicationController {
@@ -169,6 +171,11 @@ public class LoanApplicationController {
         customerNameField.setText(
                 user.getFullName()
         );
+
+        if (!"CUSTOMER".equalsIgnoreCase(user.getRole())) {
+            submitButton.setDisable(true);
+            showValidation("Only customer accounts can submit loan applications.");
+        }
     }
 
 
@@ -295,46 +302,18 @@ public class LoanApplicationController {
             }
 
 
-            // Monthly interest rate
-
-            double monthlyRate =
-                    annualRate / 12 / 100;
-
-
-            double emi;
-
-
-            // Zero-interest calculation
-
-            if (monthlyRate == 0) {
-
-                emi =
-                        principal / months;
-
-            } else {
-
-                emi =
-                        principal
-                                * monthlyRate
-                                * Math.pow(
-                                        1 + monthlyRate,
-                                        months
-                                )
-                                /
-                                (
-                                        Math.pow(
-                                                1 + monthlyRate,
-                                                months
-                                        ) - 1
-                                );
-            }
+            BigDecimal emi = calculateEmi(
+                    BigDecimal.valueOf(principal),
+                    BigDecimal.valueOf(annualRate),
+                    months
+            );
 
 
             String emiText =
                     String.format(
                             Locale.US,
                             "%.2f",
-                            emi
+                            emi.doubleValue()
                     );
 
 
@@ -549,14 +528,13 @@ public class LoanApplicationController {
 
             String sql =
                     "INSERT INTO LOAN_APPLICATION "
-                            + "(APPLICATION_ID, CUSTOMER_ID, "
+                            + "(CUSTOMER_ID, "
                             + "LOAN_AMOUNT, LOAN_PURPOSE, "
                             + "APPLICATION_DATE, STATUS, "
                             + "LOAN_TYPE, TENURE_MONTHS, "
                             + "INTEREST_RATE, EMI_AMOUNT) "
                             + "VALUES "
-                            + "(LOAN_APPLICATION_SEQ.NEXTVAL, "
-                            + "?, ?, ?, SYSDATE, 'PENDING', "
+                            + "(?, ?, ?, SYSDATE, 'PENDING', "
                             + "?, ?, ?, ?)";
 
 
@@ -772,6 +750,11 @@ public class LoanApplicationController {
             return;
         }
 
+        if (!"CUSTOMER".equalsIgnoreCase(currentUser.getRole())) {
+            showValidation("Only customer accounts can submit loan applications.");
+            return;
+        }
+
         try {
 
             FXMLLoader loader =
@@ -826,6 +809,19 @@ public class LoanApplicationController {
         }
     }
 
+    /** Standard reducing-balance EMI calculation, rounded only for display/storage. */
+    private BigDecimal calculateEmi(BigDecimal principal, BigDecimal annualRate, int months) {
+        BigDecimal monthlyRate = annualRate.divide(BigDecimal.valueOf(1200), 16, RoundingMode.HALF_UP);
+        if (monthlyRate.signum() == 0) {
+            return principal.divide(BigDecimal.valueOf(months), 2, RoundingMode.HALF_UP);
+        }
+        double rate = monthlyRate.doubleValue();
+        double factor = Math.pow(1.0 + rate, months);
+        return principal.multiply(BigDecimal.valueOf(rate))
+                .multiply(BigDecimal.valueOf(factor))
+                .divide(BigDecimal.valueOf(factor - 1.0), 2, RoundingMode.HALF_UP);
+    }
+
 
     // ============================================================
     // DATABASE CONNECTION
@@ -841,29 +837,7 @@ public class LoanApplicationController {
          * LMS_DB_PASSWORD
          */
 
-        String password =
-                System.getenv(
-                        "LMS_DB_PASSWORD"
-                );
-
-
-        if (password == null
-                || password.isBlank()) {
-
-
-            throw new SQLException(
-                    "Database password is not configured.\n\n"
-                            + "Please set the LMS_DB_PASSWORD "
-                            + "environment variable and restart VS Code."
-            );
-        }
-
-
-        return DriverManager.getConnection(
-                "jdbc:oracle:thin:@localhost:1521:xe",
-                "system",
-                password
-        );
+        return DatabaseConnection.getConnection();
     }
 
 

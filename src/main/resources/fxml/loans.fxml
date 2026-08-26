@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.loanmanagement.controller.LoanManagementController"
+            stylesheets="@../css/dashboard.css" styleClass="dashboard-root">
+    <top><HBox alignment="CENTER_LEFT" spacing="16" styleClass="top-bar"><padding><Insets top="16" right="28" bottom="16" left="28"/></padding><VBox><Label text="LOANFLOW" styleClass="dashboard-logo"/><Label text="LOAN MANAGEMENT SYSTEM" styleClass="dashboard-subtitle"/></VBox><Region HBox.hgrow="ALWAYS"/><Button text="Refresh" onAction="#refresh" styleClass="refresh-button"/><Button text="Back to Dashboard" onAction="#back" styleClass="logout-button"/></HBox></top>
+    <center><ScrollPane fitToWidth="true" styleClass="dashboard-scroll"><VBox spacing="20"><padding><Insets top="28" right="32" bottom="32" left="32"/></padding>
+        <VBox spacing="5"><Label fx:id="titleLabel" text="Loans" styleClass="page-title"/><Label fx:id="descriptionLabel" text="Loan portfolio" styleClass="page-description"/></VBox>
+        <VBox spacing="12" styleClass="content-card"><padding><Insets top="20" right="20" bottom="20" left="20"/></padding><Label text="Loan accounts" styleClass="section-title"/>
+            <TableView fx:id="loanTable" prefHeight="290" columnResizePolicy="CONSTRAINED_RESIZE_POLICY"><columns>
+                <TableColumn fx:id="loanIdColumn" text="Loan ID"/><TableColumn fx:id="applicationIdColumn" text="Application"/><TableColumn fx:id="customerColumn" text="Customer"/><TableColumn fx:id="amountColumn" text="Amount"/><TableColumn fx:id="interestColumn" text="Interest %"/><TableColumn fx:id="tenureColumn" text="Months"/><TableColumn fx:id="emiColumn" text="EMI"/><TableColumn fx:id="startColumn" text="Start date"/><TableColumn fx:id="statusColumn" text="Status"/>
+            </columns></TableView>
+        </VBox>
+        <HBox spacing="20"><VBox HBox.hgrow="ALWAYS" spacing="12" styleClass="content-card"><padding><Insets top="20" right="20" bottom="20" left="20"/></padding><HBox><VBox><Label fx:id="selectedLoanLabel" text="No loan selected" styleClass="section-title"/><Label fx:id="balanceLabel" text="-" styleClass="section-description"/></VBox></HBox><Label text="Payment history" styleClass="section-title"/>
+            <TableView fx:id="paymentTable" prefHeight="210" columnResizePolicy="CONSTRAINED_RESIZE_POLICY"><columns><TableColumn fx:id="paymentIdColumn" text="Payment ID"/><TableColumn fx:id="paymentDateColumn" text="Date"/><TableColumn fx:id="paymentAmountColumn" text="Amount"/><TableColumn fx:id="paymentMethodColumn" text="Method"/><TableColumn fx:id="paymentReferenceColumn" text="Reference"/><TableColumn fx:id="paymentStatusColumn" text="Status"/></columns></TableView>
+        </VBox>
+        <VBox prefWidth="300" spacing="12" styleClass="content-card"><padding><Insets top="20" right="20" bottom="20" left="20"/></padding><Label text="Record repayment" styleClass="section-title"/><Label text="Amount" styleClass="field-label"/><TextField fx:id="paymentAmountField" promptText="Enter amount" styleClass="modern-field"/><Label text="Method" styleClass="field-label"/><ComboBox fx:id="paymentMethodCombo" promptText="Select method" maxWidth="Infinity" styleClass="modern-combo"/><Label text="Reference" styleClass="field-label"/><TextField fx:id="paymentReferenceField" promptText="Optional reference" styleClass="modern-field"/><Button fx:id="recordPaymentButton" text="Record Payment" maxWidth="Infinity" onAction="#recordPayment" styleClass="action-button"/></VBox></HBox>
+    </VBox></ScrollPane></center>
+</BorderPane>
