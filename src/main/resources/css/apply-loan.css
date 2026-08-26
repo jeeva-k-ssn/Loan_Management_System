@@ -541,21 +541,23 @@
     );
 }
 
+.summary-card { -fx-background-color: linear-gradient(to bottom right, #0B1F35, #145E70); -fx-border-color: transparent; }
+
 .summary-title {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-text-fill: #0E7490;
+    -fx-text-fill: #72D3D0;
 }
 
 .summary-label {
     -fx-font-size: 13px;
-    -fx-text-fill: #718096;
+    -fx-text-fill: #CBE7EA;
 }
 
 .summary-amount {
     -fx-font-size: 25px;
     -fx-font-weight: bold;
-    -fx-text-fill: #102A43;
+    -fx-text-fill: white;
 }
 
 .summary-description {
