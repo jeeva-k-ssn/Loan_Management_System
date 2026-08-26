@@ -18,7 +18,7 @@ class LoanManagementFxmlTest {
             try {
                 for (String resource : new String[] {
                         "/fxml/login.fxml", "/fxml/register.fxml", "/fxml/dashboard.fxml",
-                        "/fxml/apply-loan.fxml",
+                        "/fxml/apply-loan.fxml", "/fxml/pending-applications.fxml",
                         "/fxml/loans.fxml", "/fxml/admin.fxml" }) {
                     FXMLLoader.load(getClass().getResource(resource));
                 }
