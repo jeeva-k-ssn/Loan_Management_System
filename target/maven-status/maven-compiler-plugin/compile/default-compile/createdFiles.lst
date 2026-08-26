@@ -2,8 +2,13 @@ com\loanmanagement\util\AlertUtil.class
 com\loanmanagement\service\LoginService.class
 com\loanmanagement\controller\DashboardController.class
 com\loanmanagement\controller\LoanApplicationController.class
+com\loanmanagement\controller\PendingApplicationsController$3.class
+com\loanmanagement\controller\PendingApplicationsController$2.class
 com\loanmanagement\controller\RegisterController.class
+com\loanmanagement\controller\PendingApplicationsController$LoanApplication.class
 com\loanmanagement\controller\LoginController.class
 com\loanmanagement\Main.class
+com\loanmanagement\controller\PendingApplicationsController$1.class
+com\loanmanagement\controller\PendingApplicationsController.class
 com\loanmanagement\model\User.class
 com\loanmanagement\database\DatabaseConnection.class

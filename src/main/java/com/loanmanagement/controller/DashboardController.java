@@ -1,6 +1,7 @@
 package com.loanmanagement.controller;
 
 import com.loanmanagement.model.User;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.sql.Connection;
@@ -19,7 +21,7 @@ import java.sql.SQLException;
 public class DashboardController {
 
     // ============================================================
-    // FXML COMPONENTS
+    // HEADER
     // ============================================================
 
     @FXML
@@ -28,11 +30,21 @@ public class DashboardController {
     @FXML
     private Label roleLabel;
 
+
+    // ============================================================
+    // PAGE HEADER
+    // ============================================================
+
     @FXML
     private Label pageTitleLabel;
 
     @FXML
     private Label pageDescriptionLabel;
+
+
+    // ============================================================
+    // STAT CARDS
+    // ============================================================
 
     @FXML
     private Label customersValueLabel;
@@ -46,6 +58,19 @@ public class DashboardController {
     @FXML
     private Label paymentsValueLabel;
 
+
+    // ============================================================
+    // ACTIVITY
+    // ============================================================
+
+    @FXML
+    private VBox activityContainer;
+
+
+    // ============================================================
+    // QUICK ACTION BUTTONS
+    // ============================================================
+
     @FXML
     private Button applyLoanButton;
 
@@ -54,6 +79,9 @@ public class DashboardController {
 
     @FXML
     private Button viewPaymentsButton;
+
+    @FXML
+    private Button pendingApplicationsButton;
 
 
     // ============================================================
@@ -64,26 +92,20 @@ public class DashboardController {
 
 
     // ============================================================
-    // DATABASE
-    // ============================================================
-
-    private static final String DB_URL =
-            "jdbc:oracle:thin:@localhost:1521:xe";
-
-    private static final String DB_USERNAME =
-            "system";
-
-
-    // ============================================================
     // INITIALIZE
     // ============================================================
 
     @FXML
     public void initialize() {
 
-        System.out.println(
-                "DashboardController initialized."
-        );
+        /*
+         * The dashboard is loaded first and the actual user is
+         * supplied through setCurrentUser().
+         *
+         * Therefore, do not load role-specific information here.
+         */
+
+        configureDefaultButtons();
     }
 
 
@@ -94,13 +116,6 @@ public class DashboardController {
     public void setCurrentUser(User user) {
 
         this.currentUser = user;
-
-        System.out.println(
-                "Current user: "
-                        + (user != null
-                        ? user.getFullName()
-                        : "null")
-        );
 
         updateUserInformation();
 
@@ -120,15 +135,12 @@ public class DashboardController {
             return;
         }
 
-
         if (welcomeLabel != null) {
 
             welcomeLabel.setText(
-                    "Welcome, "
-                            + currentUser.getFullName()
+                    "Welcome, " + currentUser.getFullName()
             );
         }
-
 
         if (roleLabel != null) {
 
@@ -140,7 +152,35 @@ public class DashboardController {
 
 
     // ============================================================
-    // ROLE-BASED UI
+    // DEFAULT BUTTON CONFIGURATION
+    // ============================================================
+
+    private void configureDefaultButtons() {
+
+        if (applyLoanButton != null) {
+            applyLoanButton.setVisible(false);
+            applyLoanButton.setManaged(false);
+        }
+
+        if (viewLoansButton != null) {
+            viewLoansButton.setVisible(false);
+            viewLoansButton.setManaged(false);
+        }
+
+        if (viewPaymentsButton != null) {
+            viewPaymentsButton.setVisible(false);
+            viewPaymentsButton.setManaged(false);
+        }
+
+        if (pendingApplicationsButton != null) {
+            pendingApplicationsButton.setVisible(false);
+            pendingApplicationsButton.setManaged(false);
+        }
+    }
+
+
+    // ============================================================
+    // ROLE BASED BUTTON CONFIGURATION
     // ============================================================
 
     private void configureRoleButtons() {
@@ -149,22 +189,28 @@ public class DashboardController {
             return;
         }
 
+        configureDefaultButtons();
 
-        String role =
-                currentUser.getRole();
+        String role = currentUser.getRole();
 
+        if (role == null) {
+            return;
+        }
 
-        System.out.println(
-                "Configuring dashboard for role: "
-                        + role
-        );
+        role = role.trim().toUpperCase();
 
 
         // ========================================================
         // CUSTOMER
         // ========================================================
 
-        if ("CUSTOMER".equalsIgnoreCase(role)) {
+        if (role.equals("CUSTOMER")) {
+
+            showButton(applyLoanButton);
+
+            showButton(viewLoansButton);
+
+            showButton(viewPaymentsButton);
 
             if (pageTitleLabel != null) {
 
@@ -173,40 +219,10 @@ public class DashboardController {
                 );
             }
 
-
             if (pageDescriptionLabel != null) {
 
                 pageDescriptionLabel.setText(
-                        "Manage your loan applications and payments"
-                );
-            }
-
-
-            if (applyLoanButton != null) {
-
-                applyLoanButton.setVisible(true);
-                applyLoanButton.setManaged(true);
-            }
-
-
-            if (viewLoansButton != null) {
-
-                viewLoansButton.setVisible(true);
-                viewLoansButton.setManaged(true);
-
-                viewLoansButton.setText(
-                        "▣  View Loans"
-                );
-            }
-
-
-            if (viewPaymentsButton != null) {
-
-                viewPaymentsButton.setVisible(true);
-                viewPaymentsButton.setManaged(true);
-
-                viewPaymentsButton.setText(
-                        "₹  Payment History"
+                        "Manage your loan applications and payments."
                 );
             }
         }
@@ -216,9 +232,9 @@ public class DashboardController {
         // LOAN OFFICER
         // ========================================================
 
-        else if (
-                "LOAN_OFFICER".equalsIgnoreCase(role)
-        ) {
+        else if (role.equals("LOAN_OFFICER")) {
+
+            showButton(pendingApplicationsButton);
 
             if (pageTitleLabel != null) {
 
@@ -227,49 +243,10 @@ public class DashboardController {
                 );
             }
 
-
             if (pageDescriptionLabel != null) {
 
                 pageDescriptionLabel.setText(
-                        "Review and manage customer loan applications"
-                );
-            }
-
-
-            /*
-             * Loan Officer should not apply for a loan.
-             */
-
-            if (applyLoanButton != null) {
-
-                applyLoanButton.setVisible(false);
-                applyLoanButton.setManaged(false);
-            }
-
-
-            /*
-             * Reuse View Loans button as
-             * Pending Applications.
-             */
-
-            if (viewLoansButton != null) {
-
-                viewLoansButton.setVisible(true);
-                viewLoansButton.setManaged(true);
-
-                viewLoansButton.setText(
-                        "▣  Pending Applications"
-                );
-            }
-
-
-            if (viewPaymentsButton != null) {
-
-                viewPaymentsButton.setVisible(true);
-                viewPaymentsButton.setManaged(true);
-
-                viewPaymentsButton.setText(
-                        "₹  Payment History"
+                        "Review customer applications and manage loans."
                 );
             }
         }
@@ -279,7 +256,7 @@ public class DashboardController {
         // ADMIN
         // ========================================================
 
-        else if ("ADMIN".equalsIgnoreCase(role)) {
+        else if (role.equals("ADMIN")) {
 
             if (pageTitleLabel != null) {
 
@@ -288,47 +265,28 @@ public class DashboardController {
                 );
             }
 
-
             if (pageDescriptionLabel != null) {
 
                 pageDescriptionLabel.setText(
-                        "Manage and monitor the LoanFlow system"
-                );
-            }
-
-
-            /*
-             * Admin should not apply for a loan.
-             */
-
-            if (applyLoanButton != null) {
-
-                applyLoanButton.setVisible(false);
-                applyLoanButton.setManaged(false);
-            }
-
-
-            if (viewLoansButton != null) {
-
-                viewLoansButton.setVisible(true);
-                viewLoansButton.setManaged(true);
-
-                viewLoansButton.setText(
-                        "▣  View Loans"
-                );
-            }
-
-
-            if (viewPaymentsButton != null) {
-
-                viewPaymentsButton.setVisible(true);
-                viewPaymentsButton.setManaged(true);
-
-                viewPaymentsButton.setText(
-                        "₹  Payment History"
+                        "Monitor customers, applications, loans and payments."
                 );
             }
         }
+    }
+
+
+    // ============================================================
+    // SHOW BUTTON
+    // ============================================================
+
+    private void showButton(Button button) {
+
+        if (button == null) {
+            return;
+        }
+
+        button.setVisible(true);
+        button.setManaged(true);
     }
 
 
@@ -342,326 +300,205 @@ public class DashboardController {
             return;
         }
 
+        loadCustomersCount();
 
-        String role =
-                currentUser.getRole();
+        loadApplicationsCount();
 
+        loadLoansCount();
 
-        if ("ADMIN".equalsIgnoreCase(role)) {
+        loadPaymentsCount();
 
-            loadAdminDashboard();
-
-        } else if (
-                "LOAN_OFFICER".equalsIgnoreCase(role)
-        ) {
-
-            loadLoanOfficerDashboard();
-
-        } else {
-
-            loadCustomerDashboard();
-        }
+        loadRecentActivity();
     }
 
 
     // ============================================================
-    // ADMIN DASHBOARD
+    // CUSTOMERS COUNT
     // ============================================================
 
-    private void loadAdminDashboard() {
+    private void loadCustomersCount() {
 
-        String customerQuery =
+        String query =
                 "SELECT COUNT(*) FROM LMS_CUSTOMER";
 
-        String applicationQuery =
-                "SELECT COUNT(*) FROM LOAN_APPLICATION";
+        try (Connection connection = getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(query);
+             ResultSet resultSet =
+                     statement.executeQuery()) {
 
-        String loanQuery =
-                "SELECT COUNT(*) FROM LOAN";
-
-        String paymentQuery =
-                "SELECT COUNT(*) FROM PAYMENT";
-
-
-        try (Connection connection =
-                     getConnection()) {
-
-
-            if (customersValueLabel != null) {
+            if (resultSet.next()) {
 
                 customersValueLabel.setText(
                         String.valueOf(
-                                getCount(
-                                        connection,
-                                        customerQuery
-                                )
+                                resultSet.getInt(1)
                         )
                 );
             }
-
-
-            if (applicationsValueLabel != null) {
-
-                applicationsValueLabel.setText(
-                        String.valueOf(
-                                getCount(
-                                        connection,
-                                        applicationQuery
-                                )
-                        )
-                );
-            }
-
-
-            if (loansValueLabel != null) {
-
-                loansValueLabel.setText(
-                        String.valueOf(
-                                getCount(
-                                        connection,
-                                        loanQuery
-                                )
-                        )
-                );
-            }
-
-
-            if (paymentsValueLabel != null) {
-
-                paymentsValueLabel.setText(
-                        String.valueOf(
-                                getCount(
-                                        connection,
-                                        paymentQuery
-                                )
-                        )
-                );
-            }
-
 
         } catch (SQLException e) {
 
             e.printStackTrace();
 
-            showError(
-                    "Database Error",
-                    "Unable to load admin dashboard statistics.\n\n"
-                            + e.getMessage()
+            setLabelValue(
+                    customersValueLabel,
+                    "0"
             );
         }
     }
 
 
     // ============================================================
-    // LOAN OFFICER DASHBOARD
+    // APPLICATIONS COUNT
     // ============================================================
 
-    private void loadLoanOfficerDashboard() {
+    private void loadApplicationsCount() {
 
-        String customerQuery =
-                "SELECT COUNT(*) FROM LMS_CUSTOMER";
-
-        String applicationQuery =
+        String query =
                 "SELECT COUNT(*) FROM LOAN_APPLICATION";
 
-        String loanQuery =
-                "SELECT COUNT(*) FROM LOAN";
+        try (Connection connection = getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(query);
+             ResultSet resultSet =
+                     statement.executeQuery()) {
 
-        String paymentQuery =
-                "SELECT COUNT(*) FROM PAYMENT";
-
-
-        try (Connection connection =
-                     getConnection()) {
-
-
-            if (customersValueLabel != null) {
-
-                customersValueLabel.setText(
-                        String.valueOf(
-                                getCount(
-                                        connection,
-                                        customerQuery
-                                )
-                        )
-                );
-            }
-
-
-            if (applicationsValueLabel != null) {
+            if (resultSet.next()) {
 
                 applicationsValueLabel.setText(
                         String.valueOf(
-                                getCount(
-                                        connection,
-                                        applicationQuery
-                                )
+                                resultSet.getInt(1)
                         )
                 );
             }
-
-
-            if (loansValueLabel != null) {
-
-                loansValueLabel.setText(
-                        String.valueOf(
-                                getCount(
-                                        connection,
-                                        loanQuery
-                                )
-                        )
-                );
-            }
-
-
-            if (paymentsValueLabel != null) {
-
-                paymentsValueLabel.setText(
-                        String.valueOf(
-                                getCount(
-                                        connection,
-                                        paymentQuery
-                                )
-                        )
-                );
-            }
-
 
         } catch (SQLException e) {
 
             e.printStackTrace();
 
-            showError(
-                    "Database Error",
-                    "Unable to load loan officer dashboard statistics.\n\n"
-                            + e.getMessage()
+            setLabelValue(
+                    applicationsValueLabel,
+                    "0"
             );
         }
     }
 
 
     // ============================================================
-    // CUSTOMER DASHBOARD
+    // LOANS COUNT
     // ============================================================
 
-    private void loadCustomerDashboard() {
+    private void loadLoansCount() {
+
+        String query =
+                "SELECT COUNT(*) FROM LOAN";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(query);
+             ResultSet resultSet =
+                     statement.executeQuery()) {
+
+            if (resultSet.next()) {
+
+                loansValueLabel.setText(
+                        String.valueOf(
+                                resultSet.getInt(1)
+                        )
+                );
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+            setLabelValue(
+                    loansValueLabel,
+                    "0"
+            );
+        }
+    }
+
+
+    // ============================================================
+    // PAYMENTS COUNT
+    // ============================================================
+
+    private void loadPaymentsCount() {
+
+        String query =
+                "SELECT COUNT(*) FROM PAYMENT";
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(query);
+             ResultSet resultSet =
+                     statement.executeQuery()) {
+
+            if (resultSet.next()) {
+
+                paymentsValueLabel.setText(
+                        String.valueOf(
+                                resultSet.getInt(1)
+                        )
+                );
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+            setLabelValue(
+                    paymentsValueLabel,
+                    "0"
+            );
+        }
+    }
+
+
+    // ============================================================
+    // RECENT ACTIVITY
+    // ============================================================
+
+    private void loadRecentActivity() {
+
+        if (activityContainer == null) {
+            return;
+        }
+
+        activityContainer.getChildren().clear();
+
+        Label emptyLabel =
+                new Label(
+                        "No recent activity available."
+                );
+
+        emptyLabel.getStyleClass().add(
+                "empty-label"
+        );
+
+        activityContainer.getChildren().add(
+                emptyLabel
+        );
+    }
+
+
+    // ============================================================
+    // REFRESH DASHBOARD
+    // ============================================================
+
+    @FXML
+    private void refreshDashboard() {
 
         if (currentUser == null) {
             return;
         }
 
+        updateUserInformation();
 
-        String applicationQuery =
-                "SELECT COUNT(*) "
-                        + "FROM LOAN_APPLICATION la "
-                        + "JOIN LMS_CUSTOMER lc "
-                        + "ON la.CUSTOMER_ID = lc.CUSTOMER_ID "
-                        + "WHERE lc.USER_ID = ?";
+        configureRoleButtons();
 
-
-        String loanQuery =
-                "SELECT COUNT(*) "
-                        + "FROM LOAN l "
-                        + "JOIN LMS_CUSTOMER lc "
-                        + "ON l.CUSTOMER_ID = lc.CUSTOMER_ID "
-                        + "WHERE lc.USER_ID = ?";
-
-
-        String paymentQuery =
-                "SELECT COUNT(*) "
-                        + "FROM PAYMENT p "
-                        + "JOIN LOAN l "
-                        + "ON p.LOAN_ID = l.LOAN_ID "
-                        + "JOIN LMS_CUSTOMER lc "
-                        + "ON l.CUSTOMER_ID = lc.CUSTOMER_ID "
-                        + "WHERE lc.USER_ID = ?";
-
-
-        try (Connection connection =
-                     getConnection()) {
-
-
-            /*
-             * Customers count is a system-wide statistic.
-             */
-
-            if (customersValueLabel != null) {
-
-                customersValueLabel.setText(
-                        String.valueOf(
-                                getCount(
-                                        connection,
-                                        "SELECT COUNT(*) FROM LMS_CUSTOMER"
-                                )
-                        )
-                );
-            }
-
-
-            /*
-             * Current customer's applications.
-             */
-
-            if (applicationsValueLabel != null) {
-
-                applicationsValueLabel.setText(
-                        String.valueOf(
-                                getCountWithUserId(
-                                        connection,
-                                        applicationQuery,
-                                        currentUser.getUserId()
-                                )
-                        )
-                );
-            }
-
-
-            /*
-             * Current customer's loans.
-             */
-
-            if (loansValueLabel != null) {
-
-                loansValueLabel.setText(
-                        String.valueOf(
-                                getCountWithUserId(
-                                        connection,
-                                        loanQuery,
-                                        currentUser.getUserId()
-                                )
-                        )
-                );
-            }
-
-
-            /*
-             * Current customer's payments.
-             */
-
-            if (paymentsValueLabel != null) {
-
-                paymentsValueLabel.setText(
-                        String.valueOf(
-                                getCountWithUserId(
-                                        connection,
-                                        paymentQuery,
-                                        currentUser.getUserId()
-                                )
-                        )
-                );
-            }
-
-
-        } catch (SQLException e) {
-
-            e.printStackTrace();
-
-            showError(
-                    "Database Error",
-                    "Unable to load customer dashboard statistics.\n\n"
-                            + e.getMessage()
-            );
-        }
+        loadDashboardData();
     }
 
 
@@ -673,28 +510,8 @@ public class DashboardController {
     private void applyLoan() {
 
         if (currentUser == null) {
-
-            showError(
-                    "Error",
-                    "No logged-in user was found."
-            );
-
             return;
         }
-
-
-        if (!"CUSTOMER".equalsIgnoreCase(
-                currentUser.getRole()
-        )) {
-
-            showError(
-                    "Access Denied",
-                    "Only customers can apply for loans."
-            );
-
-            return;
-        }
-
 
         try {
 
@@ -705,113 +522,17 @@ public class DashboardController {
                             )
                     );
 
-
-            Parent root =
-                    loader.load();
-
+            Parent root = loader.load();
 
             LoanApplicationController controller =
                     loader.getController();
-
 
             controller.setCurrentUser(
                     currentUser
             );
 
-
-            Stage stage =
-                    new Stage();
-
-
-            stage.setTitle(
-                    "LoanFlow - Apply for Loan"
-            );
-
-
-            Scene scene =
-                    new Scene(
-                            root,
-                            1000,
-                            750
-                    );
-
-
-            stage.setScene(scene);
-
-            stage.setMinWidth(850);
-            stage.setMinHeight(650);
-
-            stage.setMaximized(true);
-
-            stage.show();
-
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-            showError(
-                    "Error",
-                    "Unable to open Apply Loan page.\n\n"
-                            + e.getMessage()
-            );
-        }
-    }
-
-
-    // ============================================================
-    // VIEW LOANS / PENDING APPLICATIONS
-    // ============================================================
-
-    @FXML
-    private void viewLoans() {
-
-        if (currentUser != null
-                && "LOAN_OFFICER".equalsIgnoreCase(
-                currentUser.getRole()
-        )) {
-
-            openPendingApplications();
-
-            return;
-        }
-
-
-        showInformation(
-                "My Loans",
-                "Your loan details will be implemented in the Loan Management module."
-        );
-    }
-
-
-    // ============================================================
-    // OPEN PENDING APPLICATIONS
-    // ============================================================
-
-    private void openPendingApplications() {
-
-        try {
-
-            FXMLLoader loader =
-                    new FXMLLoader(
-                            getClass().getResource(
-                                    "/fxml/pending-applications.fxml"
-                            )
-                    );
-
-
-            Parent root =
-                    loader.load();
-
-
-            Stage stage =
-                    new Stage();
-
-
-            stage.setTitle(
-                    "LoanFlow - Pending Applications"
-            );
-
+            Stage currentStage =
+                    getCurrentStage();
 
             Scene scene =
                     new Scene(
@@ -820,27 +541,42 @@ public class DashboardController {
                             850
                     );
 
+            currentStage.setScene(scene);
 
-            stage.setScene(scene);
+            currentStage.setTitle(
+                    "LoanFlow - Apply for Loan"
+            );
 
-            stage.setMinWidth(1100);
-            stage.setMinHeight(700);
-
-            stage.setMaximized(true);
-
-            stage.show();
-
+            currentStage.setMaximized(true);
 
         } catch (Exception e) {
 
             e.printStackTrace();
 
             showError(
-                    "Error",
-                    "Unable to open Pending Applications.\n\n"
+                    "Navigation Error",
+                    "Unable to open loan application page.\n\n"
                             + e.getMessage()
             );
         }
+    }
+
+
+    // ============================================================
+    // VIEW LOANS
+    // ============================================================
+
+    @FXML
+    private void viewLoans() {
+
+        if (currentUser == null) {
+            return;
+        }
+
+        showInformation(
+                "Not Available",
+                "The loans page has not been added yet."
+        );
     }
 
 
@@ -851,26 +587,97 @@ public class DashboardController {
     @FXML
     private void viewPayments() {
 
+        if (currentUser == null) {
+            return;
+        }
+
         showInformation(
-                "Payments",
-                "Payment management will be implemented in the Payment Management module."
+                "Not Available",
+                "The payment history page has not been added yet."
         );
     }
 
 
     // ============================================================
-    // REFRESH
+    // OPEN PENDING APPLICATIONS
     // ============================================================
 
     @FXML
-    private void refreshDashboard() {
+    private void openPendingApplications() {
 
         if (currentUser == null) {
+
+            showError(
+                    "Navigation Error",
+                    "No logged-in user found."
+            );
+
             return;
         }
 
+        try {
 
-        loadDashboardData();
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/pending-applications.fxml"
+                            )
+                    );
+
+            Parent root = loader.load();
+
+
+            // ----------------------------------------------------
+            // GET PENDING APPLICATION CONTROLLER
+            // ----------------------------------------------------
+
+            PendingApplicationsController controller =
+                    loader.getController();
+
+
+            // ----------------------------------------------------
+            // VERY IMPORTANT:
+            // PASS THE CURRENT LOAN OFFICER
+            // ----------------------------------------------------
+
+            controller.setCurrentUser(
+                    currentUser
+            );
+
+
+            Stage currentStage =
+                    (Stage) pendingApplicationsButton
+                            .getScene()
+                            .getWindow();
+
+
+            Scene scene =
+                    new Scene(
+                            root,
+                            1400,
+                            850
+                    );
+
+
+            currentStage.setScene(scene);
+
+            currentStage.setTitle(
+                    "LoanFlow - Pending Applications"
+            );
+
+            currentStage.setMaximized(true);
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            showError(
+                    "Navigation Error",
+                    "Unable to open pending applications.\n\n"
+                            + e.getMessage()
+            );
+        }
     }
 
 
@@ -890,31 +697,18 @@ public class DashboardController {
                             )
                     );
 
+            Parent root = loader.load();
 
-            Parent root =
-                    loader.load();
-
-
-            /*
-             * Your dashboard.fxml does not have an fx:id
-             * for the Logout button.
-             *
-             * Therefore we safely obtain the current Stage
-             * from welcomeLabel, which definitely exists
-             * in your FXML.
-             */
 
             Stage currentStage =
-                    (Stage) welcomeLabel
-                            .getScene()
-                            .getWindow();
+                    getCurrentStage();
 
 
             Scene scene =
                     new Scene(
                             root,
-                            1000,
-                            650
+                            900,
+                            600
                     );
 
 
@@ -943,6 +737,105 @@ public class DashboardController {
 
 
     // ============================================================
+    // OPEN PAGE HELPER
+    // ============================================================
+
+    private void openPage(
+            String fxmlPath,
+            String title
+    ) {
+
+        try {
+
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    fxmlPath
+                            )
+                    );
+
+            Parent root = loader.load();
+
+
+            Stage currentStage =
+                    getCurrentStage();
+
+
+            Scene scene =
+                    new Scene(
+                            root,
+                            1400,
+                            850
+                    );
+
+
+            currentStage.setScene(scene);
+
+            currentStage.setTitle(title);
+
+            currentStage.setMaximized(true);
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            showError(
+                    "Navigation Error",
+                    "Unable to open page.\n\n"
+                            + e.getMessage()
+            );
+        }
+    }
+
+
+    // ============================================================
+    // GET CURRENT STAGE
+    // ============================================================
+
+    private Stage getCurrentStage() {
+
+        if (welcomeLabel != null &&
+                welcomeLabel.getScene() != null) {
+
+            return (Stage)
+                    welcomeLabel
+                            .getScene()
+                            .getWindow();
+        }
+
+        if (pageTitleLabel != null &&
+                pageTitleLabel.getScene() != null) {
+
+            return (Stage)
+                    pageTitleLabel
+                            .getScene()
+                            .getWindow();
+        }
+
+        throw new IllegalStateException(
+                "Unable to find current application window."
+        );
+    }
+
+
+    // ============================================================
+    // SET LABEL VALUE
+    // ============================================================
+
+    private void setLabelValue(
+            Label label,
+            String value
+    ) {
+
+        if (label != null) {
+
+            label.setText(value);
+        }
+    }
+
+
+    // ============================================================
     // DATABASE CONNECTION
     // ============================================================
 
@@ -955,8 +848,8 @@ public class DashboardController {
                 );
 
 
-        if (password == null
-                || password.isBlank()) {
+        if (password == null ||
+                password.isBlank()) {
 
             throw new SQLException(
                     "Database password is not configured.\n"
@@ -967,98 +860,10 @@ public class DashboardController {
 
 
         return DriverManager.getConnection(
-                DB_URL,
-                DB_USERNAME,
+                "jdbc:oracle:thin:@localhost:1521:xe",
+                "system",
                 password
         );
-    }
-
-
-    // ============================================================
-    // GET SIMPLE COUNT
-    // ============================================================
-
-    private int getCount(
-            Connection connection,
-            String query
-    ) throws SQLException {
-
-        try (PreparedStatement statement =
-                     connection.prepareStatement(query);
-
-             ResultSet resultSet =
-                     statement.executeQuery()) {
-
-
-            if (resultSet.next()) {
-
-                return resultSet.getInt(1);
-            }
-        }
-
-
-        return 0;
-    }
-
-
-    // ============================================================
-    // GET COUNT USING USER ID
-    // ============================================================
-
-    private int getCountWithUserId(
-            Connection connection,
-            String query,
-            int userId
-    ) throws SQLException {
-
-        try (PreparedStatement statement =
-                     connection.prepareStatement(query)) {
-
-
-            statement.setInt(
-                    1,
-                    userId
-            );
-
-
-            try (ResultSet resultSet =
-                         statement.executeQuery()) {
-
-
-                if (resultSet.next()) {
-
-                    return resultSet.getInt(1);
-                }
-            }
-        }
-
-
-        return 0;
-    }
-
-
-    // ============================================================
-    // INFORMATION ALERT
-    // ============================================================
-
-    private void showInformation(
-            String title,
-            String message
-    ) {
-
-        Alert alert =
-                new Alert(
-                        Alert.AlertType.INFORMATION
-                );
-
-
-        alert.setTitle(title);
-
-        alert.setHeaderText(null);
-
-        alert.setContentText(message);
-
-        alert.showAndWait();
     }
 
 
@@ -1076,6 +881,29 @@ public class DashboardController {
                         Alert.AlertType.ERROR
                 );
 
+        alert.setTitle(title);
+
+        alert.setHeaderText(null);
+
+        alert.setContentText(message);
+
+        alert.showAndWait();
+    }
+
+
+    // ============================================================
+    // INFORMATION ALERT
+    // ============================================================
+
+    private void showInformation(
+            String title,
+            String message
+    ) {
+
+        Alert alert =
+                new Alert(
+                        Alert.AlertType.INFORMATION
+                );
 
         alert.setTitle(title);
 

@@ -117,6 +117,27 @@ public class PendingApplicationsController {
 
 
     // ============================================================
+    // CURRENT USER
+    // ============================================================
+
+    /*
+     * We keep the current User so that returning to the dashboard
+     * opens the correct role dashboard.
+     *
+     * This method is also compatible with DashboardController
+     * calling:
+     *
+     * controller.setCurrentUser(currentUser);
+     */
+
+    private com.loanmanagement.model.User currentUser;
+
+    public void setCurrentUser(com.loanmanagement.model.User user) {
+        this.currentUser = user;
+    }
+
+
+    // ============================================================
     // INITIALIZE
     // ============================================================
 
@@ -131,8 +152,7 @@ public class PendingApplicationsController {
 
         applicationTable.setRowFactory(tableView -> {
 
-            TableRow<LoanApplication> row =
-                    new TableRow<>();
+            TableRow<LoanApplication> row = new TableRow<>();
 
             row.itemProperty().addListener(
                     (observable, oldValue, newValue) -> {
@@ -204,7 +224,10 @@ public class PendingApplicationsController {
         );
 
 
-        // Amount formatting
+        // --------------------------------------------------------
+        // AMOUNT
+        // --------------------------------------------------------
+
         amountColumn.setCellFactory(column ->
                 new TableCell<LoanApplication, Double>() {
 
@@ -231,7 +254,10 @@ public class PendingApplicationsController {
         );
 
 
-        // Interest formatting
+        // --------------------------------------------------------
+        // INTEREST
+        // --------------------------------------------------------
+
         interestColumn.setCellFactory(column ->
                 new TableCell<LoanApplication, Double>() {
 
@@ -258,7 +284,10 @@ public class PendingApplicationsController {
         );
 
 
-        // EMI formatting
+        // --------------------------------------------------------
+        // EMI
+        // --------------------------------------------------------
+
         emiColumn.setCellFactory(column ->
                 new TableCell<LoanApplication, Double>() {
 
@@ -374,10 +403,9 @@ public class PendingApplicationsController {
 
 
             if (applications.isEmpty()) {
-
                 clearApplicationDetails();
-
             }
+
 
         } catch (SQLException e) {
 
@@ -505,7 +533,7 @@ public class PendingApplicationsController {
 
 
     // ============================================================
-    // APPROVE
+    // APPROVE APPLICATION
     // ============================================================
 
     @FXML
@@ -528,20 +556,21 @@ public class PendingApplicationsController {
         }
 
 
-        boolean updated =
-                updateApplicationStatus(
-                        selectedApplication.getApplicationId(),
-                        "APPROVED"
+        boolean approved =
+                approveApplicationAndCreateLoan(
+                        selectedApplication.getApplicationId()
                 );
 
 
-        if (updated) {
+        if (approved) {
 
             showInformation(
                     "Application Approved",
                     "Application #"
                             + selectedApplication.getApplicationId()
-                            + " has been approved successfully."
+                            + " has been approved successfully.\n\n"
+                            + "The corresponding loan has been created "
+                            + "and marked ACTIVE."
             );
 
             loadPendingApplications();
@@ -550,7 +579,7 @@ public class PendingApplicationsController {
 
 
     // ============================================================
-    // REJECT
+    // REJECT APPLICATION
     // ============================================================
 
     @FXML
@@ -573,14 +602,14 @@ public class PendingApplicationsController {
         }
 
 
-        boolean updated =
+        boolean rejected =
                 updateApplicationStatus(
                         selectedApplication.getApplicationId(),
                         "REJECTED"
                 );
 
 
-        if (updated) {
+        if (rejected) {
 
             showInformation(
                     "Application Rejected",
@@ -595,7 +624,295 @@ public class PendingApplicationsController {
 
 
     // ============================================================
-    // UPDATE STATUS
+    // APPROVE + CREATE LOAN
+    // ============================================================
+
+    private boolean approveApplicationAndCreateLoan(
+            int applicationId
+    ) {
+
+        String checkLoanQuery =
+                "SELECT COUNT(*) " +
+                "FROM LOAN " +
+                "WHERE APPLICATION_ID = ?";
+
+
+        String applicationQuery =
+                "SELECT " +
+                "    APPLICATION_ID, " +
+                "    CUSTOMER_ID, " +
+                "    LOAN_AMOUNT, " +
+                "    INTEREST_RATE, " +
+                "    TENURE_MONTHS, " +
+                "    EMI_AMOUNT " +
+                "FROM LOAN_APPLICATION " +
+                "WHERE APPLICATION_ID = ? " +
+                "AND UPPER(STATUS) = 'PENDING'";
+
+
+        String updateApplicationQuery =
+                "UPDATE LOAN_APPLICATION " +
+                "SET STATUS = 'APPROVED' " +
+                "WHERE APPLICATION_ID = ? " +
+                "AND UPPER(STATUS) = 'PENDING'";
+
+
+        String insertLoanQuery =
+                "INSERT INTO LOAN " +
+                "( " +
+                "    APPLICATION_ID, " +
+                "    CUSTOMER_ID, " +
+                "    LOAN_AMOUNT, " +
+                "    INTEREST_RATE, " +
+                "    TENURE_MONTHS, " +
+                "    EMI_AMOUNT, " +
+                "    START_DATE, " +
+                "    STATUS " +
+                ") " +
+                "VALUES (?, ?, ?, ?, ?, ?, SYSDATE, 'ACTIVE')";
+
+
+        try (Connection connection = getConnection()) {
+
+            /*
+             * We handle the entire approval process in one transaction.
+             *
+             * If anything fails:
+             *
+             * APPROVAL + LOAN INSERT
+             *
+             * are both rolled back.
+             */
+
+            connection.setAutoCommit(false);
+
+
+            // ----------------------------------------------------
+            // STEP 1: CHECK WHETHER LOAN ALREADY EXISTS
+            // ----------------------------------------------------
+
+            try (PreparedStatement checkStatement =
+                         connection.prepareStatement(
+                                 checkLoanQuery
+                         )) {
+
+                checkStatement.setInt(
+                        1,
+                        applicationId
+                );
+
+                try (ResultSet resultSet =
+                             checkStatement.executeQuery()) {
+
+                    if (resultSet.next()) {
+
+                        int existingLoans =
+                                resultSet.getInt(1);
+
+                        if (existingLoans > 0) {
+
+                            connection.rollback();
+
+                            showWarning(
+                                    "Loan Already Exists",
+                                    "A loan already exists for "
+                                            + "Application #"
+                                            + applicationId
+                                            + "."
+                            );
+
+                            return false;
+                        }
+                    }
+                }
+            }
+
+
+            // ----------------------------------------------------
+            // STEP 2: GET APPLICATION DETAILS
+            // ----------------------------------------------------
+
+            int customerId;
+            double loanAmount;
+            double interestRate;
+            int tenureMonths;
+            double emiAmount;
+
+
+            try (PreparedStatement applicationStatement =
+                         connection.prepareStatement(
+                                 applicationQuery
+                         )) {
+
+                applicationStatement.setInt(
+                        1,
+                        applicationId
+                );
+
+
+                try (ResultSet resultSet =
+                             applicationStatement.executeQuery()) {
+
+                    if (!resultSet.next()) {
+
+                        connection.rollback();
+
+                        showWarning(
+                                "Application Not Available",
+                                "The application is no longer pending."
+                        );
+
+                        return false;
+                    }
+
+
+                    customerId =
+                            resultSet.getInt(
+                                    "CUSTOMER_ID"
+                            );
+
+                    loanAmount =
+                            resultSet.getDouble(
+                                    "LOAN_AMOUNT"
+                            );
+
+                    interestRate =
+                            resultSet.getDouble(
+                                    "INTEREST_RATE"
+                            );
+
+                    tenureMonths =
+                            resultSet.getInt(
+                                    "TENURE_MONTHS"
+                            );
+
+                    emiAmount =
+                            resultSet.getDouble(
+                                    "EMI_AMOUNT"
+                            );
+                }
+            }
+
+
+            // ----------------------------------------------------
+            // STEP 3: UPDATE APPLICATION STATUS
+            // ----------------------------------------------------
+
+            try (PreparedStatement updateStatement =
+                         connection.prepareStatement(
+                                 updateApplicationQuery
+                         )) {
+
+                updateStatement.setInt(
+                        1,
+                        applicationId
+                );
+
+
+                int rowsUpdated =
+                        updateStatement.executeUpdate();
+
+
+                if (rowsUpdated != 1) {
+
+                    connection.rollback();
+
+                    showWarning(
+                            "Application Not Updated",
+                            "The application could not be approved."
+                    );
+
+                    return false;
+                }
+            }
+
+
+            // ----------------------------------------------------
+            // STEP 4: CREATE LOAN
+            // ----------------------------------------------------
+
+            try (PreparedStatement insertStatement =
+                         connection.prepareStatement(
+                                 insertLoanQuery
+                         )) {
+
+                insertStatement.setInt(
+                        1,
+                        applicationId
+                );
+
+                insertStatement.setInt(
+                        2,
+                        customerId
+                );
+
+                insertStatement.setDouble(
+                        3,
+                        loanAmount
+                );
+
+                insertStatement.setDouble(
+                        4,
+                        interestRate
+                );
+
+                insertStatement.setInt(
+                        5,
+                        tenureMonths
+                );
+
+                insertStatement.setDouble(
+                        6,
+                        emiAmount
+                );
+
+
+                int loanCreated =
+                        insertStatement.executeUpdate();
+
+
+                if (loanCreated != 1) {
+
+                    connection.rollback();
+
+                    showError(
+                            "Loan Creation Failed",
+                            "The application was not approved because "
+                                    + "the loan record could not be created."
+                    );
+
+                    return false;
+                }
+            }
+
+
+            // ----------------------------------------------------
+            // STEP 5: COMMIT EVERYTHING
+            // ----------------------------------------------------
+
+            connection.commit();
+
+            return true;
+
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+
+            showError(
+                    "Approval Failed",
+                    "Unable to approve the application "
+                            + "and create the loan.\n\n"
+                            + e.getMessage()
+            );
+
+            return false;
+        }
+    }
+
+
+    // ============================================================
+    // UPDATE APPLICATION STATUS
     // ============================================================
 
     private boolean updateApplicationStatus(
@@ -677,7 +994,31 @@ public class PendingApplicationsController {
                             )
                     );
 
+
             Parent root = loader.load();
+
+
+            /*
+             * IMPORTANT:
+             *
+             * Pass the currently logged-in user back to
+             * DashboardController.
+             *
+             * This prevents a Loan Officer from returning
+             * to the Customer dashboard.
+             */
+
+            DashboardController controller =
+                    loader.getController();
+
+
+            if (currentUser != null) {
+
+                controller.setCurrentUser(
+                        currentUser
+                );
+            }
+
 
             Stage currentStage =
                     (Stage) applicationTable
@@ -723,7 +1064,9 @@ public class PendingApplicationsController {
             throws SQLException {
 
         String password =
-                System.getenv("LMS_DB_PASSWORD");
+                System.getenv(
+                        "LMS_DB_PASSWORD"
+                );
 
 
         if (password == null || password.isBlank()) {
@@ -745,7 +1088,7 @@ public class PendingApplicationsController {
 
 
     // ============================================================
-    // ALERTS
+    // INFORMATION ALERT
     // ============================================================
 
     private void showInformation(
@@ -766,6 +1109,10 @@ public class PendingApplicationsController {
     }
 
 
+    // ============================================================
+    // WARNING ALERT
+    // ============================================================
+
     private void showWarning(
             String title,
             String message
@@ -783,6 +1130,10 @@ public class PendingApplicationsController {
         alert.showAndWait();
     }
 
+
+    // ============================================================
+    // ERROR ALERT
+    // ============================================================
 
     private void showError(
             String title,

@@ -16,15 +16,26 @@
             stylesheets="@../css/dashboard.css"
             styleClass="dashboard-root">
 
- <top>
+
+    <!-- ========================================================= -->
+    <!-- TOP BAR -->
+    <!-- ========================================================= -->
+
+    <top>
 
         <HBox alignment="CENTER_LEFT"
               spacing="20"
               styleClass="top-bar">
 
             <padding>
-                <Insets top="18" right="28" bottom="18" left="28"/>
+                <Insets top="18"
+                        right="28"
+                        bottom="18"
+                        left="28"/>
             </padding>
+
+
+            <!-- LOGO -->
 
             <VBox spacing="3">
 
@@ -36,9 +47,14 @@
 
             </VBox>
 
+
             <Region HBox.hgrow="ALWAYS"/>
 
-            <VBox alignment="CENTER_RIGHT" spacing="2">
+
+            <!-- USER INFORMATION -->
+
+            <VBox alignment="CENTER_RIGHT"
+                  spacing="2">
 
                 <Label fx:id="welcomeLabel"
                        text="Welcome"
@@ -50,9 +66,15 @@
 
             </VBox>
 
+
+            <!-- REFRESH -->
+
             <Button text="↻  Refresh"
                     styleClass="refresh-button"
                     onAction="#refreshDashboard"/>
+
+
+            <!-- LOGOUT -->
 
             <Button text="Logout"
                     styleClass="logout-button"
@@ -62,6 +84,11 @@
 
     </top>
 
+
+    <!-- ========================================================= -->
+    <!-- CENTER -->
+    <!-- ========================================================= -->
+
     <center>
 
         <ScrollPane fitToWidth="true"
@@ -69,11 +96,20 @@
                     hbarPolicy="NEVER"
                     styleClass="dashboard-scroll">
 
+
             <VBox spacing="25">
 
                 <padding>
-                    <Insets top="30" right="35" bottom="35" left="35"/>
+                    <Insets top="30"
+                            right="35"
+                            bottom="35"
+                            left="35"/>
                 </padding>
+
+
+                <!-- ================================================= -->
+                <!-- PAGE TITLE -->
+                <!-- ================================================= -->
 
                 <VBox spacing="6">
 
@@ -87,14 +123,26 @@
 
                 </VBox>
 
-                <GridPane hgap="18" vgap="18">
+
+                <!-- ================================================= -->
+                <!-- STAT CARDS -->
+                <!-- ================================================= -->
+
+                <GridPane hgap="18"
+                          vgap="18">
+
+
+                    <!-- CUSTOMERS -->
 
                     <VBox GridPane.columnIndex="0"
                           GridPane.rowIndex="0"
                           styleClass="stat-card">
 
                         <padding>
-                            <Insets top="22" right="22" bottom="22" left="22"/>
+                            <Insets top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
                         </padding>
 
                         <Label text="CUSTOMERS"
@@ -109,12 +157,18 @@
 
                     </VBox>
 
+
+                    <!-- APPLICATIONS -->
+
                     <VBox GridPane.columnIndex="1"
                           GridPane.rowIndex="0"
                           styleClass="stat-card">
 
                         <padding>
-                            <Insets top="22" right="22" bottom="22" left="22"/>
+                            <Insets top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
                         </padding>
 
                         <Label text="APPLICATIONS"
@@ -129,12 +183,18 @@
 
                     </VBox>
 
+
+                    <!-- ACTIVE LOANS -->
+
                     <VBox GridPane.columnIndex="2"
                           GridPane.rowIndex="0"
                           styleClass="stat-card">
 
                         <padding>
-                            <Insets top="22" right="22" bottom="22" left="22"/>
+                            <Insets top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
                         </padding>
 
                         <Label text="ACTIVE LOANS"
@@ -149,12 +209,18 @@
 
                     </VBox>
 
+
+                    <!-- PAYMENTS -->
+
                     <VBox GridPane.columnIndex="3"
                           GridPane.rowIndex="0"
                           styleClass="stat-card">
 
                         <padding>
-                            <Insets top="22" right="22" bottom="22" left="22"/>
+                            <Insets top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
                         </padding>
 
                         <Label text="PAYMENTS"
@@ -171,14 +237,28 @@
 
                 </GridPane>
 
+
+                <!-- ================================================= -->
+                <!-- LOWER SECTION -->
+                <!-- ================================================= -->
+
                 <HBox spacing="20">
+
+
+                    <!-- ================================================= -->
+                    <!-- RECENT ACTIVITY -->
+                    <!-- ================================================= -->
 
                     <VBox HBox.hgrow="ALWAYS"
                           styleClass="content-card">
 
                         <padding>
-                            <Insets top="22" right="22" bottom="22" left="22"/>
+                            <Insets top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
                         </padding>
+
 
                         <HBox alignment="CENTER_LEFT">
 
@@ -192,13 +272,16 @@
 
                             </VBox>
 
+
                             <Region HBox.hgrow="ALWAYS"/>
+
 
                             <Button text="↻"
                                     styleClass="small-refresh-button"
                                     onAction="#refreshDashboard"/>
 
                         </HBox>
+
 
                         <VBox fx:id="activityContainer"
                               spacing="12"
@@ -211,12 +294,22 @@
 
                     </VBox>
 
+
+                    <!-- ================================================= -->
+                    <!-- QUICK ACTIONS -->
+                    <!-- ================================================= -->
+
                     <VBox prefWidth="300"
+                          spacing="10"
                           styleClass="content-card">
 
                         <padding>
-                            <Insets top="22" right="22" bottom="22" left="22"/>
+                            <Insets top="22"
+                                    right="22"
+                                    bottom="22"
+                                    left="22"/>
                         </padding>
+
 
                         <Label text="Quick Actions"
                                styleClass="section-title"/>
@@ -224,7 +317,13 @@
                         <Label text="Access commonly used features"
                                styleClass="section-description"/>
 
-                        <Region prefHeight="12"/>
+
+                        <Region prefHeight="8"/>
+
+
+                        <!-- ================================================= -->
+                        <!-- CUSTOMER: APPLY LOAN -->
+                        <!-- ================================================= -->
 
                         <Button fx:id="applyLoanButton"
                                 text="+  Apply for Loan"
@@ -233,12 +332,22 @@
                                 styleClass="action-button"
                                 onAction="#applyLoan"/>
 
+
+                        <!-- ================================================= -->
+                        <!-- CUSTOMER: VIEW LOANS -->
+                        <!-- ================================================= -->
+
                         <Button fx:id="viewLoansButton"
                                 text="▣  View Loans"
                                 maxWidth="Infinity"
                                 prefHeight="44"
                                 styleClass="secondary-action-button"
                                 onAction="#viewLoans"/>
+
+
+                        <!-- ================================================= -->
+                        <!-- CUSTOMER: PAYMENT HISTORY -->
+                        <!-- ================================================= -->
 
                         <Button fx:id="viewPaymentsButton"
                                 text="₹  Payment History"
@@ -247,9 +356,26 @@
                                 styleClass="secondary-action-button"
                                 onAction="#viewPayments"/>
 
+
+                        <!-- ================================================= -->
+                        <!-- LOAN OFFICER: PENDING APPLICATIONS -->
+                        <!-- ================================================= -->
+
+                        <Button fx:id="pendingApplicationsButton"
+                                text="▣  Pending Applications"
+                                maxWidth="Infinity"
+                                prefHeight="44"
+                                styleClass="secondary-action-button"
+                                onAction="#openPendingApplications"/>
+
                     </VBox>
 
                 </HBox>
+
+
+                <!-- ================================================= -->
+                <!-- QUOTE -->
+                <!-- ================================================= -->
 
                 <HBox alignment="CENTER"
                       styleClass="dashboard-quote">

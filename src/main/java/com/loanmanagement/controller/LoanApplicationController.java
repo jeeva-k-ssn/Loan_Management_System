@@ -4,6 +4,9 @@ import com.loanmanagement.model.User;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -634,10 +637,6 @@ public class LoanApplicationController {
             );
 
 
-            /*
-             * Close application window.
-             * Dashboard remains underneath.
-             */
             handleBack();
 
 
@@ -773,15 +772,58 @@ public class LoanApplicationController {
             return;
         }
 
+        try {
 
-        Stage stage =
-                (Stage)
-                        customerNameField
-                                .getScene()
-                                .getWindow();
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass().getResource(
+                                    "/fxml/dashboard.fxml"
+                            )
+                    );
 
+            Parent root = loader.load();
 
-        stage.close();
+            DashboardController controller =
+                    loader.getController();
+
+            if (currentUser != null) {
+
+                controller.setCurrentUser(
+                        currentUser
+                );
+            }
+
+            Stage stage =
+                    (Stage)
+                            customerNameField
+                                    .getScene()
+                                    .getWindow();
+
+            Scene scene =
+                    new Scene(
+                            root,
+                            1400,
+                            850
+                    );
+
+            stage.setScene(scene);
+
+            stage.setTitle(
+                    "LoanFlow - Dashboard"
+            );
+
+            stage.setMaximized(true);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            showError(
+                    "Navigation Error",
+                    "Unable to return to dashboard.\n\n"
+                            + e.getMessage()
+            );
+        }
     }
 
 
