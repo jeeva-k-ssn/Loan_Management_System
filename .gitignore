@@ -1,6 +1,9 @@
 target/
 *.class
 *.log
+.env
+.env.*
+*.properties.local
 
 .settings/
 .project

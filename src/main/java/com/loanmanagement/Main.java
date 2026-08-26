@@ -1,13 +1,9 @@
 package com.loanmanagement;
 
-import com.loanmanagement.database.DatabaseConnection;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.sql.Connection;
 
 public class Main extends Application {
 
@@ -43,22 +39,6 @@ public void start(Stage stage) throws Exception {
 }
 
 public static void main(String[] args) {
-
-    Connection connection =
-            DatabaseConnection.getConnection();
-
-    if (connection != null) {
-
-        System.out.println(
-                "Connected to Oracle Database!"
-        );
-
-        try {
-            connection.close();
-        } catch (Exception ignored) {
-        }
-    }
-
     launch(args);
 }
 

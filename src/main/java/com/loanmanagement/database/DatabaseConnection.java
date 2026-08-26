@@ -6,35 +6,29 @@ import java.sql.SQLException;
 
 public class DatabaseConnection {
 
-    // Oracle Database URL
     private static final String URL =
             "jdbc:oracle:thin:@localhost:1521:XE";
-
-    // Oracle Username
     private static final String USERNAME = "system";
 
-    // Oracle Password
-    private static final String PASSWORD = "Jeeva_Krishnan2505";
-
-    public static Connection getConnection() {
-
-        try {
-
-            Connection connection =
-                    DriverManager.getConnection(URL, USERNAME, PASSWORD);
-
-            System.out.println("Database Connected Successfully!");
-
-            return connection;
-
-        } catch (SQLException e) {
-
-            System.out.println("Database Connection Failed!");
-
-            e.printStackTrace();
-
-            return null;
-        }
+    private DatabaseConnection() {
+        // Utility class.
     }
 
+    /**
+     * Opens a database connection using the locally configured password.
+     * The password is deliberately never stored in source control.
+     */
+    public static Connection getConnection() throws SQLException {
+        String password = System.getenv("LMS_DB_PASSWORD");
+
+        if (password == null || password.isBlank()) {
+            throw new SQLException(
+                    "Database password is not configured. "
+                            + "Set the LMS_DB_PASSWORD environment variable "
+                            + "before starting LoanFlow."
+            );
+        }
+
+        return DriverManager.getConnection(URL, USERNAME, password);
+    }
 }

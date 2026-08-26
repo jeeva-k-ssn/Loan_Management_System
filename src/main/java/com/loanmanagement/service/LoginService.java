@@ -2,6 +2,7 @@ package com.loanmanagement.service;
 
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.model.User;
+import com.loanmanagement.util.PasswordUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,39 +19,17 @@ public boolean registerUser(User user) {
             "(FULL_NAME, EMAIL, PASSWORD, USER_ROLE) " +
             "VALUES (?, ?, ?, 'CUSTOMER')";
 
-    Connection connection = null;
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
 
-    try {
+        statement.setString(1, user.getFullName());
+        statement.setString(2, user.getEmail());
+        statement.setString(3, PasswordUtil.hash(user.getPassword()));
 
-        connection = DatabaseConnection.getConnection();
-
-        if (connection == null) {
-            return false;
-        }
-
-        try (PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
-
-            statement.setString(1, user.getFullName());
-            statement.setString(2, user.getEmail());
-            statement.setString(3, user.getPassword());
-
-            return statement.executeUpdate() > 0;
-        }
+        return statement.executeUpdate() > 0;
 
     } catch (SQLException e) {
-
-        e.printStackTrace();
         return false;
-
-    } finally {
-
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
-        }
     }
 }
 
@@ -58,58 +37,53 @@ public User loginUser(String email, String password, String role) {
 
     String sql =
             "SELECT USER_ID, FULL_NAME, EMAIL, PASSWORD, USER_ROLE " +
-            "FROM USERS " +
-            "WHERE EMAIL = ? " +
-            "AND PASSWORD = ? " +
-            "AND USER_ROLE = ?";
+            "FROM USERS WHERE EMAIL = ? AND USER_ROLE = ?";
 
-    Connection connection = null;
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
 
-    try {
+        statement.setString(1, email);
+        statement.setString(2, role);
 
-        connection = DatabaseConnection.getConnection();
+        try (ResultSet result = statement.executeQuery()) {
 
-        if (connection == null) {
-            return null;
-        }
+            if (result.next()) {
+                String storedPassword = result.getString("PASSWORD");
 
-        try (PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
-
-            statement.setString(1, email);
-            statement.setString(2, password);
-            statement.setString(3, role);
-
-            try (ResultSet result = statement.executeQuery()) {
-
-                if (result.next()) {
-
-                    return new User(
-                            result.getInt("USER_ID"),
-                            result.getString("FULL_NAME"),
-                            result.getString("EMAIL"),
-                            result.getString("PASSWORD"),
-                            result.getString("USER_ROLE")
-                    );
+                if (!PasswordUtil.matches(password, storedPassword)) {
+                    return null;
                 }
+
+                if (!PasswordUtil.isHashed(storedPassword)) {
+                    upgradeLegacyPassword(connection, result.getInt("USER_ID"), password);
+                }
+
+                return new User(
+                        result.getInt("USER_ID"),
+                        result.getString("FULL_NAME"),
+                        result.getString("EMAIL"),
+                        null,
+                        result.getString("USER_ROLE")
+                );
             }
         }
 
     } catch (SQLException e) {
-
-        e.printStackTrace();
-
-    } finally {
-
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException ignored) {
-            }
-        }
+        return null;
     }
 
     return null;
+}
+
+private void upgradeLegacyPassword(Connection connection, int userId, String password)
+        throws SQLException {
+    String update = "UPDATE USERS SET PASSWORD = ? WHERE USER_ID = ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(update)) {
+        statement.setString(1, PasswordUtil.hash(password));
+        statement.setInt(2, userId);
+        statement.executeUpdate();
+    }
 }
 
 
