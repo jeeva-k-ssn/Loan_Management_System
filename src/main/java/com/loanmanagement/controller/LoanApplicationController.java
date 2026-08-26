@@ -2,6 +2,7 @@ package com.loanmanagement.controller;
 
 import com.loanmanagement.model.User;
 import com.loanmanagement.database.DatabaseConnection;
+import com.loanmanagement.util.LoanCalculationUtil;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -302,7 +303,7 @@ public class LoanApplicationController {
             }
 
 
-            BigDecimal emi = calculateEmi(
+            BigDecimal emi = LoanCalculationUtil.calculateEmi(
                     BigDecimal.valueOf(principal),
                     BigDecimal.valueOf(annualRate),
                     months
@@ -809,18 +810,6 @@ public class LoanApplicationController {
         }
     }
 
-    /** Standard reducing-balance EMI calculation, rounded only for display/storage. */
-    private BigDecimal calculateEmi(BigDecimal principal, BigDecimal annualRate, int months) {
-        BigDecimal monthlyRate = annualRate.divide(BigDecimal.valueOf(1200), 16, RoundingMode.HALF_UP);
-        if (monthlyRate.signum() == 0) {
-            return principal.divide(BigDecimal.valueOf(months), 2, RoundingMode.HALF_UP);
-        }
-        double rate = monthlyRate.doubleValue();
-        double factor = Math.pow(1.0 + rate, months);
-        return principal.multiply(BigDecimal.valueOf(rate))
-                .multiply(BigDecimal.valueOf(factor))
-                .divide(BigDecimal.valueOf(factor - 1.0), 2, RoundingMode.HALF_UP);
-    }
 
 
     // ============================================================
