@@ -3,7 +3,7 @@
    ============================================================ */
 
 .pending-root {
-    -fx-background-color: #F4F7FB;
+    -fx-background-color: linear-gradient(to bottom right, #F4F7FB, #EAF4F7);
     -fx-font-family: "Segoe UI";
 }
 
@@ -75,7 +75,7 @@
     -fx-border-color: #DCE5EE;
     -fx-border-width: 1px;
     -fx-border-radius: 14px;
-    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.06), 12, 0, 0, 3);
+    -fx-effect: dropshadow(gaussian, rgba(16,42,67,0.1), 16, 0, 0, 5);
 }
 
 .section-title {
@@ -202,6 +202,7 @@
 
 .approve-button {
     -fx-background-color: #168B8B;
+    -fx-padding: 11px 22px;
 }
 
 .approve-button:hover {
@@ -213,7 +214,8 @@
 }
 
 .reject-button {
-    -fx-background-color: #E58D93;
+    -fx-background-color: #C94C5A;
+    -fx-padding: 11px 22px;
 }
 
 .reject-button:hover {

@@ -3,7 +3,7 @@
    ========================================================= */
 
 .apply-root {
-    -fx-background-color: #F4F7FB;
+    -fx-background-color: linear-gradient(to bottom right, #F4F7FB, #EAF4F7);
     -fx-font-family: "Segoe UI";
 }
 
@@ -620,3 +620,5 @@
     -fx-font-size: 12px;
     -fx-text-fill: #718096;
 }
+
+.submit-button:focused, .calculate-button:focused, .back-button:focused { -fx-border-color: #72D3D0; -fx-border-width: 2px; }
