@@ -13,11 +13,7 @@
    ========================================================= */
 
 .top-header {
-    -fx-background-color: linear-gradient(
-        to right,
-        #082B45,
-        #0E7490
-    );
+    -fx-background-color: linear-gradient(to right, #0B1F35, #123D59);
 
     -fx-padding: 20px 38px;
 
@@ -27,7 +23,7 @@
 .logo-text {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: white;
+    -fx-text-fill: #72D3D0;
 }
 
 .logo-subtitle {

@@ -27,11 +27,11 @@
 
 /* TOP BAR */
 .pending-top-bar {
-    -fx-background-color: #173F5F;
+    -fx-background-color: #0B1F35;
 }
 
 .dashboard-logo {
-    -fx-text-fill: white;
+    -fx-text-fill: #72D3D0;
     -fx-font-size: 25px;
     -fx-font-weight: bold;
 }
@@ -58,7 +58,7 @@
 
 /* PAGE */
 .page-title {
-    -fx-text-fill: #173F5F;
+    -fx-text-fill: #102A43;
     -fx-font-size: 32px;
     -fx-font-weight: bold;
 }
@@ -201,15 +201,15 @@
 }
 
 .approve-button {
-    -fx-background-color: #69B98B;
+    -fx-background-color: #168B8B;
 }
 
 .approve-button:hover {
-    -fx-background-color: #56A979;
+    -fx-background-color: #0D6F72;
 }
 
 .approve-button:pressed {
-    -fx-background-color: #438E61;
+    -fx-background-color: #09575B;
 }
 
 .reject-button {
