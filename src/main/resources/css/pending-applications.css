@@ -243,3 +243,18 @@
     -fx-opacity: 1.0;
     -fx-cursor: default;
 }
+.pending-root, .pending-scroll > .viewport { -fx-background-color: #F6F4EF; }
+.pending-top-bar { -fx-background-color: #123D2F; }
+.dashboard-logo { -fx-text-fill: #D7B56D; }
+.page-title { -fx-text-fill: #18372B; }
+.content-card { -fx-border-color: #E1E5DE; -fx-effect: dropshadow(gaussian, rgba(29,55,42,.08), 16, 0, 0, 5); }
+.section-title { -fx-text-fill: #244B3A; }
+.application-table .column-header-background, .application-table .column-header { -fx-background-color: #244B3A; }
+.application-table .table-row-cell:hover { -fx-background-color: #F0F7F1; }
+.application-table .table-row-cell:selected { -fx-background-color: #DCEEE1; }
+.application-table .table-cell { -fx-text-fill: #365447; }
+.detail-box { -fx-background-color: #F2F7F2; -fx-border-color: #D4E7D8; }
+.detail-title { -fx-text-fill: #718078; }
+.detail-value { -fx-text-fill: #244B3A; }
+.approve-button { -fx-background-color: #176B52; }
+.approve-button:hover { -fx-background-color: #0F563F; }

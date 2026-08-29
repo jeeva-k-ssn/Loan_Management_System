@@ -13,6 +13,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -34,6 +35,12 @@ private TextField emailField;
 
 @FXML
 private PasswordField passwordField;
+
+@FXML
+private TextField visiblePasswordField;
+
+@FXML
+private ToggleButton passwordToggle;
 
 @FXML
 private ComboBox<String> roleComboBox;
@@ -133,6 +140,28 @@ public void loginUser() {
                         ? "The email, password, or selected role is incorrect."
                         : message
         );
+    }
+}
+
+@FXML
+private void togglePassword() {
+    boolean visible = passwordToggle.isSelected();
+    if (visible) {
+        visiblePasswordField.setText(passwordField.getText());
+        passwordField.setManaged(false);
+        passwordField.setVisible(false);
+        visiblePasswordField.setManaged(true);
+        visiblePasswordField.setVisible(true);
+        visiblePasswordField.requestFocus();
+        passwordToggle.setText("Hide");
+    } else {
+        passwordField.setText(visiblePasswordField.getText());
+        visiblePasswordField.setManaged(false);
+        visiblePasswordField.setVisible(false);
+        passwordField.setManaged(true);
+        passwordField.setVisible(true);
+        passwordField.requestFocus();
+        passwordToggle.setText("Show");
     }
 }
 

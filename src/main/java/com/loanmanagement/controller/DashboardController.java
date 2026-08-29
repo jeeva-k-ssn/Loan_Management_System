@@ -44,6 +44,12 @@ public class DashboardController {
     @FXML private Button pendingApplicationsButton;
     @FXML private Button loanPortfolioButton;
     @FXML private Button userManagementButton;
+    @FXML private Button sidebarApplyButton;
+    @FXML private Button sidebarLoansButton;
+    @FXML private Button sidebarPaymentsButton;
+    @FXML private Button sidebarPendingButton;
+    @FXML private Button sidebarPortfolioButton;
+    @FXML private Button sidebarUsersButton;
 
     private User currentUser;
 
@@ -63,12 +69,15 @@ public class DashboardController {
 
     private void configureRoleView() {
         configureDefaultButtons();
+        hideButton(sidebarApplyButton); hideButton(sidebarLoansButton); hideButton(sidebarPaymentsButton);
+        hideButton(sidebarPendingButton); hideButton(sidebarPortfolioButton); hideButton(sidebarUsersButton);
         if (hasRole("CUSTOMER")) {
             pageTitleLabel.setText("Your loan overview");
             pageDescriptionLabel.setText("Track applications, active loans, and repayments in one place.");
             setCardCopy("APPLICATIONS", "Submitted by you", "ACTIVE LOANS", "Currently being repaid",
                     "PAYMENTS", "Successful repayments", "TOTAL PAID", "Across your loans");
             showButton(applyLoanButton); showButton(viewLoansButton); showButton(viewPaymentsButton);
+            showButton(sidebarApplyButton); showButton(sidebarLoansButton); showButton(sidebarPaymentsButton);
         } else if (hasRole("LOAN_OFFICER")) {
             pageTitleLabel.setText("Loan processing workspace");
             pageDescriptionLabel.setText("Review applications and monitor the current lending portfolio.");
@@ -76,6 +85,7 @@ public class DashboardController {
                     "ACTIVE LOANS", "Open loan accounts", "PAYMENTS", "Payments received");
             showButton(pendingApplicationsButton);
             showButton(loanPortfolioButton);
+            showButton(sidebarPendingButton); showButton(sidebarPortfolioButton);
         } else if (hasRole("ADMIN")) {
             pageTitleLabel.setText("Administrative overview");
             pageDescriptionLabel.setText("Monitor customers, lending activity, and payment operations.");
@@ -83,6 +93,7 @@ public class DashboardController {
                     "ACTIVE LOANS", "Currently active", "PAYMENTS", "Recorded payments");
             showButton(loanPortfolioButton);
             showButton(userManagementButton);
+            showButton(sidebarPortfolioButton); showButton(sidebarUsersButton);
         }
     }
 

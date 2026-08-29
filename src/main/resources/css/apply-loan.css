@@ -624,3 +624,20 @@
 }
 
 .submit-button:focused, .calculate-button:focused, .back-button:focused { -fx-border-color: #72D3D0; -fx-border-width: 2px; }
+.apply-root { -fx-background-color: #F6F4EF; }
+.top-header { -fx-background-color: #123D2F; }
+.logo-text { -fx-text-fill: #D7B56D; }
+.logo-subtitle { -fx-text-fill: #B8D0C1; }
+.main-scroll > .viewport, .main-content { -fx-background-color: #F6F4EF; }
+.page-title { -fx-text-fill: #18372B; }
+.page-description, .card-description, .process-step-description, .security-description, .footer-text { -fx-text-fill: #68766E; }
+.loan-card, .process-card, .security-card { -fx-border-color: #E1E5DE; -fx-effect: dropshadow(gaussian, rgba(29,55,42,.08), 16, .12, 0, 5); }
+.card-header { -fx-background-color: #EEF6F0; -fx-border-color: #D4E7D8; }
+.card-title, .field-label, .process-title, .process-step-title, .security-title { -fx-text-fill: #244B3A; }
+.form-field, .form-combo, .form-textarea { -fx-border-color: #D2E0D6; }
+.form-field:focused, .form-combo:focused, .form-textarea:focused { -fx-border-color: #176B52; }
+.emi-field { -fx-background-color: #EEF6F0; -fx-border-color: #82B49E; -fx-text-fill: #176B52; }
+.calculate-button, .submit-button { -fx-background-color: #176B52; }
+.calculate-button:hover, .submit-button:hover { -fx-background-color: #0F563F; }
+.summary-card { -fx-background-color: linear-gradient(to bottom right, #123D2F, #176B52); }
+.summary-title, .step-label { -fx-text-fill: #D7B56D; }

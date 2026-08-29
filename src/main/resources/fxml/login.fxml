@@ -8,17 +8,17 @@
   <StackPane prefWidth="620" styleClass="hero-panel">
    <ImageView fx:id="heroImage" fitWidth="620" fitHeight="680" preserveRatio="false"><image><Image url="@../images/login-hero-1.png"/></image></ImageView>
    <VBox alignment="TOP_LEFT" prefWidth="620" prefHeight="680" styleClass="hero-overlay"><padding><Insets top="38" right="46" bottom="38" left="46"/></padding>
-    <Label text="LOANFLOW" styleClass="brand-logo"/>
+    <Label text="LoanFlow" styleClass="brand-logo"/>
     <VBox VBox.vgrow="ALWAYS" alignment="BOTTOM_LEFT" spacing="12"><Label fx:id="heroCaption" text="Build your next chapter." styleClass="hero-caption" wrapText="true"/><Label text="Simple borrowing. Clear progress. A better way forward." styleClass="hero-subtitle" wrapText="true"/><HBox fx:id="heroDots" spacing="7" styleClass="hero-dots"><Label text="●" styleClass="hero-dot active"/><Label text="●" styleClass="hero-dot"/><Label text="●" styleClass="hero-dot"/></HBox></VBox>
    </VBox>
   </StackPane>
   <VBox prefWidth="560" alignment="CENTER_LEFT" spacing="20" styleClass="login-panel"><padding><Insets top="58" right="78" bottom="58" left="78"/></padding>
-   <Label text="GOOD TO SEE YOU" styleClass="login-kicker"/><Label text="Welcome back" styleClass="login-heading"/><Label text="Sign in securely to manage your loans and plans." styleClass="login-subtitle" wrapText="true"/>
+   <Label text="WELCOME BACK" styleClass="login-kicker"/><Label text="Welcome Back" styleClass="login-heading"/><Label text="Sign in to continue to your LoanFlow account." styleClass="login-subtitle" wrapText="true"/>
    <VBox spacing="8" maxWidth="400"><Label text="EMAIL ADDRESS" styleClass="field-label"/><TextField fx:id="emailField" promptText="you@example.com" styleClass="modern-field"/></VBox>
-   <VBox spacing="8" maxWidth="400"><Label text="PASSWORD" styleClass="field-label"/><PasswordField fx:id="passwordField" promptText="Enter your password" styleClass="modern-field"/></VBox>
+   <VBox spacing="8" maxWidth="400"><Label text="PASSWORD" styleClass="field-label"/><HBox spacing="8"><PasswordField fx:id="passwordField" HBox.hgrow="ALWAYS" promptText="Enter your password" styleClass="modern-field"/><TextField fx:id="visiblePasswordField" managed="false" visible="false" HBox.hgrow="ALWAYS" promptText="Enter your password" styleClass="modern-field"/><ToggleButton fx:id="passwordToggle" text="Show" onAction="#togglePassword" styleClass="password-toggle"/></HBox></VBox>
    <VBox spacing="8" maxWidth="400"><Label text="LOGIN AS" styleClass="field-label"/><ComboBox fx:id="roleComboBox" maxWidth="Infinity" styleClass="modern-combo"/></VBox>
-   <Button text="Sign in" maxWidth="400" prefHeight="52" styleClass="primary-button" onAction="#loginUser"/>
-   <HBox alignment="CENTER_LEFT" spacing="6"><Label text="New to LoanFlow?" styleClass="small-text"/><Hyperlink text="Create Customer Account" styleClass="register-link" onAction="#openRegister"/></HBox>
+   <Button text="Login" maxWidth="400" prefHeight="52" styleClass="primary-button" onAction="#loginUser"/>
+   <HBox alignment="CENTER_LEFT" spacing="6"><Label text="Don't have an account?" styleClass="small-text"/><Hyperlink text="Register" styleClass="register-link" onAction="#openRegister"/></HBox>
    <Label text="Protected by secure account verification" styleClass="security-note"/>
   </VBox>
  </HBox>

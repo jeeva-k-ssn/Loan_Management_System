@@ -27,8 +27,8 @@
             </padding>
 
             <VBox spacing="3">
-                <Label text="LOANFLOW" styleClass="dashboard-logo"/>
-                <Label text="LOAN MANAGEMENT SYSTEM" styleClass="dashboard-subtitle"/>
+                <Label text="LoanFlow" styleClass="dashboard-logo"/>
+                <Label text="SIMPLE LENDING • SMARTER DECISIONS" styleClass="dashboard-subtitle"/>
             </VBox>
 
             <Region HBox.hgrow="ALWAYS"/>

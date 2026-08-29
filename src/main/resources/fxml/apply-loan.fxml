@@ -32,10 +32,10 @@
 
             <VBox spacing="2">
 
-                <Label text="LOANFLOW"
+                <Label text="LoanFlow"
                        styleClass="logo-text"/>
 
-                <Label text="LOAN MANAGEMENT SYSTEM"
+                <Label text="SIMPLE LENDING • SMARTER DECISIONS"
                        styleClass="logo-subtitle"/>
 
             </VBox>
@@ -78,7 +78,7 @@
                     <Label text="Apply for a Loan"
                            styleClass="page-title"/>
 
-                    <Label text="Complete the details below to submit your loan application."
+                    <Label text="Choose the financing option that fits your needs."
                            styleClass="page-description"/>
 
                 </VBox>

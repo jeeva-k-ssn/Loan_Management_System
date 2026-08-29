@@ -9,7 +9,7 @@
     <top>
         <HBox alignment="CENTER_LEFT" spacing="12" styleClass="top-bar">
             <padding><Insets top="16" right="28" bottom="16" left="28"/></padding>
-            <VBox><Label text="LOANFLOW" styleClass="dashboard-logo"/><Label text="ADMINISTRATION" styleClass="dashboard-subtitle"/></VBox>
+            <VBox><Label text="LoanFlow" styleClass="dashboard-logo"/><Label text="ADMINISTRATION" styleClass="dashboard-subtitle"/></VBox>
             <Region HBox.hgrow="ALWAYS"/>
             <Button text="Refresh" onAction="#refresh" styleClass="refresh-button"/>
             <Button text="Back" onAction="#back" styleClass="logout-button"/>

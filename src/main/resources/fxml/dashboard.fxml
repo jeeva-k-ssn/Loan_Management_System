@@ -42,10 +42,10 @@
 
             <VBox spacing="3">
 
-                <Label text="LOANFLOW"
+                <Label text="LoanFlow"
                        styleClass="dashboard-logo"/>
 
-                <Label text="LOAN MANAGEMENT SYSTEM"
+                <Label text="SIMPLE LENDING • SMARTER DECISIONS"
                        styleClass="dashboard-subtitle"/>
 
             </VBox>
@@ -86,6 +86,25 @@
         </HBox>
 
     </top>
+
+    <left>
+        <VBox prefWidth="220" spacing="8" styleClass="app-sidebar">
+            <padding><Insets top="26" right="16" bottom="24" left="16"/></padding>
+            <Label text="LoanFlow" styleClass="sidebar-logo"/>
+            <Label text="Simple Lending. Smarter Decisions." wrapText="true" styleClass="sidebar-tagline"/>
+            <Region prefHeight="18"/>
+            <Label text="WORKSPACE" styleClass="sidebar-section"/>
+            <Button fx:id="sidebarDashboardButton" text="⌂   Dashboard" maxWidth="Infinity" styleClass="sidebar-button active"/>
+            <Button fx:id="sidebarApplyButton" text="＋   Apply for Loan" maxWidth="Infinity" onAction="#applyLoan" styleClass="sidebar-button"/>
+            <Button fx:id="sidebarLoansButton" text="▣   My Loans" maxWidth="Infinity" onAction="#viewLoans" styleClass="sidebar-button"/>
+            <Button fx:id="sidebarPaymentsButton" text="◷   Payments" maxWidth="Infinity" onAction="#viewPayments" styleClass="sidebar-button"/>
+            <Button fx:id="sidebarPendingButton" text="✓   Pending Applications" maxWidth="Infinity" onAction="#openPendingApplications" styleClass="sidebar-button"/>
+            <Button fx:id="sidebarPortfolioButton" text="▤   Loan Portfolio" maxWidth="Infinity" onAction="#openLoanPortfolioPage" styleClass="sidebar-button"/>
+            <Button fx:id="sidebarUsersButton" text="♙   User Management" maxWidth="Infinity" onAction="#openUserManagement" styleClass="sidebar-button"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="↪   Logout" maxWidth="Infinity" onAction="#logout" styleClass="sidebar-logout"/>
+        </VBox>
+    </left>
 
 
     <!-- ========================================================= -->

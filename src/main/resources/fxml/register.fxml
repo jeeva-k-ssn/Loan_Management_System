@@ -31,8 +31,8 @@
 <StackPane prefWidth="430" styleClass="register-visual">
     <ImageView fitWidth="430" fitHeight="680" preserveRatio="false"><image><Image url="@../images/login-hero-2.png"/></image></ImageView>
     <VBox alignment="TOP_LEFT" prefWidth="430" prefHeight="680" styleClass="register-overlay"><padding><Insets top="38" right="38" bottom="38" left="38"/></padding>
-        <Label text="LOANFLOW" styleClass="brand-logo"/>
-        <VBox VBox.vgrow="ALWAYS" alignment="BOTTOM_LEFT" spacing="10"><Label text="Manage your loans with confidence." styleClass="hero-caption" wrapText="true"/><Label text="Create an account to apply, review and track repayments." styleClass="hero-subtitle" wrapText="true"/></VBox>
+        <Label text="LoanFlow" styleClass="brand-logo"/>
+        <VBox VBox.vgrow="ALWAYS" alignment="BOTTOM_LEFT" spacing="10"><Label text="Start Your Financial Journey." styleClass="hero-caption" wrapText="true"/><Label text="Create an account to apply, review and track repayments." styleClass="hero-subtitle" wrapText="true"/></VBox>
     </VBox>
 </StackPane>
 <VBox maxWidth="560"
@@ -47,10 +47,10 @@
                 left="55"/>
     </padding>
 
-    <Label text="LOANFLOW"
+    <Label text="LoanFlow"
            styleClass="brand-logo-small"/>
 
-    <Label text="Create your account"
+    <Label text="Create Your Account"
            styleClass="login-heading"/>
 
     <Label text="Join LoanFlow and manage your loan journey from one place."
