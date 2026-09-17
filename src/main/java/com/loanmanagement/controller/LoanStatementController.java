@@ -2,6 +2,7 @@ package com.loanmanagement.controller;
 
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.model.User;
+import com.loanmanagement.navigation.NavigationManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -85,7 +86,7 @@ public class LoanStatementController {
         paymentTable.setItems(rows); BigDecimal paid=rows.stream().filter(x->"PAID".equalsIgnoreCase(x.status)).map(x->BigDecimal.valueOf(x.amount)).reduce(BigDecimal.ZERO,BigDecimal::add); paidLabel.setText(money(paid)); repayableLabel.setText(money(repayable)); outstandingLabel.setText(money(repayable.subtract(paid).max(BigDecimal.ZERO)));
     }
     @FXML private void refresh() { loadStatementAsync(); }
-    @FXML private void back() { try { FXMLLoader l=new FXMLLoader(getClass().getResource("/fxml/loans.fxml")); Parent root=l.load(); l.<LoanManagementController>getController().setCurrentUser(currentUser); Stage s=(Stage)paymentTable.getScene().getWindow(); s.setScene(new Scene(root,1400,850)); s.setMaximized(true); } catch(Exception e){ showError("Navigation error","Unable to return to the loan portfolio."); } }
+    @FXML private void back() { try { NavigationManager.navigate((Stage) paymentTable.getScene().getWindow(), "/fxml/loans.fxml", "LoanFlow - Loans & Payments", c -> ((LoanManagementController)c).setCurrentUser(currentUser)); } catch(Exception e){ showError("Navigation error","Unable to return to the loan portfolio."); } }
     private String money(BigDecimal value){return NumberFormat.getCurrencyInstance(new Locale("en","IN")).format(value.setScale(2,RoundingMode.HALF_UP));}
     private void showError(String title,String message){Alert a=new Alert(Alert.AlertType.ERROR);a.setTitle(title);a.setHeaderText(null);a.setContentText(message);a.showAndWait();}
     public static class PaymentRow { private final int id; private final String date,method,reference,status; private final double amount; PaymentRow(int id,String date,double amount,String method,String reference,String status){this.id=id;this.date=date;this.amount=amount;this.method=method;this.reference=reference;this.status=status;} public int getId(){return id;} public String getDate(){return date;} public double getAmount(){return amount;} public String getMethod(){return method;} public String getReference(){return reference;} public String getStatus(){return status;} }

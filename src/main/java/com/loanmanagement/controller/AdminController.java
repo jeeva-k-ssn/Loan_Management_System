@@ -2,6 +2,7 @@ package com.loanmanagement.controller;
 
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.model.User;
+import com.loanmanagement.navigation.NavigationManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -184,7 +185,7 @@ public class AdminController {
     }
 
     @FXML private void refresh() { if (isAdmin()) { loadUsers(); loadApplications(); loadCustomers(); loadPayments(); loadMetrics(); } }
-    @FXML private void openCustomerProfile() { CustomerRow row=customerTable.getSelectionModel().getSelectedItem(); if(row==null)return; try{FXMLLoader l=new FXMLLoader(getClass().getResource("/fxml/profile.fxml"));Parent root=l.load();l.<ProfileController>getController().setCustomer(currentUser,row.id);Stage s=(Stage)customerTable.getScene().getWindow();s.setScene(new Scene(root,1400,850));s.setTitle("LoanFlow - Customer Profile");s.setMaximized(true);}catch(Exception e){alert(Alert.AlertType.ERROR,"Profile unavailable","Unable to open the customer profile.");} }
+    @FXML private void openCustomerProfile() { CustomerRow row=customerTable.getSelectionModel().getSelectedItem();if(row==null)return;try{NavigationManager.navigate((Stage)customerTable.getScene().getWindow(),"/fxml/profile.fxml","LoanFlow - Customer Profile",c->((ProfileController)c).setCustomer(currentUser,row.id));}catch(Exception e){alert(Alert.AlertType.ERROR,"Profile unavailable","Unable to open the customer profile.");} }
 
     private void loadMetrics() {
         Task<AdminMetrics> task=new Task<>(){protected AdminMetrics call() throws SQLException{try(Connection c=DatabaseConnection.getConnection()){return new AdminMetrics(queryCount(c,"SELECT COUNT(*) FROM LMS_CUSTOMER"),queryNewCustomerCount(c),queryCount(c,"SELECT COUNT(DISTINCT CUSTOMER_ID) FROM LOAN WHERE STATUS='ACTIVE'"),queryCount(c,"SELECT COUNT(*) FROM LOAN_APPLICATION WHERE UPPER(STATUS)='PENDING'"),queryCount(c,"SELECT COUNT(*) FROM LOAN WHERE STATUS='ACTIVE'"),queryCount(c,"SELECT COUNT(*) FROM LOAN_APPLICATION"),queryCount(c,"SELECT COUNT(*) FROM LOAN_APPLICATION WHERE UPPER(STATUS)='APPROVED'"),queryCount(c,"SELECT COUNT(*) FROM LOAN_APPLICATION WHERE UPPER(STATUS)='REJECTED'"),queryCount(c,"SELECT COUNT(*) FROM LOAN"),queryCount(c,"SELECT COUNT(*) FROM LOAN WHERE STATUS='CLOSED'"),queryAmount(c,"SELECT NVL(SUM(LOAN_AMOUNT),0) FROM LOAN"),queryAmount(c,"SELECT NVL(SUM(AMOUNT),0) FROM PAYMENT WHERE PAYMENT_STATUS='PAID'"),queryAmount(c,"SELECT NVL(SUM(EMI_AMOUNT * TENURE_MONTHS),0) FROM LOAN"));}}};
@@ -222,7 +223,7 @@ public class AdminController {
         try {
             FXMLLoader l = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml")); Parent root = l.load();
             l.<DashboardController>getController().setCurrentUser(currentUser); Stage s = (Stage) userTable.getScene().getWindow();
-            s.setScene(new Scene(root, 1400, 850)); s.setMaximized(true);
+            s.getScene().setRoot(root); s.setMaximized(true);
         } catch (Exception e) { alert(Alert.AlertType.ERROR, "Navigation error", "Unable to return to the dashboard."); }
     }
     private void alert(Alert.AlertType type, String title, String message) { Alert a = new Alert(type); a.setTitle(title); a.setHeaderText(null); a.setContentText(message); a.showAndWait(); }

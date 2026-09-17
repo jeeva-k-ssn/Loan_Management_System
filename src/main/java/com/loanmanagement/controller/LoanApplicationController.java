@@ -807,14 +807,7 @@ public class LoanApplicationController {
                                     .getScene()
                                     .getWindow();
 
-            Scene scene =
-                    new Scene(
-                            root,
-                            1400,
-                            850
-                    );
-
-            stage.setScene(scene);
+            stage.getScene().setRoot(root);
 
             stage.setTitle(
                     "LoanFlow - Dashboard"

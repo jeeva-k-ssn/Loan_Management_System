@@ -3,6 +3,7 @@ package com.loanmanagement.controller;
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.service.NotificationService;
 import com.loanmanagement.model.User;
+import com.loanmanagement.navigation.NavigationManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -222,10 +223,10 @@ public class LoanManagementController {
     @FXML private void openStatement() {
         LoanRow loan = loanTable.getSelectionModel().getSelectedItem();
         if (loan == null) { showError("Select a loan", "Select a loan before opening its statement."); return; }
-        try { FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/loan-statement.fxml")); Parent root = loader.load(); loader.<LoanStatementController>getController().setLoan(currentUser, loan.loanId); Stage stage=(Stage)loanTable.getScene().getWindow(); stage.setScene(new Scene(root,1400,850)); stage.setTitle("LoanFlow - Loan Statement"); stage.setMaximized(true); }
+        try { NavigationManager.navigate((Stage) loanTable.getScene().getWindow(), "/fxml/loan-statement.fxml", "LoanFlow - Loan Statement", c -> ((LoanStatementController)c).setLoan(currentUser, loan.loanId)); }
         catch (Exception e) { showError("Statement unavailable", "Unable to open the loan statement."); }
     }
-    @FXML private void back() { try { FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml")); Parent root = loader.load(); loader.<DashboardController>getController().setCurrentUser(currentUser); Stage stage = (Stage) loanTable.getScene().getWindow(); stage.setScene(new Scene(root, 1400, 850)); stage.setTitle("LoanFlow - Dashboard"); stage.setMaximized(true); } catch (Exception e) { showError("Navigation error", "Unable to return to the dashboard."); } }
+    @FXML private void back() { try { NavigationManager.navigate((Stage) loanTable.getScene().getWindow(), "/fxml/dashboard.fxml", "LoanFlow - Dashboard", c -> ((DashboardController)c).setCurrentUser(currentUser)); } catch (Exception e) { showError("Navigation error", "Unable to return to the dashboard."); } }
     private void refreshPaymentPreview() {
         LoanRow loan = loanTable == null ? null : loanTable.getSelectionModel().getSelectedItem();
         if (loan == null || remainingAfterPaymentLabel == null) return;

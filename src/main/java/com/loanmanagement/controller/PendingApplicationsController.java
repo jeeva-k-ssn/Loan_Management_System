@@ -1058,15 +1058,7 @@ public class PendingApplicationsController {
                             .getWindow();
 
 
-            Scene scene =
-                    new Scene(
-                            root,
-                            1400,
-                            850
-                    );
-
-
-            currentStage.setScene(scene);
+            currentStage.getScene().setRoot(root);
 
             currentStage.setTitle(
                     "LoanFlow - Dashboard"
