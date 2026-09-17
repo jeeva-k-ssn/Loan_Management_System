@@ -3,14 +3,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.loanmanagement.controller.LoginController" stylesheets="@../css/login.css" styleClass="login-root">
-    <HBox maxWidth="1050" maxHeight="660" styleClass="login-shell">
-        <VBox prefWidth="390" spacing="18" styleClass="login-brand-panel"><padding><Insets top="52" right="42" bottom="42" left="42"/></padding>
+    <HBox maxWidth="Infinity" maxHeight="Infinity" spacing="0" styleClass="login-shell">
+        <VBox prefWidth="500" maxWidth="Infinity" spacing="18" HBox.hgrow="ALWAYS" styleClass="login-brand-panel"><padding><Insets top="52" right="56" bottom="42" left="56"/></padding>
             <Label text="LoanFlow" styleClass="brand-logo"/><Region VBox.vgrow="ALWAYS"/>
             <Label text="Smarter Lending.&#10;Simpler Management." styleClass="brand-headline" wrapText="true"/>
             <Label text="A clear, secure workspace for applications, approvals and repayments." styleClass="brand-copy" wrapText="true"/>
             <Label text="DESKTOP BANKING WORKSPACE" styleClass="brand-kicker"/>
         </VBox>
-        <VBox prefWidth="560" alignment="CENTER_LEFT" spacing="18" styleClass="login-panel"><padding><Insets top="58" right="76" bottom="58" left="76"/></padding>
+        <VBox prefWidth="700" maxWidth="Infinity" alignment="CENTER_LEFT" spacing="18" HBox.hgrow="ALWAYS" styleClass="login-panel"><padding><Insets top="58" right="90" bottom="58" left="90"/></padding>
             <Label text="WELCOME BACK" styleClass="login-kicker"/><Label text="Sign in to your account" styleClass="login-heading"/><Label text="Use your LoanFlow credentials to continue." styleClass="login-subtitle" wrapText="true"/>
             <VBox spacing="8" maxWidth="410"><Label text="EMAIL ADDRESS" styleClass="field-label"/><TextField fx:id="emailField" promptText="you@example.com" styleClass="modern-field"/></VBox>
             <VBox spacing="8" maxWidth="410"><Label text="PASSWORD" styleClass="field-label"/><HBox spacing="8"><PasswordField fx:id="passwordField" HBox.hgrow="ALWAYS" promptText="Enter your password" styleClass="modern-field"/><TextField fx:id="visiblePasswordField" managed="false" visible="false" HBox.hgrow="ALWAYS" promptText="Enter your password" styleClass="modern-field"/><ToggleButton fx:id="passwordToggle" text="Show" onAction="#togglePassword" styleClass="password-toggle"/></HBox></VBox>
