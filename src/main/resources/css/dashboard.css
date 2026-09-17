@@ -1,120 +1,54 @@
-/* LoanFlow shared fintech design system */
-.dashboard-root { -fx-background-color: #F4F7FB; -fx-font-family: "Segoe UI"; }
-.top-bar { -fx-background-color: #0B1F35; -fx-border-color: transparent; -fx-padding: 16px 28px; }
-.dashboard-logo { -fx-text-fill: #72D3D0; -fx-font-size: 21px; -fx-font-weight: bold; }
-.dashboard-subtitle { -fx-text-fill: #9EB2C7; -fx-font-size: 9px; -fx-font-weight: bold; }
-.welcome-label { -fx-text-fill: #FFFFFF; -fx-font-size: 14px; -fx-font-weight: bold; }
-.role-label { -fx-text-fill: #72D3D0; -fx-font-size: 11px; -fx-font-weight: bold; }
-.refresh-button, .logout-button { -fx-padding: 9px 16px; -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-font-size: 12px; -fx-font-weight: bold; -fx-cursor: hand; }
-.refresh-button { -fx-background-color: #163753; -fx-border-color: #2B506D; -fx-text-fill: #C7E9EA; }
-.refresh-button:hover { -fx-background-color: #214A69; }
-.logout-button { -fx-background-color: #3B2934; -fx-border-color: #6D3A4A; -fx-text-fill: #FFC7CC; }
-.logout-button:hover { -fx-background-color: #573342; }
-.dashboard-scroll, .dashboard-scroll > .viewport { -fx-background-color: #F4F7FB; -fx-border-color: transparent; }
-.dashboard-scroll .scroll-bar:vertical { -fx-background-color: transparent; -fx-pref-width: 10px; }
-.dashboard-scroll .scroll-bar:vertical .thumb { -fx-background-color: #B7C7D6; -fx-background-radius: 8px; }
-.page-title { -fx-text-fill: #102A43; -fx-font-size: 29px; -fx-font-weight: bold; }
-.page-description { -fx-text-fill: #71839A; -fx-font-size: 13px; }
-.dashboard-hero { -fx-background-color: linear-gradient(to right, #0B1F35, #145E70); -fx-background-radius: 16px; -fx-padding: 22px 24px; -fx-effect: dropshadow(gaussian, rgba(16,42,67,.16), 16, 0, 0, 5); }
-.hero-title { -fx-text-fill: #FFFFFF; -fx-font-size: 23px; -fx-font-weight: bold; }
-.hero-description { -fx-text-fill: #CBE7EA; -fx-font-size: 12px; -fx-line-spacing: 3px; }
-.stat-card, .content-card { -fx-background-color: #FFFFFF; -fx-background-radius: 14px; -fx-border-color: #DFE8F0; -fx-border-radius: 14px; -fx-effect: dropshadow(gaussian, rgba(16,42,67,0.08), 14, 0, 0, 4); }
-.stat-card { -fx-pref-width: 250px; -fx-min-width: 170px; -fx-min-height: 145px; }
-.stat-card:hover { -fx-border-color: #86C9C8; -fx-effect: dropshadow(gaussian, rgba(25,143,145,0.18), 18, 0, 0, 5); }
-.card-label { -fx-text-fill: #71839A; -fx-font-size: 10px; -fx-font-weight: bold; }
-.card-value { -fx-text-fill: #0B1F35; -fx-font-size: 32px; -fx-font-weight: bold; }
-.card-description { -fx-text-fill: #98A8B8; -fx-font-size: 11px; }
-.section-title { -fx-text-fill: #163753; -fx-font-size: 17px; -fx-font-weight: bold; }
-.section-description { -fx-text-fill: #71839A; -fx-font-size: 11px; }
-.summary-value { -fx-text-fill: #123D2F; -fx-font-size: 15px; -fx-font-weight: bold; }
-.payment-preview { -fx-background-color: #EEF6F0; -fx-background-radius: 8px; -fx-border-color: #D4E7D8; -fx-border-radius: 8px; -fx-padding: 10px; -fx-text-fill: #176B52; -fx-font-size: 12px; -fx-font-weight: bold; }
-.notification-list { -fx-background-color: transparent; -fx-border-color: #E1E5DE; -fx-border-radius: 12px; -fx-background-radius: 12px; }
-.notification-list .list-cell { -fx-background-color: #FFFFFF; -fx-padding: 16px; -fx-border-color: transparent transparent #E8EEE9 transparent; -fx-font-size: 13px; -fx-text-fill: #244B3A; }
-.notification-list .list-cell:hover { -fx-background-color: #F0F7F1; }
-.notification-unread { -fx-font-weight: bold; -fx-border-color: #82B49E; }
-.notification-read { -fx-opacity: .78; }
-.activity-container { -fx-padding: 18px 0 0 0; }
-.activity-item { -fx-background-color: #F5F8FB; -fx-background-radius: 8px; -fx-padding: 12px 14px; -fx-text-fill: #31556D; -fx-font-size: 13px; }
-.empty-label { -fx-text-fill: #98A8B8; -fx-font-size: 12px; }
-.action-button { -fx-background-color: #168B8B; -fx-text-fill: #FFFFFF; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-padding: 10px 16px; -fx-cursor: hand; }
-.action-button:hover { -fx-background-color: #0D6F72; }
-.action-button:pressed { -fx-background-color: #09575B; }
-.action-button:disabled { -fx-background-color: #C8D3DC; -fx-text-fill: #7C8B99; -fx-opacity: 1; -fx-cursor: default; }
-.secondary-action-button { -fx-background-color: #F5F8FB; -fx-border-color: #D4E0E9; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-text-fill: #31556D; -fx-font-weight: bold; -fx-padding: 10px 16px; -fx-cursor: hand; }
-.secondary-action-button:hover { -fx-background-color: #E8F4F4; -fx-border-color: #86C9C8; }
-.small-refresh-button { -fx-background-color: #E8F4F4; -fx-text-fill: #0D6F72; -fx-background-radius: 8px; -fx-padding: 5px 10px; -fx-cursor: hand; }
-.quote-card { -fx-background-color: #E8F4F4; -fx-background-radius: 12px; -fx-border-color: #C9E5E5; -fx-border-radius: 12px; -fx-padding: 16px; }
-.quote-main { -fx-text-fill: #31556D; -fx-font-size: 13px; -fx-font-weight: bold; -fx-font-style: italic; }
-.quote-sub { -fx-text-fill: #71839A; -fx-font-size: 10px; }
+/* LoanFlow design system: navy, teal, white surfaces, restrained semantic states */
+.dashboard-root { -fx-background-color: #F4F7FA; -fx-font-family: "Segoe UI"; }
+.top-bar { -fx-background-color: #0B1F35; -fx-padding: 16px 28px; }
+.dashboard-logo, .sidebar-logo { -fx-text-fill: #78D6D1; -fx-font-size: 22px; -fx-font-weight: bold; }
+.dashboard-subtitle, .sidebar-section { -fx-text-fill: #9DB2C5; -fx-font-size: 10px; -fx-font-weight: bold; }
+.welcome-label { -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; }
+.role-label { -fx-text-fill: #78D6D1; -fx-font-size: 11px; -fx-font-weight: bold; }
+.app-sidebar { -fx-background-color: #102B43; -fx-padding: 24px 16px; }
+.sidebar-tagline { -fx-text-fill: #B7C8D6; -fx-font-size: 11px; -fx-line-spacing: 2px; }
+.sidebar-button, .sidebar-logout { -fx-background-color: transparent; -fx-text-fill: #D7E4ED; -fx-alignment: CENTER_LEFT; -fx-padding: 12px 14px; -fx-font-size: 12px; -fx-background-radius: 8px; -fx-cursor: hand; }
+.sidebar-button:hover, .sidebar-button.active { -fx-background-color: #1A4A63; -fx-text-fill: white; }
+.sidebar-button.active { -fx-border-color: #78D6D1; -fx-border-width: 0 0 0 3px; }
+.sidebar-logout { -fx-border-color: #38556A transparent transparent transparent; -fx-border-width: 1px 0 0 0; -fx-text-fill: #FFC9C9; }
+.dashboard-scroll, .dashboard-scroll > .viewport { -fx-background-color: #F4F7FA; -fx-border-color: transparent; }
+.page-title { -fx-text-fill: #102A43; -fx-font-size: 28px; -fx-font-weight: bold; }
+.page-description, .section-description { -fx-text-fill: #6B7F91; -fx-font-size: 13px; }
+.dashboard-hero { -fx-background-color: linear-gradient(to right, #0B1F35, #155C70); -fx-background-radius: 14px; -fx-padding: 24px; }
+.hero-title { -fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold; }
+.hero-description { -fx-text-fill: #D4EEF0; -fx-font-size: 13px; }
+.stat-card, .content-card { -fx-background-color: white; -fx-border-color: #DCE6EE; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-padding: 18px; }
+.stat-card { -fx-min-height: 128px; }
+.card-label, .field-label { -fx-text-fill: #6B7F91; -fx-font-size: 10px; -fx-font-weight: bold; }
+.card-value { -fx-text-fill: #0B1F35; -fx-font-size: 30px; -fx-font-weight: bold; }
+.card-description, .empty-label { -fx-text-fill: #8B9BA9; -fx-font-size: 12px; }
+.section-title { -fx-text-fill: #163B55; -fx-font-size: 16px; -fx-font-weight: bold; }
+.action-button, .primary-button { -fx-background-color: #128C8C; -fx-text-fill: white; -fx-background-radius: 8px; -fx-padding: 10px 16px; -fx-font-weight: bold; -fx-cursor: hand; }
+.action-button:hover, .primary-button:hover { -fx-background-color: #0D6F72; }
+.secondary-action-button, .refresh-button { -fx-background-color: #EAF4F5; -fx-border-color: #B9D9DD; -fx-text-fill: #126B71; -fx-background-radius: 8px; -fx-border-radius: 8px; -fx-padding: 9px 14px; -fx-font-weight: bold; -fx-cursor: hand; }
+.logout-button { -fx-background-color: #4D2B37; -fx-text-fill: #FFD8DC; -fx-background-radius: 8px; -fx-padding: 9px 14px; -fx-font-weight: bold; }
+.modern-field, .modern-combo, .combo-box { -fx-background-color: #F9FBFC; -fx-border-color: #CBD9E2; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-pref-height: 40px; -fx-padding: 0 12px; }
+.modern-field:focused, .modern-combo:focused, .combo-box:focused { -fx-background-color: white; -fx-border-color: #128C8C; }
+.summary-value { -fx-text-fill: #123D52; -fx-font-size: 15px; -fx-font-weight: bold; }
+.activity-item { -fx-background-color: #F3F8FA; -fx-text-fill: #31566C; -fx-padding: 11px 13px; -fx-background-radius: 7px; }
+.table-view { -fx-background-color: white; -fx-border-color: #D8E3EA; -fx-background-radius: 9px; -fx-border-radius: 9px; -fx-fixed-cell-size: 42px; }
+.table-view .column-header-background, .table-view .column-header, .table-view .filler, .table-view .corner { -fx-background-color: #163B55; }
+.table-view .column-header .label { -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: bold; }
+.table-view .table-row-cell { -fx-background-color: white; -fx-border-color: transparent transparent #E7EEF2 transparent; }
+.table-view .table-row-cell:odd { -fx-background-color: #FBFDFE; }
+.table-view .table-row-cell:hover { -fx-background-color: #EEF8F8; }
+.table-view .table-row-cell:selected { -fx-background-color: #CFEDEE; }
+.table-view .table-cell { -fx-text-fill: #31566C; -fx-font-size: 12px; -fx-padding: 0 9px; }
+.notification-list { -fx-background-color: white; -fx-border-color: #D8E3EA; -fx-background-radius: 10px; }
+.notification-list .list-cell { -fx-background-color: white; -fx-padding: 15px; -fx-border-color: transparent transparent #E5EDF1 transparent; -fx-text-fill: #284D63; }
+.notification-list .list-cell:hover { -fx-background-color: #F0F8F8; }
+.notification-unread { -fx-font-weight: bold; -fx-border-color: #128C8C; }
+.notification-read { -fx-opacity: .72; }
+.status-badge { -fx-padding: 5px 9px; -fx-background-radius: 6px; -fx-font-size: 10px; -fx-font-weight: bold; }
+.status-pending { -fx-background-color: #FFF2D5; -fx-text-fill: #916A18; }
+.status-approved, .status-paid, .status-active { -fx-background-color: #DDF2E5; -fx-text-fill: #147344; }
+.status-rejected, .status-failed, .status-overdue { -fx-background-color: #FBE2E2; -fx-text-fill: #A23E46; }
+.payment-preview { -fx-background-color: #EAF7F1; -fx-text-fill: #147344; -fx-padding: 10px; -fx-background-radius: 7px; }
+.tab-pane .tab { -fx-background-color: #E8EFF3; -fx-padding: 9px 16px; }
+.tab-pane .tab:selected { -fx-background-color: white; }
 
-/* Shared banking tables */
-.table-view { -fx-background-color: #FFFFFF; -fx-border-color: #DCE6EE; -fx-border-radius: 9px; -fx-background-radius: 9px; -fx-fixed-cell-size: 42px; }
-.table-view .column-header-background { -fx-background-color: #163753; }
-.table-view .column-header { -fx-background-color: #163753; -fx-size: 42px; -fx-border-color: transparent; }
-.table-view .column-header .label { -fx-text-fill: #FFFFFF; -fx-font-size: 11px; -fx-font-weight: bold; }
-.table-view .table-row-cell { -fx-background-color: #FFFFFF; -fx-border-color: transparent transparent #E8EEF3 transparent; -fx-border-width: 0 0 1px 0; }
-.table-view .table-row-cell:odd { -fx-background-color: #FAFCFD; }
-.table-view .table-row-cell:hover { -fx-background-color: #EDF7F7; }
-.table-view .table-row-cell:selected { -fx-background-color: #CFEDEC; }
-.table-view .table-row-cell:selected .text { -fx-fill: #0B4E55; -fx-font-weight: bold; }
-.table-view .table-cell { -fx-text-fill: #31556D; -fx-font-size: 12px; -fx-padding: 0 9px; -fx-border-color: transparent; }
-.table-view .placeholder .label { -fx-text-fill: #98A8B8; -fx-font-size: 12px; }
-.table-view .placeholder { -fx-background-color: #F8FBFC; -fx-padding: 22px; }
-.table-view .placeholder .empty-title { -fx-text-fill: #31556D; -fx-font-size: 14px; -fx-font-weight: bold; }
-.payment-table .table-cell:nth-child(3) { -fx-font-weight: bold; -fx-text-fill: #0D6F72; }
-.admin-table { -fx-fixed-cell-size: 44px; }
-.admin-table .table-cell { -fx-font-size: 12px; }
-.loan-table .table-row-cell:selected, .application-table .table-row-cell:selected, .payment-table .table-row-cell:selected { -fx-background-color: #CFEDEC; }
-.tab-pane .tab-header-area { -fx-padding: 0 0 8px 0; }
-.tab-pane .tab { -fx-background-color: #E8EEF3; -fx-background-radius: 8px 8px 0 0; -fx-padding: 9px 18px; }
-.tab-pane .tab:selected { -fx-background-color: #FFFFFF; }
-.tab-pane .tab .tab-label { -fx-text-fill: #31556D; -fx-font-weight: bold; }
-.modern-field, .modern-combo { -fx-background-color: #F7FAFC; -fx-border-color: #D4E0E9; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 0 12px; -fx-pref-height: 42px; -fx-font-size: 13px; }
-.modern-field:focused, .modern-combo:focused { -fx-background-color: #FFFFFF; -fx-border-color: #168B8B; -fx-effect: dropshadow(gaussian, rgba(22,139,139,0.16), 8, 0, 0, 2); }
-.combo-box { -fx-background-color: #F7FAFC; -fx-border-color: #D4E0E9; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-padding: 0 10px; -fx-pref-height: 40px; }
-.combo-box:focused, .combo-box:hover { -fx-border-color: #168B8B; }
-.combo-box .list-cell { -fx-text-fill: #31556D; -fx-font-size: 12px; }
-.button:focused { -fx-border-color: #72D3D0; -fx-border-width: 2px; }
-.app-sidebar { -fx-background-color: #123D2F; -fx-border-color: #2C5C4A; -fx-border-width: 0 1px 0 0; }
-.sidebar-logo { -fx-text-fill: #D7B56D; -fx-font-size: 23px; -fx-font-weight: bold; }
-.sidebar-tagline { -fx-text-fill: #B8D0C1; -fx-font-size: 10px; -fx-line-spacing: 2px; }
-.sidebar-section { -fx-text-fill: #7FAE98; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 0 8px 5px 8px; }
-.sidebar-button, .sidebar-logout { -fx-background-color: transparent; -fx-text-fill: #D9EAE0; -fx-alignment: CENTER_LEFT; -fx-padding: 12px 10px; -fx-font-size: 12px; -fx-background-radius: 8px; -fx-cursor: hand; }
-.sidebar-button:hover { -fx-background-color: #1B5947; -fx-text-fill: white; }
-.sidebar-button.active { -fx-background-color: #1B5947; -fx-text-fill: #FFFFFF; -fx-border-color: #D7B56D; -fx-border-width: 0 0 0 3px; }
-.sidebar-logout { -fx-text-fill: #FFD9D1; -fx-border-color: #6F4542; -fx-border-width: 1px 0 0 0; -fx-border-radius: 0; -fx-padding: 16px 10px 8px 10px; }
-.sidebar-logout:hover { -fx-background-color: #663C3B; }
-.dashboard-root { -fx-background-color: #F6F4EF; }
-.top-bar { -fx-background-color: #123D2F; }
-.dashboard-logo { -fx-text-fill: #D7B56D; }
-.dashboard-subtitle { -fx-text-fill: #B8D0C1; }
-.role-label { -fx-text-fill: #D7B56D; }
-.refresh-button { -fx-background-color: #1B5947; -fx-border-color: #477C69; -fx-text-fill: #E1F0E5; }
-.logout-button { -fx-background-color: #663C3B; -fx-border-color: #8D5A55; -fx-text-fill: #FFE4DE; }
-.dashboard-scroll, .dashboard-scroll > .viewport { -fx-background-color: #F6F4EF; }
-.page-title { -fx-text-fill: #18372B; }
-.page-description { -fx-text-fill: #68766E; }
-.dashboard-hero { -fx-background-color: linear-gradient(to right, #123D2F, #176B52); }
-.stat-card, .content-card { -fx-border-color: #E1E5DE; -fx-effect: dropshadow(gaussian, rgba(29,55,42,.08), 14, 0, 0, 4); }
-.stat-card:hover { -fx-border-color: #82B49E; }
-.card-label { -fx-text-fill: #718078; }
-.card-value { -fx-text-fill: #123D2F; }
-.section-title { -fx-text-fill: #244B3A; }
-.action-button { -fx-background-color: #176B52; }
-.action-button:hover { -fx-background-color: #0F563F; }
-.secondary-action-button { -fx-background-color: #F7FAF7; -fx-border-color: #D2E0D6; -fx-text-fill: #365F4C; }
-.secondary-action-button:hover { -fx-background-color: #EAF4ED; -fx-border-color: #82B49E; }
-.dashboard-quote { -fx-background-color: #EEF6F0; -fx-border-color: #D4E7D8; }
-.table-view .column-header-background, .table-view .column-header, .table-view .filler, .table-view .corner { -fx-background-color: #244B3A; }
-.table-view .table-row-cell:hover { -fx-background-color: #F0F7F1; }
-.table-view .table-row-cell:selected { -fx-background-color: #DCEEE1; }
-.table-view .table-cell { -fx-text-fill: #365447; }
-.modern-field, .modern-combo { -fx-background-color: #FBFCFA; -fx-border-color: #D2E0D6; }
-.modern-field:focused, .modern-combo:focused { -fx-border-color: #176B52; }
-.status-badge { -fx-padding: 5px 10px; -fx-background-radius: 7px; -fx-font-size: 11px; -fx-font-weight: bold; }
-.status-pending { -fx-background-color: #FFF3D8; -fx-text-fill: #936A16; }
-.status-approved, .status-paid, .status-active { -fx-background-color: #DCEEE1; -fx-text-fill: #176B52; }
-.status-rejected, .status-failed, .status-overdue { -fx-background-color: #FBE3E0; -fx-text-fill: #A6433C; }
-.table-view .filler, .table-view .corner { -fx-background-color: #163753; }
-.table-view .scroll-bar:vertical, .table-view .scroll-bar:horizontal { -fx-background-color: transparent; }
-.table-view .scroll-bar .thumb { -fx-background-color: #B7C7D6; -fx-background-radius: 8px; }
