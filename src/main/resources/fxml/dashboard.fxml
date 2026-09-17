@@ -36,19 +36,6 @@
             </padding>
 
 
-            <!-- LOGO -->
-
-            <VBox spacing="3">
-
-                <Label text="LoanFlow"
-                       styleClass="dashboard-logo"/>
-
-                <Label text="SIMPLE LENDING • SMARTER DECISIONS"
-                       styleClass="dashboard-subtitle"/>
-
-            </VBox>
-
-
             <Region HBox.hgrow="ALWAYS"/>
 
 
@@ -92,7 +79,7 @@
             <Label text="Simple Lending. Smarter Decisions." wrapText="true" styleClass="sidebar-tagline"/>
             <Region prefHeight="18"/>
             <Label text="WORKSPACE" styleClass="sidebar-section"/>
-            <Button fx:id="sidebarDashboardButton" text="⌂   Dashboard" maxWidth="Infinity" styleClass="sidebar-button active"/>
+            <Label text="⌂   Dashboard" maxWidth="Infinity" styleClass="sidebar-current"/>
             <Button fx:id="sidebarApplyButton" text="＋   Apply for Loan" maxWidth="Infinity" onAction="#applyLoan" styleClass="sidebar-button"/>
             <Button fx:id="sidebarLoansButton" text="▣   My Loans" maxWidth="Infinity" onAction="#viewLoans" styleClass="sidebar-button"/>
             <Button fx:id="sidebarPaymentsButton" text="◷   Payments" maxWidth="Infinity" onAction="#viewPayments" styleClass="sidebar-button"/>

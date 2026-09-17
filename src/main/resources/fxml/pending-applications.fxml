@@ -66,8 +66,6 @@
                            styleClass="section-description"/>
 
                     <TableView fx:id="applicationTable"
-                               prefHeight="360"
-                               minHeight="260"
                                styleClass="application-table">
                         <placeholder>
                             <VBox alignment="CENTER" spacing="5">

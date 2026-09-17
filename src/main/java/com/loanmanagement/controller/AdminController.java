@@ -81,6 +81,10 @@ public class AdminController {
         applicationTable.setPlaceholder(new Label("No applications match the current search or filter."));
         customerTable.setPlaceholder(new Label("No customers match the current search or filter."));
         paymentTable.setPlaceholder(new Label("No payments match the current search or filter."));
+        configureDynamicHeight(userTable, 82, 360);
+        configureDynamicHeight(applicationTable, 82, 360);
+        configureDynamicHeight(customerTable, 82, 360);
+        configureDynamicHeight(paymentTable, 82, 360);
         idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
@@ -152,6 +156,7 @@ public class AdminController {
                 || row.name.toLowerCase().contains(query)
                 || row.email.toLowerCase().contains(query)
                 || row.role.toLowerCase().contains(query)));
+        resizeTable(userTable, 82, 360);
     }
 
     private void applyApplicationFilter() {
@@ -163,6 +168,7 @@ public class AdminController {
                     || row.customer.toLowerCase().contains(query) || row.type.toLowerCase().contains(query);
             return statusMatches && queryMatches;
         }));
+        resizeTable(applicationTable, 82, 360);
     }
 
     private void select(UserRow row) {
@@ -214,11 +220,13 @@ public class AdminController {
     }
     private double queryAmount(Connection c, String sql) throws SQLException { try (PreparedStatement p = c.prepareStatement(sql); ResultSet r = p.executeQuery()) { return r.next() ? r.getDouble(1) : 0; } }
     private String money(double value) { return NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(value); }
-    private void applyCustomerFilter(){String q=customerSearchField==null?"":customerSearchField.getText().trim().toLowerCase();String filter=customerFilterCombo==null||customerFilterCombo.getValue()==null?"ALL":customerFilterCombo.getValue();customerTable.setItems(new FilteredList<>(allCustomers,row->(q.isEmpty()||String.valueOf(row.id).contains(q)||row.name.toLowerCase().contains(q)||row.email.toLowerCase().contains(q)||row.phone.toLowerCase().contains(q))&&("ALL".equals(filter)||("ACTIVE LOAN CUSTOMERS".equals(filter)&&row.activeLoans>0)||("NO LOANS".equals(filter)&&row.loans==0)||("CLOSED LOANS".equals(filter)&&row.closedLoans>0))));}
+    private void applyCustomerFilter(){String q=customerSearchField==null?"":customerSearchField.getText().trim().toLowerCase();String filter=customerFilterCombo==null||customerFilterCombo.getValue()==null?"ALL":customerFilterCombo.getValue();customerTable.setItems(new FilteredList<>(allCustomers,row->(q.isEmpty()||String.valueOf(row.id).contains(q)||row.name.toLowerCase().contains(q)||row.email.toLowerCase().contains(q)||row.phone.toLowerCase().contains(q))&&("ALL".equals(filter)||("ACTIVE LOAN CUSTOMERS".equals(filter)&&row.activeLoans>0)||("NO LOANS".equals(filter)&&row.loans==0)||("CLOSED LOANS".equals(filter)&&row.closedLoans>0))));resizeTable(customerTable,82,360);}
     private void clearCustomerSearch(){if(customerSearchField!=null)customerSearchField.clear();}
     private void addClearButton(TextField field, Runnable action){if(field!=null&&field.getParent() instanceof HBox box){Button clear=new Button("Clear");clear.getStyleClass().add("secondary-action-button");clear.setOnAction(event->action.run());int index=box.getChildren().indexOf(field)+1;box.getChildren().add(Math.max(0,index),clear);}}
     private void loadPayments(){String sql="SELECT p.PAYMENT_ID,p.LOAN_ID,c.FULL_NAME,TO_CHAR(p.PAYMENT_DATE,'DD Mon YYYY') PAYMENT_DATE,p.AMOUNT,NVL(p.PAYMENT_METHOD,'-'),NVL(p.PAYMENT_REFERENCE,'-'),p.PAYMENT_STATUS FROM PAYMENT p JOIN LOAN l ON l.LOAN_ID=p.LOAN_ID JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID=l.CUSTOMER_ID ORDER BY p.PAYMENT_DATE DESC,p.PAYMENT_ID DESC";Task<ObservableList<PaymentRow>> task=new Task<>(){protected ObservableList<PaymentRow> call() throws SQLException{try(Connection c=DatabaseConnection.getConnection();PreparedStatement p=c.prepareStatement(sql);ResultSet r=p.executeQuery()){var rows=FXCollections.<PaymentRow>observableArrayList();while(r.next())rows.add(new PaymentRow(r.getInt(1),r.getInt(2),r.getString(3),r.getString(4),r.getDouble(5),r.getString(6),r.getString(7),r.getString(8)));return rows;}}};task.setOnSucceeded(e->{allPayments=task.getValue();applyPaymentFilter();});task.setOnFailed(e->paymentTable.setItems(FXCollections.observableArrayList()));start(task,"loanflow-admin-payments");}
-    private void applyPaymentFilter(){String q=paymentSearchField==null?"":paymentSearchField.getText().trim().toLowerCase();String status=paymentFilterCombo==null||paymentFilterCombo.getValue()==null?"ALL":paymentFilterCombo.getValue();paymentTable.setItems(new FilteredList<>(allPayments,row->("ALL".equals(status)||row.status.equalsIgnoreCase(status))&&(q.isEmpty()||String.valueOf(row.id).contains(q)||String.valueOf(row.loanId).contains(q)||row.customer.toLowerCase().contains(q)||row.reference.toLowerCase().contains(q))));}
+    private void applyPaymentFilter(){String q=paymentSearchField==null?"":paymentSearchField.getText().trim().toLowerCase();String status=paymentFilterCombo==null||paymentFilterCombo.getValue()==null?"ALL":paymentFilterCombo.getValue();paymentTable.setItems(new FilteredList<>(allPayments,row->("ALL".equals(status)||row.status.equalsIgnoreCase(status))&&(q.isEmpty()||String.valueOf(row.id).contains(q)||String.valueOf(row.loanId).contains(q)||row.customer.toLowerCase().contains(q)||row.reference.toLowerCase().contains(q))));resizeTable(paymentTable,82,360);}
+    private void configureDynamicHeight(TableView<?> table,double minimum,double maximum){table.setFixedCellSize(34);table.setMinHeight(minimum);table.setMaxHeight(maximum);resizeTable(table,minimum,maximum);}
+    private void resizeTable(TableView<?> table,double minimum,double maximum){int rows=table.getItems()==null?0:table.getItems().size();table.setPrefHeight(Math.min(maximum,Math.max(minimum,32+rows*table.getFixedCellSize())));}
     @FXML private void back() {
         try {
             FXMLLoader l = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml")); Parent root = l.load();

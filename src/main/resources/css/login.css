@@ -1,21 +1,33 @@
-/* LoanFlow authentication design */
-.login-root { -fx-background-color: #EEF3F7; -fx-font-family: "Segoe UI"; }
-.login-shell { -fx-background-color: white; -fx-background-radius: 0; -fx-effect: none; }
-.login-brand-panel { -fx-background-color: #0B1F35; }
-.brand-logo, .brand-logo-small { -fx-text-fill: #78D6D1; -fx-font-size: 24px; -fx-font-weight: bold; }
-.brand-headline { -fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold; -fx-line-spacing: 2px; }
-.brand-copy { -fx-text-fill: #B8CAD8; -fx-font-size: 14px; -fx-line-spacing: 4px; }
-.brand-kicker, .login-kicker { -fx-text-fill: #128C8C; -fx-font-size: 10px; -fx-font-weight: bold; }
-.login-panel, .register-card { -fx-background-color: white; }
-.register-card { -fx-background-radius: 0; -fx-effect: none; }
-.login-heading { -fx-text-fill: #102A43; -fx-font-size: 30px; -fx-font-weight: bold; }
-.login-subtitle, .small-text, .security-note { -fx-text-fill: #6B7F91; -fx-font-size: 12px; }
-.field-label { -fx-text-fill: #31566C; -fx-font-size: 10px; -fx-font-weight: bold; }
-.modern-field, .modern-combo { -fx-background-color: #F8FBFC; -fx-border-color: #CBD9E2; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-pref-height: 46px; -fx-padding: 0 13px; }
-.modern-field:focused, .modern-combo:focused { -fx-background-color: white; -fx-border-color: #128C8C; }
-.primary-button { -fx-background-color: #128C8C; -fx-text-fill: white; -fx-background-radius: 8px; -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand; }
-.primary-button:hover { -fx-background-color: #0D6F72; }
-.register-link { -fx-text-fill: #0D6F72; -fx-font-weight: bold; -fx-border-width: 0; }
+/* LoanFlow authentication: deep teal split-screen banking presentation */
+.login-root { -fx-background-color: #031C2A; -fx-font-family: "Segoe UI"; }
+.login-shell { -fx-background-color: transparent; }
+.login-brand-panel { -fx-background-color: linear-gradient(to bottom right, #031C2A 0%, #06445A 55%, #087D8D 100%); -fx-background-radius: 0 22px 22px 0; -fx-effect: dropshadow(gaussian, rgba(0,0,0,.24), 24, .2, 0, 8); }
+.brand-logo { -fx-text-fill: #F5FBFF; -fx-font-size: 30px; -fx-font-weight: bold; }
+.brand-logo::first-letter { -fx-text-fill: #17E0D5; }
+.brand-subtitle { -fx-text-fill: #B9D6DF; -fx-font-size: 13px; }
+.brand-headline { -fx-text-fill: #F5FBFF; -fx-font-size: 39px; -fx-font-weight: bold; }
+.brand-headline-accent { -fx-text-fill: #19DED4; -fx-font-size: 39px; -fx-font-weight: bold; }
+.brand-copy { -fx-text-fill: #D1E5EA; -fx-font-size: 15px; -fx-line-spacing: 5px; }
+.feature-row { -fx-padding: 8px 0 0 0; }
+.feature-card { -fx-background-color: rgba(13, 197, 193, .18); -fx-border-color: rgba(117, 237, 229, .22); -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-padding: 12px 12px; -fx-min-width: 105px; }
+.feature-icon { -fx-background-color: #0E9FA7; -fx-background-radius: 8px; -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 7px 10px; -fx-alignment: CENTER; }
+.feature-text { -fx-text-fill: #F5FBFF; -fx-font-size: 11px; -fx-font-weight: bold; -fx-line-spacing: 2px; -fx-padding: 8px 0 0 0; }
+.brand-quote { -fx-border-color: #19DED4; -fx-border-width: 0 0 0 2px; -fx-padding: 0 0 0 14px; -fx-text-fill: #D1E5EA; -fx-font-size: 13px; -fx-font-style: italic; }
+.login-panel { -fx-background-color: #031C2A; -fx-padding: 42px 56px; }
+.login-card { -fx-background-color: linear-gradient(to bottom right, rgba(8, 71, 91, .92), rgba(3, 35, 51, .98)); -fx-border-color: #08D8D0; -fx-border-width: 1px; -fx-border-radius: 18px; -fx-background-radius: 18px; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .42), 30, .25, 0, 12); }
+.login-kicker, .field-label { -fx-text-fill: #7DE9E4; -fx-font-size: 11px; -fx-font-weight: bold; }
+.login-heading { -fx-text-fill: #F6FCFF; -fx-font-size: 31px; -fx-font-weight: bold; }
+.login-subtitle, .small-text, .security-note { -fx-text-fill: #B9D6DF; -fx-font-size: 13px; }
+.modern-field, .modern-combo { -fx-background-color: rgba(5, 71, 93, .88); -fx-border-color: #087F9B; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-pref-height: 52px; -fx-text-fill: #F6FCFF; -fx-prompt-text-fill: #9DC0CA; -fx-padding: 0 15px; }
+.modern-field:focused, .modern-combo:focused { -fx-background-color: rgba(7, 88, 109, .98); -fx-border-color: #16E0D7; -fx-effect: dropshadow(gaussian, rgba(22, 224, 215, .22), 10, .2, 0, 0); }
+.modern-combo .list-cell { -fx-text-fill: #F6FCFF; -fx-background-color: transparent; }
+.primary-button { -fx-background-color: linear-gradient(to right, #11D9CE, #0BB7B9); -fx-text-fill: #032A38; -fx-background-radius: 10px; -fx-font-size: 15px; -fx-font-weight: bold; -fx-cursor: hand; }
+.primary-button:hover { -fx-background-color: linear-gradient(to right, #35F0E2, #16D0CE); }
+.register-link { -fx-text-fill: #19DED4; -fx-font-weight: bold; -fx-border-width: 0; }
 .register-link:hover { -fx-underline: true; }
-.password-toggle { -fx-background-color: #EAF4F5; -fx-text-fill: #126B71; -fx-background-radius: 8px; -fx-font-weight: bold; }
+.password-toggle { -fx-background-color: #0A8994; -fx-text-fill: white; -fx-background-radius: 9px; -fx-font-weight: bold; -fx-cursor: hand; }
+.password-toggle:hover { -fx-background-color: #0CB1B0; }
+.separator { -fx-background-color: #156A7B; }
+.security-note { -fx-alignment: CENTER; -fx-text-alignment: CENTER; }
 .registration-note { -fx-background-color: #EEF7F2; -fx-text-fill: #416A55; -fx-padding: 10px 12px; -fx-background-radius: 7px; -fx-font-size: 11px; }
+.login-card .combo-box-base { -fx-text-fill: #F6FCFF; }

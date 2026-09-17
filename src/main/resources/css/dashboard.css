@@ -10,6 +10,7 @@
 .sidebar-button, .sidebar-logout { -fx-background-color: transparent; -fx-text-fill: #D7E4ED; -fx-alignment: CENTER_LEFT; -fx-padding: 12px 14px; -fx-font-size: 12px; -fx-background-radius: 8px; -fx-cursor: hand; }
 .sidebar-button:hover, .sidebar-button.active { -fx-background-color: #1A4A63; -fx-text-fill: white; }
 .sidebar-button.active { -fx-border-color: #78D6D1; -fx-border-width: 0 0 0 3px; }
+.sidebar-current { -fx-background-color: #1A4A63; -fx-border-color: #78D6D1; -fx-border-width: 0 0 0 3px; -fx-text-fill: white; -fx-alignment: CENTER_LEFT; -fx-padding: 12px 14px; -fx-font-size: 12px; -fx-background-radius: 8px; }
 .sidebar-logout { -fx-border-color: #38556A transparent transparent transparent; -fx-border-width: 1px 0 0 0; -fx-text-fill: #FFC9C9; }
 .dashboard-scroll, .dashboard-scroll > .viewport { -fx-background-color: #F4F7FA; -fx-border-color: transparent; }
 .page-title { -fx-text-fill: #102A43; -fx-font-size: 28px; -fx-font-weight: bold; }
@@ -30,6 +31,7 @@
 .modern-field, .modern-combo, .combo-box { -fx-background-color: #F9FBFC; -fx-border-color: #CBD9E2; -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-pref-height: 40px; -fx-padding: 0 12px; }
 .modern-field:focused, .modern-combo:focused, .combo-box:focused { -fx-background-color: white; -fx-border-color: #128C8C; }
 .summary-value { -fx-text-fill: #123D52; -fx-font-size: 15px; -fx-font-weight: bold; }
+.selected-context { -fx-background-color: #EAF4F5; -fx-text-fill: #126B71; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 8px 10px; -fx-background-radius: 7px; }
 .activity-item { -fx-background-color: #F3F8FA; -fx-text-fill: #31566C; -fx-padding: 11px 13px; -fx-background-radius: 7px; }
 .table-view { -fx-background-color: white; -fx-border-color: #D8E3EA; -fx-background-radius: 9px; -fx-border-radius: 9px; -fx-fixed-cell-size: 42px; }
 .table-view .column-header-background, .table-view .column-header, .table-view .filler, .table-view .corner { -fx-background-color: #163B55; }
@@ -47,8 +49,9 @@
 .status-badge { -fx-padding: 5px 9px; -fx-background-radius: 6px; -fx-font-size: 10px; -fx-font-weight: bold; }
 .status-pending { -fx-background-color: #FFF2D5; -fx-text-fill: #916A18; }
 .status-approved, .status-paid, .status-active { -fx-background-color: #DDF2E5; -fx-text-fill: #147344; }
+.status-closed { -fx-background-color: #E8EEF2; -fx-text-fill: #496274; }
 .status-rejected, .status-failed, .status-overdue { -fx-background-color: #FBE2E2; -fx-text-fill: #A23E46; }
 .payment-preview { -fx-background-color: #EAF7F1; -fx-text-fill: #147344; -fx-padding: 10px; -fx-background-radius: 7px; }
 .tab-pane .tab { -fx-background-color: #E8EFF3; -fx-padding: 9px 16px; }
 .tab-pane .tab:selected { -fx-background-color: white; }
-
+.chart { -fx-background-color: transparent; }

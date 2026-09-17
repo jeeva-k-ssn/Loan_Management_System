@@ -159,6 +159,9 @@ public class PendingApplicationsController {
     public void initialize() {
 
         applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        applicationTable.setFixedCellSize(34);
+        applicationTable.setMinHeight(84);
+        applicationTable.setMaxHeight(360);
 
         setupTable();
 
@@ -327,6 +330,17 @@ public class PendingApplicationsController {
                     }
                 }
         );
+
+        statusColumn.setCellFactory(column -> new TableCell<LoanApplication, String>() {
+            @Override protected void updateItem(String value, boolean empty) {
+                super.updateItem(value, empty);
+                getStyleClass().removeIf(style -> style.startsWith("status-"));
+                if (empty || value == null) { setText(null); return; }
+                setText(value.toUpperCase());
+                getStyleClass().add("status-badge");
+                getStyleClass().add("status-" + value.toLowerCase().replace('_', '-'));
+            }
+        });
     }
 
 
@@ -454,6 +468,12 @@ public class PendingApplicationsController {
                 || application.getCustomerName().toLowerCase().contains(query)
                 || application.getLoanType().toLowerCase().contains(query)
                 || application.getLoanPurpose().toLowerCase().contains(query)));
+        resizeApplicationTable();
+    }
+
+    private void resizeApplicationTable() {
+        int rows = applicationTable.getItems() == null ? 0 : applicationTable.getItems().size();
+        applicationTable.setPrefHeight(Math.min(360, Math.max(84, 32 + rows * applicationTable.getFixedCellSize())));
     }
 
 
@@ -521,9 +541,7 @@ public class PendingApplicationsController {
                 application.getApplicationDate()
         );
 
-        statusLabel.setText(
-                application.getStatus()
-        );
+        setStatus(statusLabel, application.getStatus());
 
 
         approveButton.setDisable(false);
@@ -547,7 +565,7 @@ public class PendingApplicationsController {
         interestLabel.setText("-");
         emiLabel.setText("-");
         dateLabel.setText("-");
-        statusLabel.setText("-");
+        setStatus(statusLabel, "-");
 
         disableReviewButtons();
     }
@@ -565,6 +583,15 @@ public class PendingApplicationsController {
 
         if (rejectButton != null) {
             rejectButton.setDisable(true);
+        }
+    }
+
+    private void setStatus(Label label, String value) {
+        label.setText(value);
+        label.getStyleClass().removeIf(style -> style.startsWith("status-"));
+        if (value != null && !"-".equals(value)) {
+            label.getStyleClass().add("status-badge");
+            label.getStyleClass().add("status-" + value.toLowerCase().replace('_', '-'));
         }
     }
 
