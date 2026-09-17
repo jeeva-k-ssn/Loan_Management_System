@@ -51,3 +51,12 @@
 .button:focused, .hyperlink:focused, .text-field:focused, .combo-box:focused { -fx-border-color: #D7B56D; -fx-border-width: 2px; }
 .password-toggle { -fx-background-color: #EEF6F0; -fx-text-fill: #176B52; -fx-font-size: 11px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-cursor: hand; }
 .password-toggle:hover { -fx-background-color: #DCEEE1; }
+.login-root { -fx-background-color: #eef3f7; -fx-font-family: "Segoe UI"; }
+.login-shell { -fx-background-color: #ffffff; -fx-background-radius: 18px; -fx-effect: dropshadow(gaussian, rgba(11,31,53,.14), 28, .12, 0, 10); }
+.login-brand-panel { -fx-background-color: #0b1f35; -fx-background-radius: 18px 0 0 18px; }
+.brand-logo { -fx-text-fill: #72d3d0; -fx-font-size: 24px; -fx-font-weight: bold; }
+.brand-headline { -fx-text-fill: #ffffff; -fx-font-size: 32px; -fx-font-weight: bold; -fx-line-spacing: 2px; }
+.brand-copy { -fx-text-fill: #b9cbd9; -fx-font-size: 14px; -fx-line-spacing: 4px; }
+.brand-kicker { -fx-text-fill: #72d3d0; -fx-font-size: 10px; -fx-font-weight: bold; }
+.login-panel { -fx-background-color: #ffffff; -fx-background-radius: 0 18px 18px 0; }
+.register-card { -fx-background-color: #ffffff; -fx-background-radius: 18px; -fx-effect: dropshadow(gaussian, rgba(11,31,53,.14), 28, .12, 0, 10); }

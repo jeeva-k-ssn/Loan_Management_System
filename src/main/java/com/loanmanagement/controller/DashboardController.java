@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.concurrent.Task;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.Locale;
+import com.loanmanagement.navigation.NavigationManager;
 
 /** Displays only the dashboard data and actions available to the signed-in role. */
 public class DashboardController {
@@ -50,6 +52,8 @@ public class DashboardController {
     @FXML private Button sidebarPendingButton;
     @FXML private Button sidebarPortfolioButton;
     @FXML private Button sidebarUsersButton;
+    @FXML private Button sidebarNotificationsButton;
+    @FXML private Button sidebarProfileButton;
 
     private User currentUser;
 
@@ -71,13 +75,15 @@ public class DashboardController {
         configureDefaultButtons();
         hideButton(sidebarApplyButton); hideButton(sidebarLoansButton); hideButton(sidebarPaymentsButton);
         hideButton(sidebarPendingButton); hideButton(sidebarPortfolioButton); hideButton(sidebarUsersButton);
+        hideButton(sidebarProfileButton); showButton(sidebarNotificationsButton);
         if (hasRole("CUSTOMER")) {
             pageTitleLabel.setText("Your loan overview");
             pageDescriptionLabel.setText("Track applications, active loans, and repayments in one place.");
             setCardCopy("APPLICATIONS", "Submitted by you", "ACTIVE LOANS", "Currently being repaid",
-                    "PAYMENTS", "Successful repayments", "TOTAL PAID", "Across your loans");
+                    "TOTAL PAID", "Successful repayments", "OUTSTANDING", "Remaining across active loans");
             showButton(applyLoanButton); showButton(viewLoansButton); showButton(viewPaymentsButton);
             showButton(sidebarApplyButton); showButton(sidebarLoansButton); showButton(sidebarPaymentsButton);
+            showButton(sidebarProfileButton);
         } else if (hasRole("LOAN_OFFICER")) {
             pageTitleLabel.setText("Loan processing workspace");
             pageDescriptionLabel.setText("Review applications and monitor the current lending portfolio.");
@@ -122,23 +128,51 @@ public class DashboardController {
     }
 
     private void loadDashboardData() {
+        customersValueLabel.setText("…"); applicationsValueLabel.setText("…");
+        loansValueLabel.setText("…"); paymentsValueLabel.setText("…");
+        Task<DashboardSnapshot> task = new Task<>() {
+            @Override protected DashboardSnapshot call() throws SQLException { return fetchDashboardSnapshot(); }
+        };
+        task.setOnSucceeded(event -> renderDashboard(task.getValue()));
+        task.setOnFailed(event -> { setMetricValues(0, 0, 0, 0); showEmptyActivity("Dashboard data is temporarily unavailable."); });
+        Thread thread = new Thread(task, "loanflow-dashboard-load"); thread.setDaemon(true); thread.start();
+    }
+
+    private DashboardSnapshot fetchDashboardSnapshot() throws SQLException {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            if (hasRole("CUSTOMER")) loadCustomerMetrics(connection);
-            else if (hasRole("LOAN_OFFICER")) setMetricValues(
-                    queryCount(connection, "SELECT COUNT(*) FROM LOAN_APPLICATION WHERE STATUS = 'PENDING'"),
-                    queryCount(connection, "SELECT COUNT(*) FROM LOAN_APPLICATION WHERE STATUS = 'APPROVED'"),
-                    queryCount(connection, "SELECT COUNT(*) FROM LOAN WHERE STATUS = 'ACTIVE'"),
-                    queryCount(connection, "SELECT COUNT(*) FROM PAYMENT WHERE PAYMENT_STATUS = 'PAID'"));
-            else if (hasRole("ADMIN")) setMetricValues(
-                    queryCount(connection, "SELECT COUNT(*) FROM LMS_CUSTOMER"),
-                    queryCount(connection, "SELECT COUNT(*) FROM LOAN_APPLICATION"),
-                    queryCount(connection, "SELECT COUNT(*) FROM LOAN WHERE STATUS = 'ACTIVE'"),
-                    queryCount(connection, "SELECT COUNT(*) FROM PAYMENT"));
-            loadRecentActivity(connection);
-        } catch (SQLException exception) {
-            setMetricValues(0, 0, 0, 0);
-            showEmptyActivity("Dashboard data is temporarily unavailable.");
+            int first, second, third, fourth;
+            if (hasRole("CUSTOMER")) {
+                first = queryCount(connection, "SELECT COUNT(*) FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = la.CUSTOMER_ID WHERE c.USER_ID = ?");
+                second = queryCount(connection, "SELECT COUNT(*) FROM LOAN l JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = l.CUSTOMER_ID WHERE c.USER_ID = ? AND l.STATUS = 'ACTIVE'");
+                double paid = queryAmount(connection, "SELECT NVL(SUM(p.AMOUNT), 0) FROM PAYMENT p JOIN LOAN l ON l.LOAN_ID = p.LOAN_ID JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = l.CUSTOMER_ID WHERE c.USER_ID = ? AND p.PAYMENT_STATUS = 'PAID'");
+                double repayable = queryAmount(connection, "SELECT NVL(SUM(l.EMI_AMOUNT * l.TENURE_MONTHS), 0) FROM LOAN l JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = l.CUSTOMER_ID WHERE c.USER_ID = ?");
+                third = (int) Math.round(paid * 100); fourth = (int) Math.round(Math.max(0, repayable - paid) * 100);
+            } else if (hasRole("LOAN_OFFICER")) {
+                first=queryCount(connection,"SELECT COUNT(*) FROM LOAN_APPLICATION WHERE STATUS = 'PENDING'"); second=queryCount(connection,"SELECT COUNT(*) FROM LOAN_APPLICATION WHERE STATUS = 'APPROVED'"); third=queryCount(connection,"SELECT COUNT(*) FROM LOAN WHERE STATUS = 'ACTIVE'"); fourth=queryCount(connection,"SELECT COUNT(*) FROM PAYMENT WHERE PAYMENT_STATUS = 'PAID'");
+            } else {
+                first=queryCount(connection,"SELECT COUNT(*) FROM LMS_CUSTOMER"); second=queryCount(connection,"SELECT COUNT(*) FROM LOAN_APPLICATION"); third=queryCount(connection,"SELECT COUNT(*) FROM LOAN WHERE STATUS = 'ACTIVE'"); fourth=queryCount(connection,"SELECT COUNT(*) FROM PAYMENT");
+            }
+            var activity = new java.util.ArrayList<String>();
+            String sql = hasRole("CUSTOMER") ? "SELECT message FROM (SELECT 'Application #' || la.APPLICATION_ID || ' is ' || la.STATUS || ' - ' || TO_CHAR(la.APPLICATION_DATE, 'DD Mon YYYY') AS message FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = la.CUSTOMER_ID WHERE c.USER_ID = ? ORDER BY la.APPLICATION_DATE DESC) WHERE ROWNUM <= 5" : "SELECT message FROM (SELECT 'Application #' || APPLICATION_ID || ' is ' || STATUS || ' - ' || TO_CHAR(APPLICATION_DATE, 'DD Mon YYYY') AS message FROM LOAN_APPLICATION ORDER BY APPLICATION_DATE DESC) WHERE ROWNUM <= 5";
+            try (PreparedStatement statement=connection.prepareStatement(sql)) { if (hasRole("CUSTOMER")) statement.setInt(1,currentUser.getUserId()); try(ResultSet rs=statement.executeQuery()){while(rs.next()) activity.add(rs.getString(1));} }
+            return new DashboardSnapshot(first, second, third, fourth, activity);
         }
+    }
+
+    private void renderDashboard(DashboardSnapshot snapshot) {
+        if (hasRole("CUSTOMER")) {
+            customersValueLabel.setText(String.valueOf(snapshot.first)); applicationsValueLabel.setText(String.valueOf(snapshot.second));
+            loansValueLabel.setText(NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(snapshot.third / 100.0));
+            paymentsValueLabel.setText(NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(snapshot.fourth / 100.0));
+        } else setMetricValues(snapshot.first, snapshot.second, snapshot.third, snapshot.fourth);
+        activityContainer.getChildren().clear();
+        if (snapshot.activity.isEmpty()) showEmptyActivity("No recent activity yet.");
+        else for (String message : snapshot.activity) { Label item=new Label(message); item.setWrapText(true); item.setMaxWidth(Double.MAX_VALUE); item.getStyleClass().add("activity-item"); activityContainer.getChildren().add(item); }
+    }
+
+    private static final class DashboardSnapshot {
+        final int first, second, third, fourth; final java.util.List<String> activity;
+        DashboardSnapshot(int first,int second,int third,int fourth,java.util.List<String> activity){this.first=first;this.second=second;this.third=third;this.fourth=fourth;this.activity=activity;}
     }
 
     private void loadCustomerMetrics(Connection connection) throws SQLException {
@@ -146,10 +180,11 @@ public class DashboardController {
         int loans = queryCount(connection, "SELECT COUNT(*) FROM LOAN l JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = l.CUSTOMER_ID WHERE c.USER_ID = ? AND l.STATUS = 'ACTIVE'");
         int payments = queryCount(connection, "SELECT COUNT(*) FROM PAYMENT p JOIN LOAN l ON l.LOAN_ID = p.LOAN_ID JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = l.CUSTOMER_ID WHERE c.USER_ID = ? AND p.PAYMENT_STATUS = 'PAID'");
         double paid = queryAmount(connection, "SELECT NVL(SUM(p.AMOUNT), 0) FROM PAYMENT p JOIN LOAN l ON l.LOAN_ID = p.LOAN_ID JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = l.CUSTOMER_ID WHERE c.USER_ID = ? AND p.PAYMENT_STATUS = 'PAID'");
+        double repayable = queryAmount(connection, "SELECT NVL(SUM(l.EMI_AMOUNT * l.TENURE_MONTHS), 0) FROM LOAN l JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = l.CUSTOMER_ID WHERE c.USER_ID = ?");
         customersValueLabel.setText(String.valueOf(applications));
         applicationsValueLabel.setText(String.valueOf(loans));
-        loansValueLabel.setText(String.valueOf(payments));
-        paymentsValueLabel.setText(NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(paid));
+        loansValueLabel.setText(NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(paid));
+        paymentsValueLabel.setText(NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(Math.max(0, repayable - paid)));
     }
 
     private int queryCount(Connection connection, String sql) throws SQLException {
@@ -196,11 +231,28 @@ public class DashboardController {
         Label empty = new Label(message); empty.getStyleClass().add("empty-label");
         activityContainer.getChildren().add(empty);
     }
+    private void loadNotificationCount(Connection connection) {
+        if (sidebarNotificationsButton == null || currentUser == null) return;
+        try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM LOANFLOW_NOTIFICATION WHERE USER_ID=? AND IS_READ='N'")) {
+            statement.setInt(1, currentUser.getUserId());
+            try (ResultSet results = statement.executeQuery()) { int count = results.next() ? results.getInt(1) : 0; sidebarNotificationsButton.setText(count > 0 ? "Notifications (" + count + ")" : "Notifications"); }
+        } catch (SQLException ignored) { sidebarNotificationsButton.setText("Notifications"); }
+    }
 
     @FXML private void refreshDashboard() { if (currentUser != null) loadDashboardData(); }
     @FXML private void applyLoan() { if (requireRole("CUSTOMER")) openLoanApplication(); }
     @FXML private void viewLoans() { if (requireRole("CUSTOMER")) openLoanPortfolio(); }
     @FXML private void viewPayments() { if (requireRole("CUSTOMER")) openLoanPortfolio(); }
+    @FXML private void openNotifications() {
+        if (currentUser == null) return;
+        try { FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/notifications.fxml")); Parent root = loader.load(); loader.<NotificationController>getController().setCurrentUser(currentUser); replaceScene(root, "LoanFlow - Notifications"); }
+        catch (Exception exception) { showError("Navigation Error", "Unable to open notifications."); }
+    }
+    @FXML private void openProfile() {
+        if (!requireRole("CUSTOMER")) return;
+        try { FXMLLoader loader=new FXMLLoader(getClass().getResource("/fxml/profile.fxml")); Parent root=loader.load(); loader.<ProfileController>getController().setCurrentUser(currentUser); replaceScene(root,"LoanFlow - Profile"); }
+        catch(Exception e){showError("Navigation Error","Unable to open your profile.");}
+    }
     @FXML private void openLoanPortfolioPage() { if (currentUser != null) openLoanPortfolio(); }
     @FXML private void openUserManagement() {
         if (!requireRole("ADMIN")) return;
@@ -246,15 +298,15 @@ public class DashboardController {
     @FXML
     private void logout() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
-            Stage stage = currentStage(); stage.setScene(new Scene(root, 900, 600));
-            stage.setTitle("LoanFlow - Login"); stage.setMaximized(false); stage.centerOnScreen();
+            NavigationManager.navigate(currentStage(), "/fxml/login.fxml", "LoanFlow - Login", null);
         } catch (Exception exception) { showError("Logout Error", "Unable to return to the login page."); }
     }
 
     private void replaceScene(Parent root, String title) {
-        Stage stage = currentStage(); stage.setScene(new Scene(root, 1400, 850));
-        stage.setTitle(title); stage.setMaximized(true);
+        Stage stage = currentStage();
+        stage.getScene().setRoot(root);
+        stage.setTitle(title);
+        stage.setMaximized(true);
     }
 
     private Stage currentStage() { return (Stage) welcomeLabel.getScene().getWindow(); }

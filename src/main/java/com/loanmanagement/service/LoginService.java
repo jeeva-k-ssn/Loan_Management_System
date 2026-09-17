@@ -21,13 +21,8 @@ public boolean registerUser(User user) {
 
     lastErrorMessage = null;
 
-    String sql =
-            "INSERT INTO USERS " +
-            "(FULL_NAME, EMAIL, PASSWORD, USER_ROLE) " +
-            "VALUES (?, ?, ?, 'CUSTOMER')";
-
     try (Connection connection = DatabaseConnection.getConnection();
-         PreparedStatement statement = connection.prepareStatement(sql)) {
+         PreparedStatement statement = connection.prepareStatement(userInsertSql(connection))) {
 
         connection.setAutoCommit(false);
 
@@ -61,6 +56,19 @@ public boolean registerUser(User user) {
     } catch (SQLException e) {
         lastErrorMessage = toUserMessage(e);
         return false;
+    }
+}
+
+private String userInsertSql(Connection connection) throws SQLException {
+    String metadataSql =
+            "SELECT COUNT(*) FROM USER_TAB_COLUMNS " +
+            "WHERE TABLE_NAME='USERS' AND COLUMN_NAME='CREATED_AT'";
+    try (PreparedStatement metadata = connection.prepareStatement(metadataSql);
+         ResultSet result = metadata.executeQuery()) {
+        boolean hasCreatedAt = result.next() && result.getInt(1) > 0;
+        return hasCreatedAt
+                ? "INSERT INTO USERS (FULL_NAME, EMAIL, PASSWORD, USER_ROLE, CREATED_AT) VALUES (?, ?, ?, 'CUSTOMER', SYSDATE)"
+                : "INSERT INTO USERS (FULL_NAME, EMAIL, PASSWORD, USER_ROLE) VALUES (?, ?, ?, 'CUSTOMER')";
     }
 }
 
@@ -112,7 +120,7 @@ public User loginUser(String email, String password, String role) {
 private String toUserMessage(SQLException exception) {
     if (exception.getMessage() != null
             && exception.getMessage().contains("LMS_DB_PASSWORD")) {
-        return exception.getMessage();
+        return "LoanFlow is not configured for database access. Please contact the administrator.";
     }
     return "LoanFlow could not connect to the database. Please try again later.";
 }

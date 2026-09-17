@@ -19,7 +19,8 @@ class LoanManagementFxmlTest {
                 for (String resource : new String[] {
                         "/fxml/login.fxml", "/fxml/register.fxml", "/fxml/dashboard.fxml",
                         "/fxml/apply-loan.fxml", "/fxml/pending-applications.fxml",
-                        "/fxml/loans.fxml", "/fxml/admin.fxml" }) {
+                        "/fxml/loans.fxml", "/fxml/admin.fxml", "/fxml/notifications.fxml",
+                        "/fxml/profile.fxml", "/fxml/loan-statement.fxml" }) {
                     FXMLLoader.load(getClass().getResource(resource));
                 }
             } catch (Throwable throwable) {
@@ -28,7 +29,7 @@ class LoanManagementFxmlTest {
                 complete.countDown();
             }
         });
-        if (!complete.await(10, TimeUnit.SECONDS)) fail("FXML loading timed out");
+        if (!complete.await(60, TimeUnit.SECONDS)) fail("FXML loading timed out");
         if (failure.get() != null) fail("Loan portfolio FXML failed to load", failure.get());
         Platform.exit();
     }

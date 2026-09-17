@@ -14,21 +14,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
+import javafx.concurrent.Task;
+import com.loanmanagement.navigation.NavigationManager;
 
 public class LoginController {
-
-@FXML private ImageView heroImage;
-@FXML private Label heroCaption;
-@FXML private HBox heroDots;
-private Timeline heroCarousel;
-
 
 @FXML
 private TextField emailField;
@@ -58,27 +48,6 @@ public void initialize() {
 
     roleComboBox.setValue("Customer");
 
-    startHeroCarousel();
-}
-
-private void startHeroCarousel() {
-    Image[] images = {
-            new Image(getClass().getResource("/images/login-hero-1.png").toExternalForm()),
-            new Image(getClass().getResource("/images/login-hero-2.png").toExternalForm()),
-            new Image(getClass().getResource("/images/login-hero-3.png").toExternalForm())
-    };
-    String[] captions = {"Build your next chapter.", "Make room for what matters.", "Plans that move with you."};
-    heroCarousel = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
-        int next = (int) ((heroCarousel.getCurrentTime().toSeconds() / 5) % images.length);
-        heroImage.setImage(images[next]);
-        heroCaption.setText(captions[next]);
-        for (int i = 0; i < heroDots.getChildren().size(); i++) {
-            heroDots.getChildren().get(i).getStyleClass().remove("active");
-            if (i == next) heroDots.getChildren().get(i).getStyleClass().add("active");
-        }
-    }));
-    heroCarousel.setCycleCount(Timeline.INDEFINITE);
-    heroCarousel.play();
 }
 
 @FXML
@@ -118,29 +87,26 @@ public void loginUser() {
             convertRoleToDatabaseValue(selectedRole);
 
     LoginService service = new LoginService();
-
-    User user =
-            service.loginUser(
-                    email,
-                    password,
-                    databaseRole
-            );
-
-    if (user != null) {
-
-        openDashboard(user);
-
-    } else {
-
-        String message = service.getLastErrorMessage();
-
-        showError(
-                "Login Failed",
-                message == null
-                        ? "The email, password, or selected role is incorrect."
-                        : message
-        );
-    }
+    passwordField.setDisable(true);
+    emailField.setDisable(true);
+    roleComboBox.setDisable(true);
+    Task<User> loginTask = new Task<>() {
+        @Override protected User call() { return service.loginUser(email, password, databaseRole); }
+    };
+    loginTask.setOnSucceeded(event -> {
+        passwordField.setDisable(false); emailField.setDisable(false); roleComboBox.setDisable(false);
+        User user = loginTask.getValue();
+        if (user != null) openDashboard(user);
+        else showError("Login Failed", service.getLastErrorMessage() == null
+                ? "The email, password, or selected role is incorrect." : service.getLastErrorMessage());
+    });
+    loginTask.setOnFailed(event -> {
+        passwordField.setDisable(false); emailField.setDisable(false); roleComboBox.setDisable(false);
+        showError("Login Failed", "LoanFlow could not complete sign in. Please try again.");
+    });
+    Thread loginThread = new Thread(loginTask, "loanflow-login");
+    loginThread.setDaemon(true);
+    loginThread.start();
 }
 
 @FXML
@@ -187,38 +153,9 @@ private void openDashboard(User user) {
 
     try {
 
-        FXMLLoader loader =
-                new FXMLLoader(
-                        getClass().getResource(
-                                "/fxml/dashboard.fxml"
-                        )
-                );
-
-        Parent root = loader.load();
-
-        DashboardController controller =
-                loader.getController();
-
-        controller.setCurrentUser(user);
-
-        Stage stage =
-                (Stage) emailField
-                        .getScene()
-                        .getWindow();
-
-        Scene scene =
-                new Scene(root, 1280, 760);
-
-        stage.setScene(scene);
-
-        stage.setTitle(
-                "LoanFlow - " + user.getDisplayRole()
-        );
-
-        stage.setMinWidth(1100);
-        stage.setMinHeight(680);
-
-        stage.centerOnScreen();
+        Stage stage = (Stage) emailField.getScene().getWindow();
+        NavigationManager.navigate(stage, "/fxml/dashboard.fxml", "LoanFlow - " + user.getDisplayRole(),
+                controller -> ((DashboardController) controller).setCurrentUser(user));
 
     } catch (Exception e) {
 
@@ -236,30 +173,8 @@ public void openRegister(ActionEvent event) {
 
     try {
 
-        FXMLLoader loader =
-                new FXMLLoader(
-                        getClass().getResource(
-                                "/fxml/register.fxml"
-                        )
-                );
-
-        Parent root = loader.load();
-
-        Stage stage =
-                (Stage)
-                ((javafx.scene.Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-        stage.setScene(
-                new Scene(root, 1050, 700)
-        );
-
-        stage.setTitle(
-                "LoanFlow - Create Account"
-        );
-
-        stage.centerOnScreen();
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        NavigationManager.navigate(stage, "/fxml/register.fxml", "LoanFlow - Create Account", null);
 
     } catch (Exception e) {
 

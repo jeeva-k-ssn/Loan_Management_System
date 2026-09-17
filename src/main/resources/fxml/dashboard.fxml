@@ -10,8 +10,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -101,6 +99,8 @@
             <Button fx:id="sidebarPendingButton" text="✓   Pending Applications" maxWidth="Infinity" onAction="#openPendingApplications" styleClass="sidebar-button"/>
             <Button fx:id="sidebarPortfolioButton" text="▤   Loan Portfolio" maxWidth="Infinity" onAction="#openLoanPortfolioPage" styleClass="sidebar-button"/>
             <Button fx:id="sidebarUsersButton" text="♙   User Management" maxWidth="Infinity" onAction="#openUserManagement" styleClass="sidebar-button"/>
+            <Button fx:id="sidebarNotificationsButton" text="Notifications" maxWidth="Infinity" onAction="#openNotifications" styleClass="sidebar-button"/>
+            <Button fx:id="sidebarProfileButton" text="Profile" maxWidth="Infinity" onAction="#openProfile" styleClass="sidebar-button"/>
             <Region VBox.vgrow="ALWAYS"/>
             <Button text="↪   Logout" maxWidth="Infinity" onAction="#logout" styleClass="sidebar-logout"/>
         </VBox>
@@ -147,10 +147,9 @@
 
                 <HBox styleClass="dashboard-hero" spacing="20" alignment="CENTER_LEFT">
                     <VBox spacing="8" HBox.hgrow="ALWAYS">
-                        <Label text="Your loan overview" styleClass="hero-title" wrapText="true"/>
+                        <Label text="Clear lending. Confident decisions." styleClass="hero-title" wrapText="true"/>
                         <Label text="Review applications, active loans and repayments in one place." styleClass="hero-description" wrapText="true"/>
                     </VBox>
-                    <ImageView fitWidth="235" fitHeight="118" preserveRatio="false"><image><Image url="@../images/login-hero-3.png"/></image></ImageView>
                 </HBox>
 
 
@@ -324,10 +323,6 @@
 
                             <Region HBox.hgrow="ALWAYS"/>
 
-
-                            <Button text="Refresh"
-                                    styleClass="small-refresh-button"
-                                    onAction="#refreshDashboard"/>
 
                         </HBox>
 

@@ -1,9 +1,11 @@
 package com.loanmanagement.controller;
 
 import com.loanmanagement.database.DatabaseConnection;
+import com.loanmanagement.service.NotificationService;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,8 +17,10 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.concurrent.Task;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +35,9 @@ public class PendingApplicationsController {
 
     @FXML
     private TableView<LoanApplication> applicationTable;
+
+    @FXML
+    private TextField applicationSearchField;
 
     @FXML
     private TableColumn<LoanApplication, Integer> applicationIdColumn;
@@ -140,7 +147,7 @@ public class PendingApplicationsController {
             showError("Access Denied", "Only loan officers can review pending applications.");
             return;
         }
-        loadPendingApplications();
+        loadPendingApplicationsAsync();
     }
 
 
@@ -176,11 +183,12 @@ public class PendingApplicationsController {
         });
 
         applicationTable.getSelectionModel()
-                .selectedItemProperty()
+                                .selectedItemProperty()
                 .addListener(
                         (observable, oldValue, newValue) ->
                                 showApplicationDetails(newValue)
-                );
+                                );
+        applicationSearchField.textProperty().addListener((observable, oldValue, newValue) -> applySearch());
     }
 
 
@@ -326,6 +334,22 @@ public class PendingApplicationsController {
     // LOAD PENDING APPLICATIONS
     // ============================================================
 
+    private void loadPendingApplicationsAsync() {
+        Task<ObservableList<LoanApplication>> task = new Task<>() {
+            @Override protected ObservableList<LoanApplication> call() throws SQLException {
+                String query = "SELECT la.APPLICATION_ID,lc.FULL_NAME,la.LOAN_TYPE,la.LOAN_AMOUNT,la.LOAN_PURPOSE,la.TENURE_MONTHS,la.INTEREST_RATE,la.EMI_AMOUNT,TO_CHAR(la.APPLICATION_DATE, 'DD-MON-YY') APPLICATION_DATE,la.STATUS FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER lc ON la.CUSTOMER_ID=lc.CUSTOMER_ID WHERE UPPER(la.STATUS)='PENDING' ORDER BY la.APPLICATION_ID";
+                try (Connection connection=getConnection(); PreparedStatement statement=connection.prepareStatement(query); ResultSet resultSet=statement.executeQuery()) {
+                    var rows=FXCollections.<LoanApplication>observableArrayList();
+                    while(resultSet.next()) rows.add(new LoanApplication(resultSet.getInt("APPLICATION_ID"),resultSet.getString("FULL_NAME"),resultSet.getString("LOAN_TYPE"),resultSet.getDouble("LOAN_AMOUNT"),resultSet.getString("LOAN_PURPOSE"),resultSet.getInt("TENURE_MONTHS"),resultSet.getDouble("INTEREST_RATE"),resultSet.getDouble("EMI_AMOUNT"),resultSet.getString("APPLICATION_DATE"),resultSet.getString("STATUS")));
+                    return rows;
+                }
+            }
+        };
+        task.setOnSucceeded(event -> { applications.setAll(task.getValue()); applySearch(); if (applications.isEmpty()) clearApplicationDetails(); });
+        task.setOnFailed(event -> showError("Database Error", "Unable to load pending applications right now. Please try again."));
+        Thread thread=new Thread(task,"loanflow-pending-applications-load"); thread.setDaemon(true); thread.start();
+    }
+
     private void loadPendingApplications() {
 
         applications.clear();
@@ -406,7 +430,7 @@ public class PendingApplicationsController {
             }
 
 
-            applicationTable.setItems(applications);
+            applySearch();
 
 
             if (applications.isEmpty()) {
@@ -416,14 +440,20 @@ public class PendingApplicationsController {
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
-
             showError(
                     "Database Error",
-                    "Unable to load pending applications.\n\n"
-                            + e.getMessage()
+                    "Unable to load pending applications right now. Please try again."
             );
         }
+    }
+
+    private void applySearch() {
+        String query = applicationSearchField == null ? "" : applicationSearchField.getText().trim().toLowerCase();
+        applicationTable.setItems(new FilteredList<>(applications, application -> query.isEmpty()
+                || String.valueOf(application.getApplicationId()).contains(query)
+                || application.getCustomerName().toLowerCase().contains(query)
+                || application.getLoanType().toLowerCase().contains(query)
+                || application.getLoanPurpose().toLowerCase().contains(query)));
     }
 
 
@@ -564,26 +594,13 @@ public class PendingApplicationsController {
             return;
         }
 
-
-        boolean approved =
-                approveApplicationAndCreateLoan(
-                        selectedApplication.getApplicationId()
-                );
+        if (!confirmAction("Approve Application", "Approve application #" + selectedApplication.getApplicationId() + " and create its active loan?")) return;
 
 
-        if (approved) {
-
-            showInformation(
-                    "Application Approved",
-                    "Application #"
-                            + selectedApplication.getApplicationId()
-                            + " has been approved successfully.\n\n"
-                            + "The corresponding loan has been created "
-                            + "and marked ACTIVE."
-            );
-
-            loadPendingApplications();
-        }
+        int applicationId=selectedApplication.getApplicationId(); approveButton.setDisable(true); rejectButton.setDisable(true);
+        Task<Boolean> task=new Task<>(){protected Boolean call(){return approveApplicationAndCreateLoan(applicationId);}};
+        task.setOnSucceeded(e->{disableReviewButtons();if(Boolean.TRUE.equals(task.getValue())){showInformation("Application Approved","Application #"+applicationId+" has been approved successfully.\n\nThe corresponding loan has been created and marked ACTIVE.");loadPendingApplicationsAsync();}else showWarning("Approval Incomplete","The application could not be approved.");});
+        task.setOnFailed(e->{disableReviewButtons();showError("Approval Failed","Unable to approve the application right now.");}); Thread t=new Thread(task,"loanflow-approve-application");t.setDaemon(true);t.start();
     }
 
 
@@ -612,25 +629,29 @@ public class PendingApplicationsController {
             return;
         }
 
-
-        boolean rejected =
-                updateApplicationStatus(
-                        selectedApplication.getApplicationId(),
-                        "REJECTED"
-                );
+        if (!confirmAction("Reject Application", "Reject application #" + selectedApplication.getApplicationId() + "?")) return;
 
 
-        if (rejected) {
+        int applicationId=selectedApplication.getApplicationId(); approveButton.setDisable(true); rejectButton.setDisable(true);
+        Task<Boolean> task=new Task<>(){protected Boolean call(){boolean result=updateApplicationStatus(applicationId,"REJECTED");if(result)notifyRejected(applicationId);return result;}};
+        task.setOnSucceeded(e->{disableReviewButtons();if(Boolean.TRUE.equals(task.getValue())){showInformation("Application Rejected","Application #"+applicationId+" has been rejected.");loadPendingApplicationsAsync();}else showWarning("Rejection Incomplete","The application could not be rejected.");});task.setOnFailed(e->{disableReviewButtons();showError("Rejection Failed","Unable to reject the application right now.");});Thread t=new Thread(task,"loanflow-reject-application");t.setDaemon(true);t.start();
+    }
 
-            showInformation(
-                    "Application Rejected",
-                    "Application #"
-                            + selectedApplication.getApplicationId()
-                            + " has been rejected."
-            );
+    private boolean confirmAction(String title, String message) {
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION, message, javafx.scene.control.ButtonType.OK, javafx.scene.control.ButtonType.CANCEL);
+        confirmation.setTitle(title);
+        confirmation.setHeaderText("Please confirm this review decision");
+        return confirmation.showAndWait().orElse(javafx.scene.control.ButtonType.CANCEL) == javafx.scene.control.ButtonType.OK;
+    }
 
-            loadPendingApplications();
-        }
+    private void notifyRejected(int applicationId) {
+        String sql = "SELECT c.USER_ID FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID=la.CUSTOMER_ID WHERE la.APPLICATION_ID=?";
+        try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, applicationId);
+            try (ResultSet result = statement.executeQuery()) {
+                if (result.next()) NotificationService.create(result.getInt(1), "Application rejected", "Application #" + applicationId + " has been rejected.", "APPLICATION_REJECTED", applicationId);
+            }
+        } catch (SQLException ignored) { }
     }
 
 
@@ -903,18 +924,21 @@ public class PendingApplicationsController {
 
             connection.commit();
 
+            try (PreparedStatement notificationStatement = connection.prepareStatement("SELECT c.USER_ID,l.LOAN_ID FROM LMS_CUSTOMER c JOIN LOAN l ON l.CUSTOMER_ID=c.CUSTOMER_ID WHERE l.APPLICATION_ID=?")) {
+                notificationStatement.setInt(1, applicationId);
+                try (ResultSet result = notificationStatement.executeQuery()) {
+                    if (result.next()) NotificationService.create(result.getInt("USER_ID"), "Application approved", "Application #" + applicationId + " approved. Loan #" + result.getInt("LOAN_ID") + " is now ACTIVE. EMI: ₹" + String.format(java.util.Locale.US, "%,.2f", emiAmount) + ".", "APPLICATION_APPROVED", result.getInt("LOAN_ID"));
+                }
+            }
+
             return true;
 
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
-
             showError(
                     "Approval Failed",
-                    "Unable to approve the application "
-                            + "and create the loan.\n\n"
-                            + e.getMessage()
+                    "Unable to approve the application and create the loan right now. Please try again."
             );
 
             return false;
@@ -976,12 +1000,9 @@ public class PendingApplicationsController {
 
         } catch (SQLException e) {
 
-            e.printStackTrace();
-
             showError(
                     "Database Error",
-                    "Unable to update application status.\n\n"
-                            + e.getMessage()
+                    "Unable to update application status right now. Please try again."
             );
 
             return false;
@@ -1056,12 +1077,9 @@ public class PendingApplicationsController {
 
         } catch (Exception e) {
 
-            e.printStackTrace();
-
             showError(
                     "Navigation Error",
-                    "Unable to return to dashboard.\n\n"
-                            + e.getMessage()
+                    "Unable to return to the dashboard. Please try again."
             );
         }
     }

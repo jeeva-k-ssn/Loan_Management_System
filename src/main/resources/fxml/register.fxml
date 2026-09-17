@@ -1,130 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
-
-<?import javafx.scene.control.Button?>
-
-<?import javafx.scene.control.Hyperlink?>
-
-<?import javafx.scene.control.Label?>
-
-<?import javafx.scene.control.PasswordField?>
-
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-
-<?import javafx.scene.layout.HBox?>
-
-<?import javafx.scene.layout.StackPane?>
-
-<?import javafx.scene.layout.VBox?>
-
-<StackPane xmlns="http://javafx.com/javafx"
-        xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="com.loanmanagement.controller.RegisterController"
-        stylesheets="@../css/login.css"
-        styleClass="login-root">
-
-
-<HBox maxWidth="1040" maxHeight="680" styleClass="register-shell" spacing="0">
-<StackPane prefWidth="430" styleClass="register-visual">
-    <ImageView fitWidth="430" fitHeight="680" preserveRatio="false"><image><Image url="@../images/login-hero-2.png"/></image></ImageView>
-    <VBox alignment="TOP_LEFT" prefWidth="430" prefHeight="680" styleClass="register-overlay"><padding><Insets top="38" right="38" bottom="38" left="38"/></padding>
-        <Label text="LoanFlow" styleClass="brand-logo"/>
-        <VBox VBox.vgrow="ALWAYS" alignment="BOTTOM_LEFT" spacing="10"><Label text="Start Your Financial Journey." styleClass="hero-caption" wrapText="true"/><Label text="Create an account to apply, review and track repayments." styleClass="hero-subtitle" wrapText="true"/></VBox>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.loanmanagement.controller.RegisterController" stylesheets="@../css/login.css" styleClass="login-root">
+    <VBox maxWidth="560" maxHeight="690" spacing="18" styleClass="register-card"><padding><Insets top="48" right="64" bottom="48" left="64"/></padding>
+        <Label text="LoanFlow" styleClass="brand-logo-small"/><Label text="Create your account" styleClass="login-heading"/><Label text="Smarter Lending. Simpler Management." styleClass="login-subtitle"/>
+        <VBox spacing="8"><Label text="FULL NAME" styleClass="field-label"/><TextField fx:id="nameField" promptText="Enter your full name" styleClass="modern-field"/></VBox>
+        <VBox spacing="8"><Label text="EMAIL ADDRESS" styleClass="field-label"/><TextField fx:id="emailField" promptText="you@example.com" styleClass="modern-field"/></VBox>
+        <VBox spacing="8"><Label text="PASSWORD" styleClass="field-label"/><PasswordField fx:id="passwordField" promptText="Minimum 6 characters" styleClass="modern-field"/></VBox>
+        <VBox spacing="8"><Label text="CONFIRM PASSWORD" styleClass="field-label"/><PasswordField fx:id="confirmPasswordField" promptText="Re-enter your password" styleClass="modern-field"/></VBox>
+        <Label text="Customer accounts can be created here. Staff accounts are managed separately." styleClass="registration-note" wrapText="true"/>
+        <Button text="Create customer account" maxWidth="Infinity" prefHeight="50" styleClass="primary-button" onAction="#registerUser"/>
+        <HBox alignment="CENTER" spacing="6"><Label text="Already have an account?" styleClass="small-text"/><Hyperlink text="Back to Login" styleClass="register-link" onAction="#openLogin"/></HBox>
     </VBox>
-</StackPane>
-<VBox maxWidth="560"
-      maxHeight="650"
-      spacing="18"
-      styleClass="register-card">
-
-    <padding>
-        <Insets top="42"
-                right="55"
-                bottom="42"
-                left="55"/>
-    </padding>
-
-    <Label text="LoanFlow"
-           styleClass="brand-logo-small"/>
-
-    <Label text="Create Your Account"
-           styleClass="login-heading"/>
-
-    <Label text="Join LoanFlow and manage your loan journey from one place."
-           styleClass="login-subtitle"
-           wrapText="true"/>
-
-    <VBox spacing="8">
-
-        <Label text="FULL NAME"
-               styleClass="field-label"/>
-
-        <TextField fx:id="nameField"
-                   promptText="Enter your full name"
-                   styleClass="modern-field"/>
-
-    </VBox>
-
-    <VBox spacing="8">
-
-        <Label text="EMAIL ADDRESS"
-               styleClass="field-label"/>
-
-        <TextField fx:id="emailField"
-                   promptText="you@example.com"
-                   styleClass="modern-field"/>
-
-    </VBox>
-
-    <VBox spacing="8">
-
-        <Label text="PASSWORD"
-               styleClass="field-label"/>
-
-        <PasswordField fx:id="passwordField"
-                       promptText="Minimum 6 characters"
-                       styleClass="modern-field"/>
-
-    </VBox>
-
-    <VBox spacing="8">
-
-        <Label text="CONFIRM PASSWORD"
-               styleClass="field-label"/>
-
-        <PasswordField fx:id="confirmPasswordField"
-                       promptText="Re-enter your password"
-                       styleClass="modern-field"/>
-
-    </VBox>
-
-    <Label text="Customer accounts can be created here. Administrator and Loan Officer accounts are managed separately."
-           styleClass="registration-note"
-           wrapText="true"/>
-
-    <Button text="Create Account"
-            maxWidth="Infinity"
-            prefHeight="50"
-            styleClass="primary-button"
-            onAction="#registerUser"/>
-
-    <HBox alignment="CENTER"
-          spacing="6">
-
-        <Label text="Already have an account?"
-               styleClass="small-text"/>
-
-        <Hyperlink text="Back to Login"
-                   styleClass="register-link"
-                   onAction="#openLogin"/>
-
-    </HBox>
-
-</VBox>
-</HBox>
-
-
 </StackPane>

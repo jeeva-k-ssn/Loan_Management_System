@@ -17,12 +17,7 @@ public void start(Stage stage) throws Exception {
                     )
             );
 
-    Scene scene =
-            new Scene(
-                    loader.load(),
-                    1100,
-                    700
-            );
+    Scene scene = new Scene(loader.load());
 
     stage.setTitle(
             "LoanFlow - Loan Management System"
@@ -33,7 +28,6 @@ public void start(Stage stage) throws Exception {
     stage.setMinWidth(950);
     stage.setMinHeight(620);
 
-    stage.centerOnScreen();
     stage.setMaximized(true);
     stage.show();
 }

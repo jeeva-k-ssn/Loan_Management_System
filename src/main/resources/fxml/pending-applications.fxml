@@ -6,13 +6,12 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -62,7 +61,7 @@
                         <Insets top="22" right="22" bottom="22" left="22"/>
                     </padding>
 
-                    <Label text="Applications Awaiting Review" styleClass="section-title"/>
+                    <HBox alignment="CENTER_LEFT" spacing="12"><Label text="Applications Awaiting Review" styleClass="section-title"/><Region HBox.hgrow="ALWAYS"/><TextField fx:id="applicationSearchField" promptText="Search by ID, customer, type, or purpose" styleClass="modern-field"/></HBox>
                     <Label text="Select an application to view its complete details."
                            styleClass="section-description"/>
 
@@ -72,7 +71,6 @@
                                styleClass="application-table">
                         <placeholder>
                             <VBox alignment="CENTER" spacing="5">
-                                <ImageView fitWidth="110" fitHeight="78" preserveRatio="false"><image><Image url="@../images/login-hero-1.png"/></image></ImageView>
                                 <Label text="No pending applications" styleClass="empty-title"/>
                                 <Label text="Applications awaiting review will appear here." styleClass="empty-label"/>
                             </VBox>

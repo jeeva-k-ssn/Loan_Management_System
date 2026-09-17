@@ -12,6 +12,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import com.loanmanagement.navigation.NavigationManager;
 
 public class RegisterController {
 
@@ -163,15 +164,7 @@ public void openLogin(ActionEvent event) {
                         .getScene()
                         .getWindow();
 
-        stage.setScene(
-                new Scene(root, 1100, 700)
-        );
-
-        stage.setTitle(
-                "LoanFlow - Login"
-        );
-
-        stage.centerOnScreen();
+        NavigationManager.navigate(stage, "/fxml/login.fxml", "LoanFlow - Login", null);
 
     } catch (Exception e) {
 

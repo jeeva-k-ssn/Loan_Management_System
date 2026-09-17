@@ -26,6 +26,13 @@
 .card-description { -fx-text-fill: #98A8B8; -fx-font-size: 11px; }
 .section-title { -fx-text-fill: #163753; -fx-font-size: 17px; -fx-font-weight: bold; }
 .section-description { -fx-text-fill: #71839A; -fx-font-size: 11px; }
+.summary-value { -fx-text-fill: #123D2F; -fx-font-size: 15px; -fx-font-weight: bold; }
+.payment-preview { -fx-background-color: #EEF6F0; -fx-background-radius: 8px; -fx-border-color: #D4E7D8; -fx-border-radius: 8px; -fx-padding: 10px; -fx-text-fill: #176B52; -fx-font-size: 12px; -fx-font-weight: bold; }
+.notification-list { -fx-background-color: transparent; -fx-border-color: #E1E5DE; -fx-border-radius: 12px; -fx-background-radius: 12px; }
+.notification-list .list-cell { -fx-background-color: #FFFFFF; -fx-padding: 16px; -fx-border-color: transparent transparent #E8EEE9 transparent; -fx-font-size: 13px; -fx-text-fill: #244B3A; }
+.notification-list .list-cell:hover { -fx-background-color: #F0F7F1; }
+.notification-unread { -fx-font-weight: bold; -fx-border-color: #82B49E; }
+.notification-read { -fx-opacity: .78; }
 .activity-container { -fx-padding: 18px 0 0 0; }
 .activity-item { -fx-background-color: #F5F8FB; -fx-background-radius: 8px; -fx-padding: 12px 14px; -fx-text-fill: #31556D; -fx-font-size: 13px; }
 .empty-label { -fx-text-fill: #98A8B8; -fx-font-size: 12px; }

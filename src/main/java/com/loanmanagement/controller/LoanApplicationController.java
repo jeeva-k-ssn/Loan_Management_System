@@ -3,6 +3,7 @@ package com.loanmanagement.controller;
 import com.loanmanagement.model.User;
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.util.LoanCalculationUtil;
+import com.loanmanagement.service.NotificationService;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -349,6 +350,20 @@ public class LoanApplicationController {
 
     @FXML
     private void submitApplication() {
+        if (submitButton != null) submitButton.setDisable(true);
+        javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<>() {
+            @Override protected Void call() {
+                submitApplicationDatabaseWork();
+                return null;
+            }
+        };
+        task.setOnFailed(event -> { if (submitButton != null) submitButton.setDisable(false); showError("Submission Error", "Unable to submit the loan application right now."); });
+        Thread thread = new Thread(task, "loanflow-submit-application");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void submitApplicationDatabaseWork() {
 
         clearValidation();
 
@@ -604,6 +619,16 @@ public class LoanApplicationController {
             }
 
 
+            try (PreparedStatement idStatement = connection.prepareStatement("SELECT MAX(APPLICATION_ID) FROM LOAN_APPLICATION WHERE CUSTOMER_ID=?")) {
+                idStatement.setInt(1, customerId);
+                try (ResultSet result = idStatement.executeQuery()) {
+                    if (result.next()) {
+                        int applicationId = result.getInt(1);
+                        NotificationService.create(currentUser.getUserId(), "Application submitted", "Application #" + applicationId + " for ₹" + String.format(Locale.US, "%,.2f", loanAmount) + " is now PENDING.", "APPLICATION_SUBMITTED", applicationId);
+                    }
+                }
+            }
+
             // ====================================================
             // SUCCESS
             // ====================================================
@@ -624,9 +649,8 @@ public class LoanApplicationController {
             e.printStackTrace();
 
             showError(
-                    "Database Error",
-                    "Unable to submit the loan application.\n\n"
-                            + e.getMessage()
+                    "Application Error",
+                    "Unable to submit the loan application right now. Please try again."
             );
         }
     }
@@ -804,8 +828,7 @@ public class LoanApplicationController {
 
             showError(
                     "Navigation Error",
-                    "Unable to return to dashboard.\n\n"
-                            + e.getMessage()
+                    "Unable to return to the dashboard."
             );
         }
     }

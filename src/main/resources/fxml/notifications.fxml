@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.loanmanagement.controller.NotificationController" stylesheets="@../css/dashboard.css" styleClass="dashboard-root">
+ <top><HBox alignment="CENTER_LEFT" spacing="12" styleClass="top-bar"><padding><Insets top="16" right="28" bottom="16" left="28"/></padding><VBox><Label text="LoanFlow" styleClass="dashboard-logo"/><Label text="NOTIFICATIONS" styleClass="dashboard-subtitle"/></VBox><Region HBox.hgrow="ALWAYS"/><Button text="Refresh" onAction="#refresh" styleClass="refresh-button"/><Button text="Back to Dashboard" onAction="#back" styleClass="logout-button"/></HBox></top>
+ <center><VBox spacing="16"><padding><Insets top="30" right="35" bottom="35" left="35"/></padding><VBox spacing="5"><Label text="Notifications" styleClass="page-title"/><Label fx:id="countLabel" text="0 unread" styleClass="page-description"/></VBox><ListView fx:id="notificationList" VBox.vgrow="ALWAYS" styleClass="notification-list"><placeholder><Label text="No notifications yet." styleClass="empty-label"/></placeholder></ListView><Button text="Mark all as read" onAction="#markAllRead" styleClass="secondary-action-button" maxWidth="180"/></VBox></center>
+</BorderPane>
