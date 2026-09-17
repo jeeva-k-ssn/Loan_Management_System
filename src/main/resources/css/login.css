@@ -1,13 +1,13 @@
 /* LoanFlow authentication design */
 .login-root { -fx-background-color: #EEF3F7; -fx-font-family: "Segoe UI"; }
-.login-shell { -fx-background-color: white; -fx-background-radius: 18px; -fx-effect: dropshadow(gaussian, rgba(11,31,53,.16), 28, .12, 0, 10); }
-.login-brand-panel { -fx-background-color: #0B1F35; -fx-background-radius: 18px 0 0 18px; }
+.login-shell { -fx-background-color: white; -fx-background-radius: 0; -fx-effect: none; }
+.login-brand-panel { -fx-background-color: #0B1F35; }
 .brand-logo, .brand-logo-small { -fx-text-fill: #78D6D1; -fx-font-size: 24px; -fx-font-weight: bold; }
 .brand-headline { -fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold; -fx-line-spacing: 2px; }
 .brand-copy { -fx-text-fill: #B8CAD8; -fx-font-size: 14px; -fx-line-spacing: 4px; }
 .brand-kicker, .login-kicker { -fx-text-fill: #128C8C; -fx-font-size: 10px; -fx-font-weight: bold; }
-.login-panel, .register-card { -fx-background-color: white; -fx-background-radius: 0 18px 18px 0; }
-.register-card { -fx-background-radius: 18px; -fx-effect: dropshadow(gaussian, rgba(11,31,53,.16), 28, .12, 0, 10); }
+.login-panel, .register-card { -fx-background-color: white; }
+.register-card { -fx-background-radius: 0; -fx-effect: none; }
 .login-heading { -fx-text-fill: #102A43; -fx-font-size: 30px; -fx-font-weight: bold; }
 .login-subtitle, .small-text, .security-note { -fx-text-fill: #6B7F91; -fx-font-size: 12px; }
 .field-label { -fx-text-fill: #31566C; -fx-font-size: 10px; -fx-font-weight: bold; }
@@ -19,4 +19,3 @@
 .register-link:hover { -fx-underline: true; }
 .password-toggle { -fx-background-color: #EAF4F5; -fx-text-fill: #126B71; -fx-background-radius: 8px; -fx-font-weight: bold; }
 .registration-note { -fx-background-color: #EEF7F2; -fx-text-fill: #416A55; -fx-padding: 10px 12px; -fx-background-radius: 7px; -fx-font-size: 11px; }
-
