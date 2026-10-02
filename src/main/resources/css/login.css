@@ -17,7 +17,7 @@
 }
 
 .hero-overlay {
-    -fx-background-color: linear-gradient(to right, rgba(2, 18, 26, 0.70), rgba(2, 18, 26, 0.88));
+    -fx-background-color: linear-gradient(to right, rgba(2, 22, 34, 0.35), rgba(2, 22, 34, 0.65));
 }
 
 .hero-content {
@@ -26,7 +26,7 @@
 
 /* Brand Header */
 .brand-logo-icon-bg {
-    -fx-background-color: rgba(0, 242, 254, 0.12);
+    -fx-background-color: rgba(0, 242, 254, 0.15);
     -fx-background-radius: 12px;
     -fx-padding: 8px 10px;
 }
@@ -73,8 +73,8 @@
 }
 
 .feature-card {
-    -fx-background-color: rgba(4, 34, 46, 0.65);
-    -fx-border-color: rgba(0, 242, 254, 0.20);
+    -fx-background-color: rgba(4, 34, 46, 0.70);
+    -fx-border-color: rgba(0, 242, 254, 0.25);
     -fx-border-width: 1px;
     -fx-border-radius: 14px;
     -fx-background-radius: 14px;
@@ -84,7 +84,7 @@
 }
 
 .feature-icon-badge {
-    -fx-background-color: rgba(0, 242, 254, 0.15);
+    -fx-background-color: rgba(0, 242, 254, 0.18);
     -fx-background-radius: 10px;
     -fx-padding: 8px 10px;
     -fx-alignment: center;
@@ -126,7 +126,7 @@
 }
 
 .login-card {
-    -fx-background-color: rgba(4, 34, 46, 0.90);
+    -fx-background-color: rgba(4, 34, 46, 0.92);
     -fx-border-color: #00E5FF;
     -fx-border-width: 1.5px;
     -fx-border-radius: 24px;
@@ -171,14 +171,14 @@
 
 /* Input Containers */
 .input-container {
-    -fx-background-color: rgba(3, 38, 52, 0.85);
+    -fx-background-color: rgba(3, 38, 52, 0.90);
     -fx-border-color: #0A8494;
     -fx-border-width: 1px;
     -fx-border-radius: 14px;
     -fx-background-radius: 14px;
     -fx-padding: 0 14px;
-    -fx-min-height: 52px;
-    -fx-pref-height: 52px;
+    -fx-min-height: 50px;
+    -fx-pref-height: 50px;
 }
 
 .input-container:hover, .input-container:focused-within {
@@ -199,6 +199,7 @@
     -fx-font-size: 14px;
 }
 
+/* ComboBox Main Control */
 .custom-combo {
     -fx-background-color: transparent;
     -fx-border-width: 0;
@@ -219,6 +220,34 @@
 
 .custom-combo .arrow {
     -fx-background-color: #00F2FE;
+}
+
+/* ComboBox Popup List Options Styling (Fixes blank options bug) */
+.combo-box-popup .list-view {
+    -fx-background-color: #042431;
+    -fx-border-color: #00E5FF;
+    -fx-border-width: 1px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0.3, 0, 8);
+    -fx-padding: 6px;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: #042431;
+    -fx-text-fill: #E2F4FA;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-padding: 10px 14px;
+    -fx-background-radius: 8px;
+}
+
+.combo-box-popup .list-cell:hover,
+.combo-box-popup .list-cell:filled:hover,
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #0A4A5C;
+    -fx-text-fill: #00F2FE;
+    -fx-font-weight: bold;
 }
 
 /* Password Eye Toggle Button */
@@ -249,7 +278,7 @@
     -fx-background-color: linear-gradient(to right, #00E5FF, #00C6FF);
     -fx-text-fill: #02121A;
     -fx-background-radius: 14px;
-    -fx-font-size: 17px;
+    -fx-font-size: 16px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.35), 15, 0.3, 0, 4);
@@ -282,6 +311,12 @@
     -fx-underline: true;
 }
 
+.registration-note {
+    -fx-text-fill: #82ACB9;
+    -fx-font-size: 12px;
+    -fx-line-spacing: 2px;
+}
+
 .card-divider {
     -fx-background-color: #0C5266;
 }
@@ -293,7 +328,7 @@
 
 /* Top Right Tagline Accent */
 .top-right-tagline {
-    -fx-padding: 36px 60px 0 0;
+    -fx-padding: 24px 44px 0 0;
 }
 
 .tagline-bar {
@@ -310,4 +345,5 @@
     -fx-text-fill: #E0F5FC;
     -fx-font-size: 13px;
 }
+
 

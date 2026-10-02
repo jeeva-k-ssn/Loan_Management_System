@@ -2,15 +2,179 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.loanmanagement.controller.RegisterController" stylesheets="@../css/login.css" styleClass="login-root">
-    <VBox maxWidth="560" maxHeight="690" spacing="18" styleClass="register-card"><padding><Insets top="48" right="64" bottom="48" left="64"/></padding>
-        <Label text="LoanFlow" styleClass="brand-logo-small"/><Label text="Create your account" styleClass="login-heading"/><Label text="Smarter Lending. Simpler Management." styleClass="login-subtitle"/>
-        <VBox spacing="8"><Label text="FULL NAME" styleClass="field-label"/><TextField fx:id="nameField" promptText="Enter your full name" styleClass="modern-field"/></VBox>
-        <VBox spacing="8"><Label text="EMAIL ADDRESS" styleClass="field-label"/><TextField fx:id="emailField" promptText="you@example.com" styleClass="modern-field"/></VBox>
-        <VBox spacing="8"><Label text="PASSWORD" styleClass="field-label"/><PasswordField fx:id="passwordField" promptText="Minimum 6 characters" styleClass="modern-field"/></VBox>
-        <VBox spacing="8"><Label text="CONFIRM PASSWORD" styleClass="field-label"/><PasswordField fx:id="confirmPasswordField" promptText="Re-enter your password" styleClass="modern-field"/></VBox>
-        <Label text="Customer accounts can be created here. Staff accounts are managed separately." styleClass="registration-note" wrapText="true"/>
-        <Button text="Create customer account" maxWidth="Infinity" prefHeight="50" styleClass="primary-button" onAction="#registerUser"/>
-        <HBox alignment="CENTER" spacing="6"><Label text="Already have an account?" styleClass="small-text"/><Hyperlink text="Back to Login" styleClass="register-link" onAction="#openLogin"/></HBox>
-    </VBox>
+<?import javafx.scene.shape.SVGPath?>
+
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.loanmanagement.controller.RegisterController"
+           stylesheets="@../css/login.css" styleClass="login-root">
+    
+    <!-- Main Split Shell -->
+    <GridPane styleClass="login-shell">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="54"/>
+            <ColumnConstraints percentWidth="46"/>
+        </columnConstraints>
+        
+        <!-- Left Hero Panel -->
+        <StackPane GridPane.columnIndex="0" styleClass="hero-panel">
+            <Region styleClass="hero-overlay"/>
+            
+            <VBox styleClass="hero-content" fillWidth="true">
+                <!-- Brand Header -->
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <StackPane styleClass="brand-logo-icon-bg">
+                        <SVGPath content="M17 3H7c-1.1 0-1.99.9-1.99 2L5 19c0 1.1.89 2 1.99 2H17c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="#00F2FE" styleClass="brand-svg"/>
+                    </StackPane>
+                    <VBox spacing="0">
+                        <HBox spacing="0">
+                            <Label text="Loan" styleClass="brand-title-white"/>
+                            <Label text="Flow" styleClass="brand-title-cyan"/>
+                        </HBox>
+                        <Label text="Loan Management System" styleClass="brand-subtitle"/>
+                    </VBox>
+                </HBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- Main Hero Copy & Badges -->
+                <VBox spacing="20" maxWidth="620">
+                    <VBox spacing="2">
+                        <Label text="Start Your Journey." styleClass="hero-heading-white"/>
+                        <HBox spacing="10">
+                            <Label text="Join" styleClass="hero-heading-cyan"/>
+                            <Label text="LoanFlow Today." styleClass="hero-heading-white"/>
+                        </HBox>
+                    </VBox>
+
+                    <Label text="Create your customer profile to calculate EMIs, apply for loans, track application status, and manage repayments effortlessly." styleClass="hero-copy" wrapText="true"/>
+
+                    <!-- 4 Feature Cards -->
+                    <HBox spacing="12" styleClass="feature-row">
+                        <VBox styleClass="feature-card" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <StackPane styleClass="feature-icon-badge">
+                                <SVGPath content="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="#00F2FE" styleClass="feature-svg"/>
+                            </StackPane>
+                            <Label text="Instant&#10;Eligibility" styleClass="feature-text"/>
+                        </VBox>
+
+                        <VBox styleClass="feature-card" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <StackPane styleClass="feature-icon-badge">
+                                <SVGPath content="M7 2v11h3v9l7-12h-4l4-8z" fill="#00F2FE" styleClass="feature-svg"/>
+                            </StackPane>
+                            <Label text="Flexible&#10;Tenures" styleClass="feature-text"/>
+                        </VBox>
+
+                        <VBox styleClass="feature-card" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <StackPane styleClass="feature-icon-badge">
+                                <SVGPath content="M5 9.2h3V19H5zM10.6 5h3v14h-3zM16.2 13h3v6h-3z" fill="#00F2FE" styleClass="feature-svg"/>
+                            </StackPane>
+                            <Label text="Transparent&#10;EMI Schedule" styleClass="feature-text"/>
+                        </VBox>
+
+                        <VBox styleClass="feature-card" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                            <StackPane styleClass="feature-icon-badge">
+                                <SVGPath content="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="#00F2FE" styleClass="feature-svg"/>
+                            </StackPane>
+                            <Label text="Bank-Grade&#10;Security" styleClass="feature-text"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- Bottom Quote Block -->
+                <HBox alignment="CENTER_LEFT" spacing="14" styleClass="quote-box">
+                    <Region styleClass="quote-accent-bar"/>
+                    <Label text="“Empowering your financial growth,&#10;one step at a time.”" styleClass="quote-text"/>
+                </HBox>
+            </VBox>
+        </StackPane>
+
+        <!-- Right Register Panel -->
+        <StackPane GridPane.columnIndex="1" styleClass="login-panel" alignment="CENTER">
+            <!-- Top Right Tagline Header -->
+            <HBox alignment="TOP_RIGHT" spacing="12" mouseTransparent="true" styleClass="top-right-tagline" StackPane.alignment="TOP_RIGHT">
+                <Region styleClass="tagline-bar"/>
+                <Label text="Smarter Lending. Brighter Futures." styleClass="tagline-text"/>
+            </HBox>
+
+            <VBox maxWidth="490" prefWidth="470" spacing="16" styleClass="login-card">
+                <padding>
+                    <Insets top="32" right="38" bottom="30" left="38"/>
+                </padding>
+
+                <!-- Header inside Card -->
+                <HBox alignment="CENTER_LEFT" spacing="14">
+                    <StackPane styleClass="card-logo-badge">
+                        <SVGPath content="M17 3H7c-1.1 0-1.99.9-1.99 2L5 19c0 1.1.89 2 1.99 2H17c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" fill="#00F2FE" styleClass="card-logo-svg"/>
+                    </StackPane>
+                    <VBox spacing="2">
+                        <Label text="Create Account" styleClass="kicker-text"/>
+                        <HBox spacing="6">
+                            <Label text="Register as" styleClass="card-title-white"/>
+                            <Label text="Customer" styleClass="card-title-cyan"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <Label text="Fill in your details to start your LoanFlow account." styleClass="card-subtitle"/>
+
+                <!-- Full Name Input -->
+                <VBox spacing="5">
+                    <Label text="FULL NAME" styleClass="field-label"/>
+                    <HBox alignment="CENTER_LEFT" styleClass="input-container">
+                        <StackPane styleClass="input-icon-box">
+                            <SVGPath content="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="#94BCCB" styleClass="input-svg"/>
+                        </StackPane>
+                        <TextField fx:id="nameField" promptText="Enter your full name" styleClass="custom-input" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Email Input -->
+                <VBox spacing="5">
+                    <Label text="EMAIL ADDRESS" styleClass="field-label"/>
+                    <HBox alignment="CENTER_LEFT" styleClass="input-container">
+                        <StackPane styleClass="input-icon-box">
+                            <SVGPath content="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#94BCCB" styleClass="input-svg"/>
+                        </StackPane>
+                        <TextField fx:id="emailField" promptText="you@example.com" styleClass="custom-input" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Password Input -->
+                <VBox spacing="5">
+                    <Label text="PASSWORD" styleClass="field-label"/>
+                    <HBox alignment="CENTER_LEFT" styleClass="input-container">
+                        <StackPane styleClass="input-icon-box">
+                            <SVGPath content="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="#94BCCB" styleClass="input-svg"/>
+                        </StackPane>
+                        <PasswordField fx:id="passwordField" promptText="Minimum 6 characters" styleClass="custom-input" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <!-- Confirm Password Input -->
+                <VBox spacing="5">
+                    <Label text="CONFIRM PASSWORD" styleClass="field-label"/>
+                    <HBox alignment="CENTER_LEFT" styleClass="input-container">
+                        <StackPane styleClass="input-icon-box">
+                            <SVGPath content="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="#94BCCB" styleClass="input-svg"/>
+                        </StackPane>
+                        <PasswordField fx:id="confirmPasswordField" promptText="Re-enter your password" styleClass="custom-input" HBox.hgrow="ALWAYS"/>
+                    </HBox>
+                </VBox>
+
+                <Label text="Customer accounts can be created here. Staff accounts are managed separately." styleClass="registration-note" wrapText="true"/>
+
+                <!-- Submit Button -->
+                <Button text="→   Create Customer Account" maxWidth="Infinity" prefHeight="46" styleClass="sign-in-btn" onAction="#registerUser"/>
+
+                <!-- Login Link Row -->
+                <HBox alignment="CENTER" spacing="6">
+                    <Label text="Already have an account?" styleClass="register-prompt"/>
+                    <Hyperlink text="Back to Login  ›" styleClass="register-link" onAction="#openLogin"/>
+                </HBox>
+            </VBox>
+        </StackPane>
+    </GridPane>
 </StackPane>
+
