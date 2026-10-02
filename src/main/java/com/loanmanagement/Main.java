@@ -27,8 +27,14 @@ public void start(Stage stage) throws Exception {
 
     stage.setMinWidth(950);
     stage.setMinHeight(620);
-
-    stage.setMaximized(true);
+    stage.setResizable(true);
+    stage.setFullScreen(false);
+    stage.setMaximized(false);
+    // Start at a comfortable desktop size instead of forcing an immediate
+    // maximization, which makes the responsive login artwork appear to zoom.
+    stage.setWidth(1440);
+    stage.setHeight(860);
+    stage.centerOnScreen();
     stage.show();
 }
 

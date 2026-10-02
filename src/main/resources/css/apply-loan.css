@@ -623,6 +623,26 @@
     -fx-text-fill: #718096;
 }
 
+/* LoanFlow unified fintech workspace overrides */
+.apply-root { -fx-background-color: #F4F7FA; -fx-font-family: "Segoe UI"; }
+.top-header { -fx-background-color: linear-gradient(to right, #031C2A, #06445A); -fx-padding: 18px 34px; }
+.logo-text { -fx-text-fill: #F5FBFF; -fx-font-size: 24px; }
+.logo-subtitle, .header-right-text { -fx-text-fill: #B9D6DF; }
+.main-scroll > .viewport, .main-content { -fx-background-color: #F4F7FA; }
+.loan-card, .summary-card, .process-card, .security-card { -fx-background-color: white; -fx-border-color: #D5E5EA; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-effect: dropshadow(gaussian, rgba(3,28,42,.12), 18, .16, 0, 5); }
+.card-header { -fx-background-color: linear-gradient(to right, #E7F8F7, white); -fx-border-color: #D5E5EA; }
+.card-title, .field-label, .process-title, .process-step-title, .security-title { -fx-text-fill: #163B55; }
+.form-field, .form-combo, .form-textarea { -fx-background-color: #F9FCFD; -fx-border-color: #C8DDE3; -fx-text-fill: #163B55; }
+.form-field:focused, .form-combo:focused, .form-textarea:focused { -fx-border-color: #11BFC0; }
+.readonly-field { -fx-background-color: #EEF4F6; -fx-text-fill: #5C7481; }
+.emi-field { -fx-background-color: #E8FAF8; -fx-border-color: #62D9D1; -fx-text-fill: #087F8C; }
+.calculate-button, .submit-button { -fx-background-color: linear-gradient(to right, #11D9CE, #0BB7B9); -fx-background-radius: 9px; }
+.calculate-button:hover, .submit-button:hover { -fx-background-color: #0D969C; }
+.summary-card { -fx-background-color: linear-gradient(to bottom right, #031C2A, #08677A); -fx-border-color: #11CFCB; }
+.summary-title, .step-label { -fx-text-fill: #7DE9E4; }
+.summary-label, .summary-description { -fx-text-fill: #CBE7EA; }
+.summary-amount { -fx-text-fill: white; }
+
 .submit-button:focused, .calculate-button:focused, .back-button:focused { -fx-border-color: #72D3D0; -fx-border-width: 2px; }
 .apply-root { -fx-background-color: #F6F4EF; }
 .top-header { -fx-background-color: #123D2F; }

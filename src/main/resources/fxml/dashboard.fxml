@@ -144,7 +144,7 @@
                 <!-- STAT CARDS -->
                 <!-- ================================================= -->
 
-                <GridPane hgap="18"
+                <GridPane fx:id="summaryGrid" hgap="18"
                           vgap="18">
 
                     <columnConstraints>

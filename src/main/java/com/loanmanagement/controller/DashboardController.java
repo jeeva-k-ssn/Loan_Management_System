@@ -10,6 +10,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
@@ -40,6 +42,7 @@ public class DashboardController {
     @FXML private Label loansValueLabel;
     @FXML private Label paymentsValueLabel;
     @FXML private VBox activityContainer;
+    @FXML private GridPane summaryGrid;
     @FXML private Button applyLoanButton;
     @FXML private Button viewLoansButton;
     @FXML private Button viewPaymentsButton;
@@ -60,6 +63,25 @@ public class DashboardController {
     @FXML
     public void initialize() {
         configureDefaultButtons();
+        summaryGrid.widthProperty().addListener((obs, oldWidth, newWidth) -> configureResponsiveSummaryCards(newWidth.doubleValue()));
+        configureResponsiveSummaryCards(0);
+    }
+
+    private void configureResponsiveSummaryCards(double width) {
+        if (summaryGrid == null) return;
+        int columns = width >= 900 ? 4 : width >= 560 ? 2 : 1;
+        summaryGrid.getColumnConstraints().clear();
+        for (int i = 0; i < columns; i++) {
+            ColumnConstraints constraint = new ColumnConstraints();
+            constraint.setPercentWidth(100.0 / columns);
+            constraint.setHgrow(javafx.scene.layout.Priority.ALWAYS);
+            summaryGrid.getColumnConstraints().add(constraint);
+        }
+        for (int i = 0; i < summaryGrid.getChildren().size(); i++) {
+            javafx.scene.Node card = summaryGrid.getChildren().get(i);
+            GridPane.setColumnIndex(card, i % columns);
+            GridPane.setRowIndex(card, i / columns);
+        }
     }
 
     public void setCurrentUser(User user) {

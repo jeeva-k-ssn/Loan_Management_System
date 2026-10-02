@@ -108,6 +108,7 @@
 
                             <VBox spacing="4">
 
+
                                 <Label text="Loan Details"
                                        styleClass="card-title"/>
 
@@ -247,14 +248,15 @@
                                       GridPane.rowIndex="2"
                                       spacing="7">
 
-                                    <Label text="Interest Rate *"
+                                    <Label text="Interest Rate (set by loan type)"
                                            styleClass="field-label"/>
 
                                     <TextField fx:id="interestRateField"
+                                               editable="false"
                                                maxWidth="Infinity"
                                                prefHeight="46"
                                                promptText="Enter interest rate"
-                                               styleClass="form-field"/>
+                                               styleClass="form-field readonly-field"/>
 
                                 </VBox>
 

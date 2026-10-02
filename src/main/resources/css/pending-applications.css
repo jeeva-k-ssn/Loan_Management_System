@@ -258,3 +258,22 @@
 .detail-value { -fx-text-fill: #244B3A; }
 .approve-button { -fx-background-color: #176B52; }
 .approve-button:hover { -fx-background-color: #0F563F; }
+
+/* LoanFlow unified fintech workspace overrides */
+.pending-root, .pending-scroll > .viewport { -fx-background-color: #F4F7FA; -fx-font-family: "Segoe UI"; }
+.pending-top-bar { -fx-background-color: linear-gradient(to right, #031C2A, #06445A); }
+.dashboard-logo { -fx-text-fill: #F5FBFF; }
+.dashboard-subtitle { -fx-text-fill: #B9D6DF; }
+.page-title { -fx-text-fill: #102A43; }
+.content-card { -fx-background-color: white; -fx-border-color: #D5E5EA; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-effect: dropshadow(gaussian, rgba(3,28,42,.11), 16, .14, 0, 5); }
+.section-title { -fx-text-fill: #163B55; }
+.application-table .column-header-background, .application-table .column-header { -fx-background-color: #163B55; }
+.application-table .table-row-cell:hover { -fx-background-color: #EEF8F8; }
+.application-table .table-row-cell:selected { -fx-background-color: #CFEDEE; }
+.application-table .table-cell { -fx-text-fill: #31566C; }
+.detail-box { -fx-background-color: #F4F9FA; -fx-border-color: #D5E5EA; }
+.detail-title { -fx-text-fill: #6B7F91; }
+.detail-value { -fx-text-fill: #163B55; }
+.approve-button { -fx-background-color: #128C8C; }
+.approve-button:hover { -fx-background-color: #0D6F72; }
+.reject-button { -fx-background-color: #C94C5A; }
