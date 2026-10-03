@@ -277,3 +277,10 @@
 .approve-button { -fx-background-color: #128C8C; }
 .approve-button:hover { -fx-background-color: #0D6F72; }
 .reject-button { -fx-background-color: #C94C5A; }
+
+.assessment-panel { -fx-background-color: #F4F9FA; -fx-background-radius: 10px; -fx-border-color: #D5E5EA; -fx-border-radius: 10px; -fx-padding: 14px; }
+.assessment-title { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #176B52; }
+.assessment-description { -fx-font-size: 11px; -fx-text-fill: #68766E; }
+.assessment-label { -fx-font-size: 12px; -fx-text-fill: #718078; }
+.assessment-value { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #244B3A; }
+.assessment-status { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #176B52; }

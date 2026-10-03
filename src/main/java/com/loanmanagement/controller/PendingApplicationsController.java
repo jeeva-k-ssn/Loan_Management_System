@@ -2,6 +2,7 @@ package com.loanmanagement.controller;
 
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.service.NotificationService;
+import com.loanmanagement.service.CreditAssessmentService;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -103,6 +104,10 @@ public class PendingApplicationsController {
 
     @FXML
     private Label statusLabel;
+
+    @FXML private Label assessmentScoreLabel, assessmentIncomeLabel, assessmentExistingEmiLabel,
+            assessmentNewEmiLabel, assessmentTotalEmiLabel, assessmentRatioLabel,
+            assessmentDebtLabel, assessmentEligibilityLabel, assessmentRiskLabel, assessmentReasonLabel;
 
 
     // ============================================================
@@ -543,11 +548,62 @@ public class PendingApplicationsController {
 
         setStatus(statusLabel, application.getStatus());
 
+        clearAssessment();
+        int selectedApplicationId = application.getApplicationId();
+        Task<CreditAssessmentService.Assessment> assessmentTask = new Task<>() {
+            @Override protected CreditAssessmentService.Assessment call() throws Exception {
+                try (Connection connection = getConnection()) {
+                    return CreditAssessmentService.loadForApplication(connection, selectedApplicationId);
+                }
+            }
+        };
+        assessmentTask.setOnSucceeded(event -> {
+            LoanApplication current = applicationTable.getSelectionModel().getSelectedItem();
+            if (current != null && current.getApplicationId() == selectedApplicationId) showAssessment(assessmentTask.getValue());
+        });
+        assessmentTask.setOnFailed(event -> {
+            LoanApplication current = applicationTable.getSelectionModel().getSelectedItem();
+            if (current != null && current.getApplicationId() == selectedApplicationId)
+                assessmentReasonLabel.setText("Credit data is unavailable; officer review is required.");
+        });
+        Thread assessmentThread = new Thread(assessmentTask, "loanflow-credit-assessment");
+        assessmentThread.setDaemon(true);
+        assessmentThread.start();
+
 
         approveButton.setDisable(false);
 
         rejectButton.setDisable(false);
     }
+
+    private void showAssessment(CreditAssessmentService.Assessment assessment) {
+        assessmentScoreLabel.setText(assessment.getCreditScoreDisplay());
+        assessmentIncomeLabel.setText(assessment.getIncomeDisplay());
+        assessmentExistingEmiLabel.setText(money(assessment.getExistingEmi()));
+        assessmentNewEmiLabel.setText(money(assessment.getNewEmi()));
+        assessmentTotalEmiLabel.setText(money(assessment.getTotalEmi()));
+        assessmentRatioLabel.setText(assessment.getRatioDisplay());
+        assessmentDebtLabel.setText(money(assessment.getOutstandingDebt()));
+        assessmentEligibilityLabel.setText(assessment.getEligibilityDisplay());
+        assessmentRiskLabel.setText(assessment.getRisk());
+        assessmentReasonLabel.setText(assessment.getReason());
+    }
+
+    private void clearAssessment() {
+        if (assessmentScoreLabel == null) return;
+        assessmentScoreLabel.setText("NH / Not available");
+        assessmentIncomeLabel.setText("Not available");
+        assessmentExistingEmiLabel.setText("Not available");
+        assessmentNewEmiLabel.setText("Not available");
+        assessmentTotalEmiLabel.setText("Not available");
+        assessmentRatioLabel.setText("Not available");
+        assessmentDebtLabel.setText("Not available");
+        assessmentEligibilityLabel.setText("REQUIRES REVIEW");
+        assessmentRiskLabel.setText("REVIEW");
+        assessmentReasonLabel.setText("Select an application to load its academic credit assessment.");
+    }
+
+    private String money(java.math.BigDecimal value) { return "₹" + value.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString(); }
 
 
     // ============================================================
@@ -566,6 +622,7 @@ public class PendingApplicationsController {
         emiLabel.setText("-");
         dateLabel.setText("-");
         setStatus(statusLabel, "-");
+        clearAssessment();
 
         disableReviewButtons();
     }

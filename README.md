@@ -19,7 +19,7 @@ LoanFlow is a JavaFX desktop application for managing lending operations from lo
 - Admin statistics and charts
 - Maximized desktop presentation with responsive JavaFX layouts
 
-## User roles and permissions
+## User roles and permissions 
 
 ### Customer
 
@@ -46,7 +46,7 @@ Login → Customer Dashboard → Calculate EMI → Submit Loan Application
 ### Loan officer workflow
 
 ```text
-Login → Officer Dashboard → Pending Applications
+Login → Officer Dashboard → Pending Applications 
      → Review Application → Approve or Reject
      → Notification and Dashboard Refresh
 ```
@@ -112,9 +112,10 @@ role_migration.sql
 module3_lifecycle_migration.sql
 module4_notifications_migration.sql
 module5_customer_created_at_migration.sql
+module6_credit_assessment_migration.sql
 ```
 
-The later migrations are additive. They enable password upgrades, roles, loan lifecycle fields, notifications, and customer creation dates.
+The later migrations are additive. They enable password upgrades, roles, loan lifecycle fields, notifications, customer creation dates, and persisted academic credit assessments. Module 6 adds optional verified income/academic-score profile fields plus application assessment snapshots; LoanFlow does not retrieve or claim real CIBIL data.
 
 Example connection:
 
@@ -246,4 +247,3 @@ Check controller names, `fx:id` values, and `onAction` methods.
 
 Jeeva K  
 SSN College of Engineering
-

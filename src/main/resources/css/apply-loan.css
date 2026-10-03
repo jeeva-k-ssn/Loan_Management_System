@@ -643,6 +643,14 @@
 .summary-label, .summary-description { -fx-text-fill: #CBE7EA; }
 .summary-amount { -fx-text-fill: white; }
 
+/* Integrated credit assessment; intentionally follows the existing form-card language. */
+.assessment-card { -fx-background-color: #F4F9FA; -fx-background-radius: 10px; -fx-border-color: #D5E5EA; -fx-border-radius: 10px; -fx-padding: 14px; }
+.assessment-title { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #176B52; }
+.assessment-description { -fx-font-size: 11px; -fx-text-fill: #68766E; }
+.assessment-label { -fx-font-size: 12px; -fx-text-fill: #718078; }
+.assessment-value { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #244B3A; }
+.assessment-status { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #176B52; }
+
 .submit-button:focused, .calculate-button:focused, .back-button:focused { -fx-border-color: #72D3D0; -fx-border-width: 2px; }
 .apply-root { -fx-background-color: #F6F4EF; }
 .top-header { -fx-background-color: #123D2F; }
@@ -661,3 +669,30 @@
 .calculate-button:hover, .submit-button:hover { -fx-background-color: #0F563F; }
 .summary-card { -fx-background-color: linear-gradient(to bottom right, #123D2F, #176B52); }
 .summary-title, .step-label { -fx-text-fill: #D7B56D; }
+
+/* Final LoanFlow dashboard-aligned palette. */
+.apply-root { -fx-background-color: #F4F7FA; -fx-font-family: "Segoe UI"; }
+.top-header { -fx-background-color: #0B1F35; -fx-padding: 16px 28px; }
+.logo-text { -fx-text-fill: #78D6D1; -fx-font-size: 22px; -fx-font-weight: bold; }
+.logo-subtitle, .header-right-text { -fx-text-fill: #9DB2C5; }
+.main-scroll > .viewport, .main-content { -fx-background-color: #F4F7FA; }
+.page-title { -fx-text-fill: #102A43; -fx-font-size: 28px; -fx-font-weight: bold; }
+.page-description, .card-description, .process-step-description, .security-description, .footer-text { -fx-text-fill: #6B7F91; }
+.loan-card, .summary-card, .process-card, .security-card { -fx-background-color: white; -fx-border-color: #DCE6EE; -fx-border-radius: 12px; -fx-background-radius: 12px; -fx-effect: dropshadow(gaussian, rgba(16,42,67,.10), 14, .12, 0, 4); }
+.card-header { -fx-background-color: #F7FBFC; -fx-border-color: #DCE6EE; }
+.card-title, .field-label, .process-title, .process-step-title, .security-title { -fx-text-fill: #163B55; }
+.form-field, .form-combo, .form-textarea { -fx-background-color: #F9FBFC; -fx-border-color: #CBD9E2; -fx-text-fill: #163B55; }
+.form-field:focused, .form-combo:focused, .form-textarea:focused { -fx-border-color: #128C8C; }
+.readonly-field { -fx-background-color: #EEF4F6; -fx-text-fill: #5C7481; }
+.emi-field { -fx-background-color: #E8FAF8; -fx-border-color: #62D9D1; -fx-text-fill: #087F8C; }
+.calculate-button, .submit-button { -fx-background-color: #128C8C; -fx-background-radius: 8px; }
+.calculate-button:hover, .submit-button:hover { -fx-background-color: #0D6F72; }
+.back-button { -fx-background-color: #EAF4F5; -fx-border-color: #B9D9DD; -fx-text-fill: #126B71; }
+.summary-card { -fx-background-color: linear-gradient(to bottom right, #0B1F35, #155C70); -fx-border-color: transparent; }
+.summary-title, .step-label { -fx-text-fill: #78D6D1; }
+.summary-label, .summary-description { -fx-text-fill: #D4EEF0; }
+.summary-amount { -fx-text-fill: white; }
+.assessment-card { -fx-background-color: #F3F8FA; -fx-border-color: #D8E3EA; }
+.assessment-title, .assessment-status { -fx-text-fill: #126B71; }
+.assessment-description, .assessment-label { -fx-text-fill: #6B7F91; }
+.assessment-value { -fx-text-fill: #123D52; }

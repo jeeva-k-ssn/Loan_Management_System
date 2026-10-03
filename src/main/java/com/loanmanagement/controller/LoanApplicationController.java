@@ -4,6 +4,7 @@ import com.loanmanagement.model.User;
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.util.LoanCalculationUtil;
 import com.loanmanagement.service.NotificationService;
+import com.loanmanagement.service.CreditAssessmentService;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -58,6 +59,9 @@ public class LoanApplicationController {
 
     @FXML
     private Button submitButton;
+
+    @FXML private Label assessmentScoreLabel, assessmentExistingEmiLabel, assessmentTotalEmiLabel,
+            assessmentRatioLabel, assessmentEligibilityLabel, assessmentReasonLabel, summaryEmiLabel;
 
 
     // ============================================================
@@ -198,6 +202,7 @@ public class LoanApplicationController {
         if (validationLabel != null) {
             validationLabel.setText("");
         }
+        clearAssessment();
     }
 
 
@@ -322,6 +327,8 @@ public class LoanApplicationController {
             emiField.setText(
                     "₹ " + emiText
             );
+            if (summaryEmiLabel != null) summaryEmiLabel.setText("₹ " + emiText);
+            updateCreditAssessment(emi);
 
 
             showSuccessValidation(
@@ -361,6 +368,34 @@ public class LoanApplicationController {
         Thread thread = new Thread(task, "loanflow-submit-application");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    private void clearAssessment() {
+        if (assessmentScoreLabel != null) assessmentScoreLabel.setText("NH / Not available");
+        if (assessmentExistingEmiLabel != null) assessmentExistingEmiLabel.setText("Not available");
+        if (assessmentTotalEmiLabel != null) assessmentTotalEmiLabel.setText("Not available");
+        if (assessmentRatioLabel != null) assessmentRatioLabel.setText("Not available");
+        if (assessmentEligibilityLabel != null) assessmentEligibilityLabel.setText("REQUIRES REVIEW");
+        if (assessmentReasonLabel != null) assessmentReasonLabel.setText("Calculate EMI to run the academic credit assessment.");
+    }
+
+    private void updateCreditAssessment(BigDecimal newEmi) {
+        if (currentUser == null) return;
+        try (Connection connection = getConnection()) {
+            int customerId = findCustomerId(connection, currentUser.getUserId());
+            if (customerId < 0) { clearAssessment(); return; }
+            CreditAssessmentService.Assessment assessment = CreditAssessmentService.loadForCustomer(
+                    connection, customerId, newEmi);
+            assessmentScoreLabel.setText(assessment.getCreditScoreDisplay());
+            assessmentExistingEmiLabel.setText("₹" + assessment.getExistingEmi().setScale(2, RoundingMode.HALF_UP).toPlainString());
+            assessmentTotalEmiLabel.setText("₹" + assessment.getTotalEmi().setScale(2, RoundingMode.HALF_UP).toPlainString());
+            assessmentRatioLabel.setText(assessment.getRatioDisplay());
+            assessmentEligibilityLabel.setText(assessment.getEligibilityDisplay());
+            assessmentReasonLabel.setText(assessment.getReason());
+        } catch (SQLException ignored) {
+            clearAssessment();
+            if (assessmentReasonLabel != null) assessmentReasonLabel.setText("Credit data is unavailable; officer review is required.");
+        }
     }
 
     private void submitApplicationDatabaseWork() {
@@ -624,6 +659,12 @@ public class LoanApplicationController {
                 try (ResultSet result = idStatement.executeQuery()) {
                     if (result.next()) {
                         int applicationId = result.getInt(1);
+                        try {
+                            CreditAssessmentService.saveAssessment(connection, applicationId,
+                                    CreditAssessmentService.loadForCustomer(connection, customerId, BigDecimal.valueOf(emi)));
+                        } catch (SQLException ignored) {
+                            // Assessment persistence is additive; legacy applications remain submit-capable until migration 6 is run.
+                        }
                         NotificationService.create(currentUser.getUserId(), "Application submitted", "Application #" + applicationId + " for ₹" + String.format(Locale.US, "%,.2f", loanAmount) + " is now PENDING.", "APPLICATION_SUBMITTED", applicationId);
                     }
                 }

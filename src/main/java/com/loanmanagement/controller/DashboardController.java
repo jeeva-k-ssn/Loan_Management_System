@@ -263,8 +263,8 @@ public class DashboardController {
 
     @FXML private void refreshDashboard() { if (currentUser != null) loadDashboardData(); }
     @FXML private void applyLoan() { if (requireRole("CUSTOMER")) openLoanApplication(); }
-    @FXML private void viewLoans() { if (requireRole("CUSTOMER")) openLoanPortfolio(); }
-    @FXML private void viewPayments() { if (requireRole("CUSTOMER")) openLoanPortfolio(); }
+    @FXML private void viewLoans() { if (requireRole("CUSTOMER")) openLoanPortfolio(LoanManagementController.ViewMode.LOANS); }
+    @FXML private void viewPayments() { if (requireRole("CUSTOMER")) openLoanPortfolio(LoanManagementController.ViewMode.PAYMENTS); }
     @FXML private void openNotifications() {
         if (currentUser == null) return;
         try { FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/notifications.fxml")); Parent root = loader.load(); loader.<NotificationController>getController().setCurrentUser(currentUser); replaceScene(root, "LoanFlow - Notifications"); }
@@ -275,7 +275,7 @@ public class DashboardController {
         try { FXMLLoader loader=new FXMLLoader(getClass().getResource("/fxml/profile.fxml")); Parent root=loader.load(); loader.<ProfileController>getController().setCurrentUser(currentUser); replaceScene(root,"LoanFlow - Profile"); }
         catch(Exception e){showError("Navigation Error","Unable to open your profile.");}
     }
-    @FXML private void openLoanPortfolioPage() { if (currentUser != null) openLoanPortfolio(); }
+    @FXML private void openLoanPortfolioPage() { if (currentUser != null) openLoanPortfolio(LoanManagementController.ViewMode.LOANS); }
     @FXML private void openUserManagement() {
         if (!requireRole("ADMIN")) return;
         try { FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/admin.fxml")); Parent root = loader.load(); loader.<AdminController>getController().setCurrentUser(currentUser); replaceScene(root, "LoanFlow - User Management"); }
@@ -308,11 +308,13 @@ public class DashboardController {
         } catch (Exception exception) { showError("Navigation Error", "Unable to open the loan application page."); }
     }
 
-    private void openLoanPortfolio() {
+    private void openLoanPortfolio(LoanManagementController.ViewMode viewMode) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/loans.fxml"));
             Parent root = loader.load();
-            loader.<LoanManagementController>getController().setCurrentUser(currentUser);
+            LoanManagementController controller = loader.getController();
+            controller.setCurrentUser(currentUser);
+            controller.setViewMode(viewMode);
             replaceScene(root, "LoanFlow - Loans & Payments");
         } catch (Exception exception) { showError("Navigation Error", "Unable to open the loan portfolio."); }
     }

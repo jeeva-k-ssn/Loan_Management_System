@@ -153,6 +153,36 @@
                         </VBox>
                     </GridPane>
 
+                    <VBox spacing="10" styleClass="assessment-panel">
+                        <Label text="CREDIT ASSESSMENT" styleClass="assessment-title"/>
+                        <Label text="Academic decision support for the selected application. Final approval remains with the loan officer."
+                               wrapText="true" styleClass="assessment-description"/>
+                        <GridPane hgap="18" vgap="8">
+                            <Label text="Credit score" styleClass="assessment-label"/>
+                            <Label fx:id="assessmentScoreLabel" text="NH / Not available" styleClass="assessment-value" GridPane.columnIndex="1"/>
+                            <Label text="Monthly income" styleClass="assessment-label" GridPane.columnIndex="2"/>
+                            <Label fx:id="assessmentIncomeLabel" text="Not available" styleClass="assessment-value" GridPane.columnIndex="3"/>
+                            <Label text="Existing EMI" styleClass="assessment-label" GridPane.rowIndex="1"/>
+                            <Label fx:id="assessmentExistingEmiLabel" text="Not available" styleClass="assessment-value" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                            <Label text="New EMI" styleClass="assessment-label" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                            <Label fx:id="assessmentNewEmiLabel" text="Not available" styleClass="assessment-value" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                            <Label text="Total EMI" styleClass="assessment-label" GridPane.rowIndex="2"/>
+                            <Label fx:id="assessmentTotalEmiLabel" text="Not available" styleClass="assessment-value" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            <Label text="EMI / income" styleClass="assessment-label" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                            <Label fx:id="assessmentRatioLabel" text="Not available" styleClass="assessment-value" GridPane.columnIndex="3" GridPane.rowIndex="2"/>
+                            <Label text="Outstanding debt" styleClass="assessment-label" GridPane.rowIndex="3"/>
+                            <Label fx:id="assessmentDebtLabel" text="Not available" styleClass="assessment-value" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                            <Label text="Risk" styleClass="assessment-label" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
+                            <Label fx:id="assessmentRiskLabel" text="REVIEW" styleClass="assessment-value" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+                        </GridPane>
+                        <HBox spacing="18">
+                            <Label text="Eligibility" styleClass="assessment-label"/>
+                            <Label fx:id="assessmentEligibilityLabel" text="REQUIRES REVIEW" styleClass="assessment-status"/>
+                        </HBox>
+                        <Label fx:id="assessmentReasonLabel" text="Select an application to load its academic credit assessment."
+                               wrapText="true" styleClass="assessment-description"/>
+                    </VBox>
+
                     <HBox alignment="CENTER_RIGHT" spacing="12" styleClass="action-row">
                         <Button fx:id="rejectButton"
                                 text="✕  Reject Application"

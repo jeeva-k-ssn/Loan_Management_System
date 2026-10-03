@@ -29,10 +29,14 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.Node;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /** Displays role-scoped loans, payment history, and customer repayments. */
 public class LoanManagementController {
+    public enum ViewMode { LOANS, PAYMENTS }
+
     @FXML private Label titleLabel, descriptionLabel, selectedLoanLabel, selectedLoanTypeLabel, balanceLabel;
     @FXML private Label originalAmountLabel, totalRepayableLabel, totalPaidLabel, outstandingLabel, emiLabel, paymentsMadeLabel, remainingAfterPaymentLabel;
     @FXML private TableView<LoanRow> loanTable;
@@ -53,12 +57,14 @@ public class LoanManagementController {
     @FXML private TextField loanSearchField, paymentSearchField;
     @FXML private ComboBox<String> paymentMethodCombo;
     @FXML private ComboBox<String> loanFilterCombo, paymentFilterCombo;
+    @FXML private ComboBox<LoanRow> paymentLoanCombo;
     @FXML private Button recordPaymentButton;
     @FXML private Button statementButton;
     private User currentUser;
     private BigDecimal selectedOutstanding = BigDecimal.ZERO;
     private ObservableList<LoanRow> allLoans = FXCollections.observableArrayList();
     private ObservableList<PaymentRow> allPayments = FXCollections.observableArrayList();
+    private ViewMode viewMode = ViewMode.LOANS;
 
     @FXML public void initialize() {
         applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -81,6 +87,12 @@ public class LoanManagementController {
         paymentFilterCombo.setItems(FXCollections.observableArrayList("All Payments", "PAID", "PENDING", "FAILED"));
         paymentFilterCombo.getSelectionModel().selectFirst();
         paymentFilterCombo.valueProperty().addListener((obs, oldValue, newValue) -> applyPaymentFilter());
+        paymentLoanCombo.valueProperty().addListener((obs, oldValue, newValue) -> {
+            if (newValue != null) {
+                repaymentLoanContextLabel.setText("Recording against Loan #" + newValue.loanId + " · " + newValue.loanType + " · " + newValue.status);
+                recordPaymentButton.setDisable(!"ACTIVE".equalsIgnoreCase(newValue.status));
+            } else recordPaymentButton.setDisable(true);
+        });
         recordPaymentButton.setDisable(true); statementButton.setDisable(true);
         applicationIdColumn.setCellValueFactory(new PropertyValueFactory<>("applicationId")); applicationLoanIdColumn.setCellValueFactory(new PropertyValueFactory<>("loanId")); applicationLoanIdColumn.setCellFactory(column -> new TableCell<>() { @Override protected void updateItem(Integer item, boolean empty) { super.updateItem(item, empty); setText(empty ? null : item == null ? "-" : "#" + item); } }); applicationTypeColumn.setCellValueFactory(new PropertyValueFactory<>("loanType")); applicationAmountColumn.setCellValueFactory(new PropertyValueFactory<>("amount")); applicationPurposeColumn.setCellValueFactory(new PropertyValueFactory<>("purpose")); applicationTenureColumn.setCellValueFactory(new PropertyValueFactory<>("tenure")); applicationInterestColumn.setCellValueFactory(new PropertyValueFactory<>("interest")); applicationEmiColumn.setCellValueFactory(new PropertyValueFactory<>("emi")); applicationDateColumn.setCellValueFactory(new PropertyValueFactory<>("applicationDate")); applicationStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
         amountColumn.setCellFactory(column -> currencyCell());
@@ -116,7 +128,40 @@ public class LoanManagementController {
         currentUser = user; boolean customer = hasRole("CUSTOMER");
         titleLabel.setText(customer ? "My Loans & Repayments" : "Loan Portfolio"); descriptionLabel.setText(customer ? "View your loans, payment history, and record repayments." : "Monitor active and closed customer loans and repayment history.");
         applicationTable.setVisible(customer); applicationTable.setManaged(customer);
-        paymentAmountField.setVisible(customer); paymentAmountField.setManaged(customer); paymentMethodCombo.setVisible(customer); paymentMethodCombo.setManaged(customer); paymentReferenceField.setVisible(customer); paymentReferenceField.setManaged(customer); recordPaymentButton.setVisible(customer); recordPaymentButton.setManaged(customer); if (customer) loadApplications(); loadLoans();
+        paymentAmountField.setVisible(customer); paymentAmountField.setManaged(customer); paymentMethodCombo.setVisible(customer); paymentMethodCombo.setManaged(customer); paymentReferenceField.setVisible(customer); paymentReferenceField.setManaged(customer); paymentLoanCombo.setVisible(customer); paymentLoanCombo.setManaged(customer); recordPaymentButton.setVisible(customer); recordPaymentButton.setManaged(customer); if (customer) loadApplications(); loadLoans();
+    }
+
+    public void setViewMode(ViewMode mode) {
+        viewMode = mode == null ? ViewMode.LOANS : mode;
+        boolean payments = viewMode == ViewMode.PAYMENTS;
+        applyViewModeLayout(payments);
+        if (titleLabel != null) {
+            titleLabel.setText(payments ? "Payment History" : "My Loans");
+            descriptionLabel.setText(payments ? "View your payment records and repayment status." : "View your loan applications and loan account details.");
+        }
+        if (payments) {
+            selectedLoanLabel.setText("Payment history");
+            selectedLoanTypeLabel.setText("Your payment records across all loans");
+            loadAllCustomerPayments();
+        }
+    }
+
+    private void applyViewModeLayout(boolean payments) {
+        if (paymentTable == null || !(paymentTable.getParent() instanceof javafx.scene.layout.VBox paymentCard)
+                || !(paymentCard.getParent() instanceof javafx.scene.layout.HBox repaymentRow)) return;
+        if (repaymentRow.getParent() instanceof javafx.scene.layout.VBox pageContent) {
+            if (pageContent.getChildren().size() > 1) setNodeState(pageContent.getChildren().get(1), !payments);
+            if (pageContent.getChildren().size() > 2) setNodeState(pageContent.getChildren().get(2), !payments);
+        }
+        setNodeState(repaymentRow, payments);
+        if (paymentCard.getChildren().size() > 0) setNodeState(paymentCard.getChildren().get(0), !payments);
+        if (paymentCard.getChildren().size() > 1) setNodeState(paymentCard.getChildren().get(1), !payments);
+        if (repaymentRow.getChildren().size() > 1) setNodeState(repaymentRow.getChildren().get(1), true);
+    }
+
+    private void setNodeState(Node node, boolean visible) {
+        node.setVisible(visible);
+        node.setManaged(visible);
     }
 
     private boolean hasRole(String role) { return currentUser != null && role.equalsIgnoreCase(currentUser.getRole()); }
@@ -130,7 +175,7 @@ public class LoanManagementController {
                 }
             }
         };
-        task.setOnSucceeded(event -> { allLoans=task.getValue(); applyLoanFilter(); if(!allLoans.isEmpty()) loanTable.getSelectionModel().selectFirst(); else { paymentTable.getItems().clear(); selectedLoanLabel.setText("No loan selected"); selectedLoanTypeLabel.setText("Select a loan above to view its repayment history."); balanceLabel.setText("-"); clearRepaymentSummary(); } });
+        task.setOnSucceeded(event -> { allLoans=task.getValue(); applyLoanFilter(); paymentLoanCombo.setItems(FXCollections.observableArrayList(allLoans)); if(viewMode == ViewMode.LOANS && !allLoans.isEmpty()) loanTable.getSelectionModel().selectFirst(); else if(allLoans.isEmpty()) { paymentTable.getItems().clear(); selectedLoanLabel.setText("No loan selected"); selectedLoanTypeLabel.setText("Select a loan above to view its repayment history."); balanceLabel.setText("-"); clearRepaymentSummary(); } });
         task.setOnFailed(event -> showError("Loans unavailable", "Unable to load loan data right now."));
         Thread thread=new Thread(task,"loanflow-loans-load"); thread.setDaemon(true); thread.start();
     }
@@ -164,6 +209,27 @@ public class LoanManagementController {
             balanceLabel.setText("Outstanding balance: " + money(outstanding));
             remainingAfterPaymentLabel.setText("Enter an amount to preview your remaining balance.");
         } catch (SQLException e) { showError("Payments unavailable", "Unable to load payment history."); }
+    }
+
+    private void loadAllCustomerPayments() {
+        if (!hasRole("CUSTOMER")) return;
+        String sql = "SELECT p.PAYMENT_ID,p.LOAN_ID,TO_CHAR(p.PAYMENT_DATE,'DD Mon YYYY') PAYMENT_DATE,p.AMOUNT,NVL(p.PAYMENT_METHOD,'-') PAYMENT_METHOD,NVL(p.PAYMENT_REFERENCE,'-') PAYMENT_REFERENCE,p.PAYMENT_STATUS "
+                + "FROM PAYMENT p JOIN LOAN l ON l.LOAN_ID=p.LOAN_ID JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID=l.CUSTOMER_ID WHERE c.USER_ID=? ORDER BY p.PAYMENT_DATE DESC,p.PAYMENT_ID DESC";
+        Task<ObservableList<PaymentRow>> task = new Task<>() {
+            @Override protected ObservableList<PaymentRow> call() throws SQLException {
+                try (Connection connection = DatabaseConnection.getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+                    ps.setInt(1, currentUser.getUserId());
+                    ObservableList<PaymentRow> rows = FXCollections.observableArrayList();
+                    try (ResultSet rs = ps.executeQuery()) {
+                        while (rs.next()) rows.add(new PaymentRow(rs.getInt("PAYMENT_ID"), rs.getInt("LOAN_ID"), rs.getString("PAYMENT_DATE"), rs.getDouble("AMOUNT"), rs.getString("PAYMENT_METHOD"), rs.getString("PAYMENT_REFERENCE"), rs.getString("PAYMENT_STATUS")));
+                    }
+                    return rows;
+                }
+            }
+        };
+        task.setOnSucceeded(event -> { allPayments = task.getValue(); applyPaymentFilter(); });
+        task.setOnFailed(event -> showError("Payments unavailable", "Unable to load payment history."));
+        Thread thread = new Thread(task, "loanflow-customer-payments-load"); thread.setDaemon(true); thread.start();
     }
     private void applyLoanFilter() {
         if (loanTable == null) return;
@@ -201,7 +267,7 @@ public class LoanManagementController {
     }
     @FXML private void recordPayment() {
         if (!hasRole("CUSTOMER")) { showError("Access denied", "Only customers can record repayments."); return; }
-        LoanRow loan = loanTable.getSelectionModel().getSelectedItem(); if (loan == null || !"ACTIVE".equalsIgnoreCase(loan.status)) { showError("Select an active loan", "Select one of your active loans first."); return; }
+        LoanRow loan = viewMode == ViewMode.PAYMENTS ? paymentLoanCombo.getValue() : loanTable.getSelectionModel().getSelectedItem(); if (loan == null || !"ACTIVE".equalsIgnoreCase(loan.status)) { showError("Select an active loan", "Select one of your active loans first."); return; }
         if (paymentAmountField.getText() == null || paymentAmountField.getText().trim().isEmpty()) { showError("Payment amount required", "Payment amount must be greater than ₹0."); return; }
         BigDecimal amount; try { amount = new BigDecimal(paymentAmountField.getText().trim()); } catch (NumberFormatException e) { showError("Invalid amount", "Enter a valid payment amount."); return; }
         if (amount.compareTo(BigDecimal.ZERO) <= 0) { showError("Invalid amount", "Payment amount must be greater than ₹0."); return; }
@@ -237,7 +303,7 @@ public class LoanManagementController {
     private void closeIfRepaid(Connection connection, int loanId, BigDecimal totalRepayable) throws SQLException {
         if (outstandingBalance(connection, loanId, totalRepayable).compareTo(BigDecimal.ZERO) == 0) try (PreparedStatement close = connection.prepareStatement("UPDATE LOAN SET STATUS='CLOSED', CLOSED_DATE=SYSDATE WHERE LOAN_ID=? AND STATUS='ACTIVE'")) { close.setInt(1, loanId); close.executeUpdate(); }
     }
-    @FXML private void refresh() { if (hasRole("CUSTOMER")) loadApplications(); loadLoans(); }
+    @FXML private void refresh() { if (hasRole("CUSTOMER")) loadApplications(); loadLoans(); if (viewMode == ViewMode.PAYMENTS) loadAllCustomerPayments(); }
     @FXML private void openStatement() {
         LoanRow loan = loanTable.getSelectionModel().getSelectedItem();
         if (loan == null) { showError("Select a loan", "Select a loan before opening its statement."); return; }
@@ -265,7 +331,7 @@ public class LoanManagementController {
     private void clearRepaymentSummary() { selectedOutstanding = BigDecimal.ZERO; if (originalAmountLabel != null) { originalAmountLabel.setText("-"); totalRepayableLabel.setText("-"); totalPaidLabel.setText("-"); outstandingLabel.setText("-"); emiLabel.setText("-"); paymentsMadeLabel.setText("-"); remainingAfterPaymentLabel.setText("Select a loan to see repayment details."); } }
     private String money(BigDecimal value) { return NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(value.setScale(2, RoundingMode.HALF_UP)); }
     private void showError(String title, String message) { alert(Alert.AlertType.ERROR, title, message); } private void showInfo(String title, String message) { alert(Alert.AlertType.INFORMATION, title, message); } private void alert(Alert.AlertType type, String title, String message) { Alert a = new Alert(type); a.setTitle(title); a.setHeaderText(null); a.setContentText(message); a.showAndWait(); }
-    public static class LoanRow { private final int loanId, applicationId, tenure; private final String loanType, customerName, startDate, status; private final double amount, interest, emi, totalRepayable, totalPaid, outstanding; LoanRow(int loanId,int applicationId,String loanType,String customerName,double amount,double interest,int tenure,double emi,double totalRepayable,double totalPaid,double outstanding,String startDate,String status){this.loanId=loanId;this.applicationId=applicationId;this.loanType=loanType;this.customerName=customerName;this.amount=amount;this.interest=interest;this.tenure=tenure;this.emi=emi;this.totalRepayable=totalRepayable;this.totalPaid=totalPaid;this.outstanding=outstanding;this.startDate=startDate;this.status=status;} public int getLoanId(){return loanId;} public int getApplicationId(){return applicationId;} public String getLoanType(){return loanType;} public String getCustomerName(){return customerName;} public double getAmount(){return amount;} public double getInterest(){return interest;} public int getTenure(){return tenure;} public double getEmi(){return emi;} public double getTotalRepayable(){return totalRepayable;} public double getTotalPaid(){return totalPaid;} public double getOutstanding(){return outstanding;} public String getStartDate(){return startDate;} public String getStatus(){return status;} public BigDecimal totalRepayable(){return BigDecimal.valueOf(totalRepayable).setScale(2,RoundingMode.HALF_UP);} }
+    public static class LoanRow { private final int loanId, applicationId, tenure; private final String loanType, customerName, startDate, status; private final double amount, interest, emi, totalRepayable, totalPaid, outstanding; LoanRow(int loanId,int applicationId,String loanType,String customerName,double amount,double interest,int tenure,double emi,double totalRepayable,double totalPaid,double outstanding,String startDate,String status){this.loanId=loanId;this.applicationId=applicationId;this.loanType=loanType;this.customerName=customerName;this.amount=amount;this.interest=interest;this.tenure=tenure;this.emi=emi;this.totalRepayable=totalRepayable;this.totalPaid=totalPaid;this.outstanding=outstanding;this.startDate=startDate;this.status=status;} public int getLoanId(){return loanId;} public int getApplicationId(){return applicationId;} public String getLoanType(){return loanType;} public String getCustomerName(){return customerName;} public double getAmount(){return amount;} public double getInterest(){return interest;} public int getTenure(){return tenure;} public double getEmi(){return emi;} public double getTotalRepayable(){return totalRepayable;} public double getTotalPaid(){return totalPaid;} public double getOutstanding(){return outstanding;} public String getStartDate(){return startDate;} public String getStatus(){return status;} public BigDecimal totalRepayable(){return BigDecimal.valueOf(totalRepayable).setScale(2,RoundingMode.HALF_UP);} @Override public String toString(){return "#"+loanId+" · "+loanType+" · "+status;} }
     public static class ApplicationRow { private final int applicationId, loanId, tenure; private final String loanType, purpose, applicationDate, status; private final double amount, interest, emi; ApplicationRow(int applicationId,int loanId,String loanType,double amount,String purpose,int tenure,double interest,double emi,String applicationDate,String status){this.applicationId=applicationId;this.loanId=loanId;this.loanType=loanType;this.amount=amount;this.purpose=purpose;this.tenure=tenure;this.interest=interest;this.emi=emi;this.applicationDate=applicationDate;this.status=status;} public int getApplicationId(){return applicationId;} public Integer getLoanId(){return loanId == 0 ? null : loanId;} public String getLoanType(){return loanType;} public double getAmount(){return amount;} public String getPurpose(){return purpose;} public int getTenure(){return tenure;} public double getInterest(){return interest;} public double getEmi(){return emi;} public String getApplicationDate(){return applicationDate;} public String getStatus(){return status;} }
     public static class PaymentRow { private final int paymentId, loanId; private final String paymentDate, method, reference, status; private final double amount; PaymentRow(int paymentId,int loanId,String paymentDate,double amount,String method,String reference,String status){this.paymentId=paymentId;this.loanId=loanId;this.paymentDate=paymentDate;this.amount=amount;this.method=method;this.reference=reference;this.status=status;} public int getPaymentId(){return paymentId;} public int getLoanId(){return loanId;} public String getPaymentDate(){return paymentDate;} public double getAmount(){return amount;} public String getMethod(){return method;} public String getReference(){return reference;} public String getStatus(){return status;} }
 }

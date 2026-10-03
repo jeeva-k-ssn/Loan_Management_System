@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.loanmanagement.util.PasswordUtil;
+import com.loanmanagement.service.CreditAssessmentService;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -38,6 +39,10 @@ class LoanFlowEndToEndDatabaseTest {
             int userId = insertUser(connection, email);
             int customerId = insertCustomer(connection, userId, email);
             int applicationId = insertApplication(connection, customerId);
+            CreditAssessmentService.Assessment assessment = CreditAssessmentService.assess(null, null,
+                    BigDecimal.ZERO, BigDecimal.valueOf(1000), BigDecimal.ZERO, 0, 0);
+            CreditAssessmentService.saveAssessment(connection, applicationId, assessment);
+            assertEquals(1, scalar(connection, "SELECT COUNT(*) FROM LOANFLOW_CREDIT_ASSESSMENT WHERE APPLICATION_ID=?", applicationId));
 
             update(connection, "UPDATE LOAN_APPLICATION SET STATUS='APPROVED' WHERE APPLICATION_ID=?", applicationId);
             int loanId = insertLoan(connection, applicationId, customerId);

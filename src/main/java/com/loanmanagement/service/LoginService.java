@@ -118,9 +118,15 @@ public User loginUser(String email, String password, String role) {
 }
 
 private String toUserMessage(SQLException exception) {
-    if (exception.getMessage() != null
-            && exception.getMessage().contains("LMS_DB_PASSWORD")) {
+    String message = exception.getMessage() == null ? "" : exception.getMessage().toLowerCase();
+    if (message.contains("ora-00001") || message.contains("unique constraint")) {
+        return "An account with this email already exists. Please use a different email or return to login.";
+    }
+    if (message.contains("lms_db_password")) {
         return "LoanFlow is not configured for database access. Please contact the administrator.";
+    }
+    if (message.contains("ora-01017") || message.contains("invalid username/password")) {
+        return "LoanFlow could not authenticate with the database. Please contact the administrator.";
     }
     return "LoanFlow could not connect to the database. Please try again later.";
 }

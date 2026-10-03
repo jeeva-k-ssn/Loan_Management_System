@@ -29,7 +29,7 @@
  */
 .hero-panel {
     -fx-background-color: #042b3a;
-    -fx-background-image: url("../images/login-hero.png");
+    -fx-background-image: url("../images/login-hero-clean.png");
     -fx-background-repeat: no-repeat;
     -fx-background-position: center center;
     -fx-background-size: cover;
@@ -125,8 +125,8 @@
 /* Each card: compact, equal size, semi-transparent dark with cyan border */
 .feature-card {
     -fx-background-color: transparent;
-    -fx-border-color: transparent rgba(116, 218, 235, 0.25) transparent transparent;
-    -fx-border-width: 0 1px 0 0;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
     -fx-padding: 0 12px 0 0;
     -fx-spacing: 8px;
     -fx-min-width: 0;
@@ -164,23 +164,31 @@
 
 /* ── Bottom Quote (matches screenshot bottom-left corner) ── */
 .quote-box {
-    -fx-padding: 4px 0 0 0;
+    -fx-max-width: 560px;
+    -fx-translate-y: -48px;
+    -fx-padding: 16px 22px;
+    -fx-background-color: rgba(3, 35, 50, 0.58);
+    -fx-background-radius: 14px;
+    -fx-border-color: rgba(116, 218, 235, 0.24);
+    -fx-border-width: 1px;
+    -fx-border-radius: 14px;
 }
 
 /* Large decorative quotation mark \u201C in muted teal */
 .quote-mark {
     -fx-text-fill: rgba(0, 242, 254, 0.52);
-    -fx-font-size: 46px;
+    -fx-font-size: 58px;
     -fx-font-weight: 800;
-    -fx-translate-y: -10px;
+    -fx-translate-y: -12px;
 }
 
 /* Italic quote body text */
 .quote-text {
     -fx-text-fill: #D8EDF6;
-    -fx-font-size: 15px;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
     -fx-font-style: italic;
-    -fx-line-spacing: 3px;
+    -fx-line-spacing: 4px;
     -fx-wrap-text: true;
 }
 
@@ -190,8 +198,8 @@
     -fx-min-width: 3px;
     -fx-pref-width: 3px;
     -fx-max-width: 3px;
-    -fx-min-height: 38px;
-    -fx-pref-height: 38px;
+    -fx-min-height: 54px;
+    -fx-pref-height: 54px;
     -fx-background-radius: 2px;
 }
 
@@ -202,8 +210,13 @@
  */
 .login-panel {
     -fx-background-color: linear-gradient(to bottom right, #022435, #06384b);
-    -fx-padding: 24px 44px;
+    -fx-padding: 0;
     -fx-min-height: 620px;
+}
+
+/* The tagline has its own row. The card can only occupy the stage beneath it. */
+.login-card-stage {
+    -fx-padding: 12px 44px 28px 44px;
     -fx-alignment: center;
 }
 
@@ -225,18 +238,18 @@
 /* The registration form has one additional field, so it uses the same card
    proportions with a tighter internal rhythm to remain fully visible. */
 .register-card {
-    -fx-max-width: 510px;
-    -fx-pref-width: 490px;
+    -fx-max-width: 540px;
+    -fx-pref-width: 520px;
 }
 
 .register-card .input-container {
-    -fx-min-height: 48px;
-    -fx-pref-height: 48px;
-    -fx-max-height: 48px;
+    -fx-min-height: 50px;
+    -fx-pref-height: 50px;
+    -fx-max-height: 50px;
 }
 
 .register-card .sign-in-btn {
-    -fx-pref-height: 44px;
+    -fx-pref-height: 48px;
 }
 
 .register-card .registration-note {
@@ -482,6 +495,15 @@
     -fx-line-spacing: 2px;
 }
 
+.registration-status {
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
+    -fx-alignment: center;
+}
+
+.registration-status-success { -fx-text-fill: #55F2D5; }
+.registration-status-error { -fx-text-fill: #FF9EA8; }
+
 .card-divider {
     -fx-background-color: #0C5266;
 }
@@ -494,7 +516,10 @@
 
 /* ── Top-Right Tagline Accent (decorative, mouse-transparent) ── */
 .top-right-tagline {
-    -fx-padding: 20px 40px 0 0;
+    -fx-min-height: 64px;
+    -fx-pref-height: 64px;
+    -fx-max-height: 64px;
+    -fx-padding: 24px 32px 12px 0;
 }
 
 .tagline-bar {
@@ -510,4 +535,102 @@
 .tagline-text {
     -fx-text-fill: #E0F5FC;
     -fx-font-size: 12.5px;
+}
+
+/* Registration success card: same navy, cyan, rounded-card language as login/register. */
+.success-dialog-root {
+    -fx-background-color: transparent;
+    -fx-font-family: "Segoe UI", "Inter", "Roboto", sans-serif;
+    -fx-padding: 12px;
+}
+
+.success-dialog-card {
+    -fx-background-color: rgba(3, 35, 50, 0.98);
+    -fx-border-color: rgba(0, 229, 255, 0.9);
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 22px;
+    -fx-background-radius: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.42), 32, 0.2, 0, 12);
+    -fx-min-width: 420px;
+    -fx-min-height: 310px;
+}
+
+.success-dialog-icon {
+    -fx-background-color: rgba(0, 242, 254, 0.15);
+    -fx-border-color: #00F2FE;
+    -fx-border-width: 1px;
+    -fx-background-radius: 50px;
+    -fx-border-radius: 50px;
+    -fx-min-width: 58px;
+    -fx-min-height: 58px;
+    -fx-max-width: 58px;
+    -fx-max-height: 58px;
+}
+
+.success-dialog-checkmark {
+    -fx-text-fill: #00F2FE;
+    -fx-font-size: 29px;
+    -fx-font-weight: bold;
+}
+
+.success-dialog-kicker {
+    -fx-text-fill: #00F2FE;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1px;
+}
+
+.success-dialog-title-white,
+.success-dialog-title-cyan {
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+}
+
+.success-dialog-title-white { -fx-text-fill: #FFFFFF; }
+.success-dialog-title-cyan { -fx-text-fill: #00F2FE; }
+
+.success-dialog-message {
+    -fx-text-fill: #E8F6FF;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.success-dialog-subtitle {
+    -fx-text-fill: #94BCCB;
+    -fx-font-size: 13px;
+    -fx-alignment: center;
+}
+
+.success-dialog-button {
+    -fx-background-color: linear-gradient(to right, #00DDEB, #00AFC1);
+    -fx-text-fill: #031A25;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 11px;
+    -fx-padding: 12px 24px;
+    -fx-cursor: hand;
+}
+
+.success-dialog-button:hover {
+    -fx-background-color: #00F2FE;
+    -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.35), 12, 0.25, 0, 3);
+}
+
+/* Final register-card override: keep the shell visibly identical to sign-in. */
+.login-panel .register-card {
+    -fx-background-color: rgba(3, 35, 50, 0.96);
+    -fx-border-color: #00E5FF;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 22px;
+    -fx-background-radius: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.34), 32, 0.18, 0, 12);
+    -fx-padding: 34px 38px 32px 38px;
+}
+
+/* Remove every feature-card divider, including the trailing line after the last card. */
+.feature-row,
+.feature-row .feature-card,
+.feature-row .feature-card:last-child {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
 }

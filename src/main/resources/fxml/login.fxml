@@ -89,14 +89,20 @@
                 <HBox styleClass="quote-box" spacing="12" alignment="CENTER_LEFT">
                     <Region styleClass="quote-accent-bar"/>
                     <Label text="&#8220;" styleClass="quote-mark"/>
-                    <Label text="Better financial decisions today,&#10;a stronger tomorrow." styleClass="quote-text" wrapText="true" maxWidth="280"/>
+                    <Label text="Better financial decisions today,&#10;a stronger tomorrow." styleClass="quote-text" wrapText="true" maxWidth="430"/>
                 </HBox>
             </VBox>
         </StackPane>
 
         <!-- Right Login Panel -->
-        <StackPane GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS" styleClass="login-panel" alignment="CENTER">
-            <VBox maxWidth="540" prefWidth="520" maxHeight="-Infinity" spacing="14" styleClass="login-card">
+        <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS" styleClass="login-panel">
+            <HBox alignment="CENTER_RIGHT" spacing="12" mouseTransparent="true" styleClass="top-right-tagline">
+                <Region styleClass="tagline-bar"/>
+                <Label text="Smarter Lending. Brighter Futures." styleClass="tagline-text"/>
+            </HBox>
+
+            <StackPane styleClass="login-card-stage" alignment="CENTER" VBox.vgrow="ALWAYS">
+                <VBox maxWidth="540" prefWidth="520" maxHeight="-Infinity" spacing="14" styleClass="login-card">
                 <padding>
                     <Insets top="34" right="38" bottom="32" left="38"/>
                 </padding>
@@ -172,13 +178,9 @@
                     <SVGPath content="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="#00F2FE" styleClass="security-svg"/>
                     <Label text="Your data is protected with bank-grade security." styleClass="security-note" wrapText="true"/>
                 </HBox>
-            </VBox>
-        </StackPane>
+                </VBox>
+            </StackPane>
+        </VBox>
     </GridPane>
 
-    <!-- Top Right Tagline Header (Anchored at root level top right) -->
-    <HBox alignment="TOP_RIGHT" spacing="12" mouseTransparent="true" styleClass="top-right-tagline" StackPane.alignment="TOP_RIGHT">
-        <Region styleClass="tagline-bar"/>
-        <Label text="Smarter Lending. Brighter Futures." styleClass="tagline-text"/>
-    </HBox>
 </StackPane>
