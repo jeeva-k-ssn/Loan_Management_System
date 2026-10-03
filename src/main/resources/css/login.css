@@ -1,45 +1,87 @@
+/* =========================================================
+   LoanFlow – Login Page CSS  (UI/UX fixes applied)
+   ========================================================= */
+
+/* ── Root & Shell ── */
 .login-root {
-    -fx-background-color: #02121A;
+    -fx-background-color: #031a25;
     -fx-font-family: "Segoe UI", "Inter", "Roboto", sans-serif;
 }
 
+/*
+ * login-shell is a GridPane that sits inside the root StackPane.
+ * We need it to fill the full window so both columns stretch equally.
+ * FIX: set pref/min height so the GridPane fills the StackPane.
+ */
 .login-shell {
-    -fx-background-color: #02121A;
+    -fx-background-color: linear-gradient(to bottom right, #02131e, #06344a);
+    -fx-pref-height: 900px;
+    -fx-min-height: 620px;
 }
 
-/* Left Hero Panel */
+/* ── Left Hero Panel ── */
+/*
+ * hero-panel is a StackPane column. It renders:
+ *   [0] background image (via -fx-background-image)
+ *   [1] .hero-overlay  (gradient, added first in StackPane so it layers above bg)
+ *   [2] .hero-content  (VBox, layered above overlay)
+ * No explicit z-index needed – StackPane renders children in DOM order (back→front).
+ */
 .hero-panel {
-    -fx-background-color: #04202B;
+    -fx-background-color: #042b3a;
     -fx-background-image: url("../images/login-hero.png");
     -fx-background-repeat: no-repeat;
     -fx-background-position: center center;
     -fx-background-size: cover;
+    -fx-min-height: 620px;
 }
 
+/* Gradient overlay – sits between bg image and content (StackPane child order) */
 .hero-overlay {
-    -fx-background-color: linear-gradient(to right, rgba(2, 22, 34, 0.35), rgba(2, 22, 34, 0.65));
+    -fx-background-color: linear-gradient(to bottom, rgba(1, 20, 31, 0.42) 0%, rgba(1, 20, 31, 0.57) 46%, #021925 72%, #021925 100%);
 }
 
+/*
+ * hero-content VBox:
+ * FIX: reduced right padding so content never overflows into the right column.
+ * The VBox.vgrow=ALWAYS regions distribute remaining height evenly.
+ */
 .hero-content {
-    -fx-padding: 44px 50px 44px 72px;
+    -fx-padding: 24px 42px 36px 92px;
+    -fx-spacing: 0;
 }
 
-/* Brand Header */
+/* ── Brand Header ── */
+/*
+ * FIX: explicit min/max size on the badge so it stays a consistent square
+ * regardless of the SVGPath natural bounds.
+ */
 .brand-logo-icon-bg {
-    -fx-background-color: rgba(0, 242, 254, 0.15);
-    -fx-background-radius: 12px;
-    -fx-padding: 8px 10px;
+    -fx-background-color: rgba(0, 242, 254, 0.18);
+    -fx-background-radius: 14px;
+    -fx-padding: 10px 12px;
+    -fx-min-width: 54px;
+    -fx-min-height: 54px;
+    -fx-max-width: 54px;
+    -fx-max-height: 54px;
+    -fx-alignment: center;
+}
+
+/* FIX: scale the SVGPath so it fits inside the badge without overflowing */
+.brand-svg {
+    -fx-scale-x: 0.85;
+    -fx-scale-y: 0.85;
 }
 
 .brand-title-white {
     -fx-text-fill: #FFFFFF;
-    -fx-font-size: 32px;
+    -fx-font-size: 34px;
     -fx-font-weight: bold;
 }
 
 .brand-title-cyan {
     -fx-text-fill: #00F2FE;
-    -fx-font-size: 32px;
+    -fx-font-size: 34px;
     -fx-font-weight: bold;
 }
 
@@ -48,60 +90,101 @@
     -fx-font-size: 13px;
 }
 
-/* Hero Typography */
+/* ── Hero Typography ── */
+/* Screenshot heading is very large — about 48px, bold */
 .hero-heading-white {
     -fx-text-fill: #FFFFFF;
-    -fx-font-size: 46px;
+    -fx-font-size: 48px;
     -fx-font-weight: 800;
+    -fx-wrap-text: true;
 }
 
 .hero-heading-cyan {
     -fx-text-fill: #00F2FE;
-    -fx-font-size: 46px;
+    -fx-font-size: 48px;
     -fx-font-weight: 800;
+    -fx-wrap-text: true;
 }
 
+/* Description text — 3 lines, lighter color */
 .hero-copy {
-    -fx-text-fill: #C2DDE6;
-    -fx-font-size: 16px;
-    -fx-line-spacing: 4px;
+    -fx-text-fill: #C8DDE8;
+    -fx-font-size: 15px;
+    -fx-line-spacing: 3px;
+    -fx-wrap-text: true;
+    -fx-max-width: 480px;
 }
 
-/* Feature Cards Grid */
+/* ── Feature Cards Row ── */
 .feature-row {
-    -fx-padding: 10px 0 0 0;
+    -fx-padding: 5px 0 0 0;
+    -fx-spacing: 0;
+    -fx-max-width: Infinity;
 }
 
+/* Each card: compact, equal size, semi-transparent dark with cyan border */
 .feature-card {
-    -fx-background-color: rgba(4, 34, 46, 0.70);
-    -fx-border-color: rgba(0, 242, 254, 0.25);
-    -fx-border-width: 1px;
-    -fx-border-radius: 14px;
-    -fx-background-radius: 14px;
-    -fx-padding: 14px 14px;
-    -fx-spacing: 10px;
-    -fx-min-width: 110px;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent rgba(116, 218, 235, 0.25) transparent transparent;
+    -fx-border-width: 0 1px 0 0;
+    -fx-padding: 0 12px 0 0;
+    -fx-spacing: 8px;
+    -fx-min-width: 0;
+    -fx-pref-width: 128px;
+    -fx-min-height: 100px;
+    -fx-alignment: top-left;
 }
 
+/* Icon badge — small cyan-tinted square, centered content */
 .feature-icon-badge {
-    -fx-background-color: rgba(0, 242, 254, 0.18);
-    -fx-background-radius: 10px;
-    -fx-padding: 8px 10px;
+    -fx-background-color: rgba(0, 242, 254, 0.15);
+    -fx-background-radius: 8px;
+    -fx-padding: 6px;
+    -fx-min-width: 56px;
+    -fx-min-height: 56px;
+    -fx-max-width: 56px;
+    -fx-max-height: 56px;
     -fx-alignment: center;
 }
 
+/* Scale SVG icons to fit the 32px badge */
+.feature-svg {
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* Card label: bold, small, wrapping */
 .feature-text {
-    -fx-text-fill: #F0F9FF;
-    -fx-font-size: 12px;
+    -fx-text-fill: #E8F6FF;
+    -fx-font-size: 13px;
     -fx-font-weight: bold;
     -fx-line-spacing: 2px;
+    -fx-wrap-text: true;
 }
 
-/* Bottom Quote Box */
+/* ── Bottom Quote (matches screenshot bottom-left corner) ── */
 .quote-box {
-    -fx-padding: 10px 0 0 0;
+    -fx-padding: 4px 0 0 0;
 }
 
+/* Large decorative quotation mark \u201C in muted teal */
+.quote-mark {
+    -fx-text-fill: rgba(0, 242, 254, 0.52);
+    -fx-font-size: 46px;
+    -fx-font-weight: 800;
+    -fx-translate-y: -10px;
+}
+
+/* Italic quote body text */
+.quote-text {
+    -fx-text-fill: #D8EDF6;
+    -fx-font-size: 15px;
+    -fx-font-style: italic;
+    -fx-line-spacing: 3px;
+    -fx-wrap-text: true;
+}
+
+/* Keep accent-bar class in case used elsewhere */
 .quote-accent-bar {
     -fx-background-color: #00F2FE;
     -fx-min-width: 3px;
@@ -112,66 +195,109 @@
     -fx-background-radius: 2px;
 }
 
-.quote-text {
-    -fx-text-fill: #D5E8EE;
-    -fx-font-size: 15px;
-    -fx-font-style: italic;
-    -fx-line-spacing: 2px;
-}
-
-/* Right Login Panel & Card */
+/* ── Right Login Panel & Card ── */
+/*
+ * FIX: login-panel must fill the full column height.
+ * Horizontal padding reduced slightly so the card has room to breathe.
+ */
 .login-panel {
-    -fx-background-color: #02121A;
-    -fx-padding: 30px;
+    -fx-background-color: linear-gradient(to bottom right, #022435, #06384b);
+    -fx-padding: 24px 44px;
+    -fx-min-height: 620px;
+    -fx-alignment: center;
 }
 
+/*
+ * FIX: explicit max-width and pref-width prevent the card from stretching
+ * edge-to-edge at large resolutions.
+ */
 .login-card {
-    -fx-background-color: rgba(4, 34, 46, 0.92);
-    -fx-border-color: #00E5FF;
+    -fx-background-color: rgba(3, 35, 50, 0.94);
+    -fx-border-color: rgba(0, 229, 255, 0.88);
     -fx-border-width: 1.5px;
-    -fx-border-radius: 24px;
-    -fx-background-radius: 24px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.18), 30, 0.2, 0, 8);
+    -fx-border-radius: 22px;
+    -fx-background-radius: 22px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.34), 32, 0.18, 0, 12);
+    -fx-max-width: 540px;
+    -fx-pref-width: 520px;
 }
 
+/* The registration form has one additional field, so it uses the same card
+   proportions with a tighter internal rhythm to remain fully visible. */
+.register-card {
+    -fx-max-width: 510px;
+    -fx-pref-width: 490px;
+}
+
+.register-card .input-container {
+    -fx-min-height: 48px;
+    -fx-pref-height: 48px;
+    -fx-max-height: 48px;
+}
+
+.register-card .sign-in-btn {
+    -fx-pref-height: 44px;
+}
+
+.register-card .registration-note {
+    -fx-padding: 2px 0;
+}
+
+/* FIX: fixed badge size keeps the logo icon square inside the card header */
 .card-logo-badge {
     -fx-background-color: rgba(0, 242, 254, 0.15);
-    -fx-background-radius: 12px;
+    -fx-background-radius: 14px;
     -fx-padding: 10px 12px;
+    -fx-min-width: 46px;
+    -fx-min-height: 46px;
+    -fx-max-width: 46px;
+    -fx-max-height: 46px;
+    -fx-alignment: center;
+}
+
+/* FIX: scale card logo SVG to fit within badge */
+.card-logo-svg {
+    -fx-scale-x: 0.85;
+    -fx-scale-y: 0.85;
 }
 
 .kicker-text {
-    -fx-text-fill: #00F2FE;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-}
-
-.card-title-white {
-    -fx-text-fill: #FFFFFF;
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-}
-
-.card-title-cyan {
-    -fx-text-fill: #00F2FE;
-    -fx-font-size: 30px;
-    -fx-font-weight: bold;
-}
-
-.card-subtitle {
-    -fx-text-fill: #94BCCB;
-    -fx-font-size: 14px;
-}
-
-.field-label {
     -fx-text-fill: #00F2FE;
     -fx-font-size: 12px;
     -fx-font-weight: bold;
 }
 
-/* Input Containers */
+.card-title-white {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.card-title-cyan {
+    -fx-text-fill: #00F2FE;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+}
+
+.card-subtitle {
+    -fx-text-fill: #94BCCB;
+    -fx-font-size: 13px;
+}
+
+.field-label {
+    -fx-text-fill: #00F2FE;
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+}
+
+/* ── Input Containers ── */
+/*
+ * FIX: max-height locks the container at exactly 50px so the inner
+ * TextField/PasswordField are always vertically centred.
+ * -fx-alignment: center-left ensures children align correctly inside the HBox.
+ */
 .input-container {
-    -fx-background-color: rgba(3, 38, 52, 0.90);
+    -fx-background-color: rgba(3, 38, 52, 0.92);
     -fx-border-color: #0A8494;
     -fx-border-width: 1px;
     -fx-border-radius: 14px;
@@ -179,17 +305,37 @@
     -fx-padding: 0 14px;
     -fx-min-height: 50px;
     -fx-pref-height: 50px;
+    -fx-max-height: 50px;
+    -fx-alignment: center-left;
 }
 
-.input-container:hover, .input-container:focused-within {
+.input-container:hover,
+.input-container:focused-within {
     -fx-border-color: #00E5FF;
     -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.25), 10, 0.3, 0, 0);
 }
 
+/* FIX: explicit size on the icon box prevents the icon from expanding/shifting */
 .input-icon-box {
     -fx-padding: 0 8px 0 0;
+    -fx-min-width: 28px;
+    -fx-max-width: 28px;
+    -fx-alignment: center;
 }
 
+/* FIX: scale input SVG icons to stay within the icon box */
+.input-svg {
+    -fx-scale-x: 0.82;
+    -fx-scale-y: 0.82;
+}
+
+/* FIX: security icon at bottom of card */
+.security-svg {
+    -fx-scale-x: 0.78;
+    -fx-scale-y: 0.78;
+}
+
+/* FIX: center-left alignment keeps prompt text vertically centred */
 .custom-input {
     -fx-background-color: transparent;
     -fx-border-width: 0;
@@ -197,21 +343,25 @@
     -fx-text-fill: #FFFFFF;
     -fx-prompt-text-fill: #6FA6B8;
     -fx-font-size: 14px;
+    -fx-alignment: center-left;
+    -fx-padding: 0;
 }
 
-/* ComboBox Main Control */
+/* ── ComboBox Styling ── */
 .custom-combo {
     -fx-background-color: transparent;
     -fx-border-width: 0;
     -fx-background-radius: 0;
     -fx-text-fill: #FFFFFF;
     -fx-font-size: 14px;
+    -fx-padding: 0;
 }
 
 .custom-combo .list-cell {
     -fx-text-fill: #FFFFFF;
     -fx-background-color: transparent;
     -fx-padding: 0;
+    -fx-alignment: center-left;
 }
 
 .custom-combo .arrow-button {
@@ -222,7 +372,7 @@
     -fx-background-color: #00F2FE;
 }
 
-/* ComboBox Popup List Options Styling (Fixes blank options bug) */
+/* ComboBox Popup List Options */
 .combo-box-popup .list-view {
     -fx-background-color: #042431;
     -fx-border-color: #00E5FF;
@@ -250,18 +400,25 @@
     -fx-font-weight: bold;
 }
 
-/* Password Eye Toggle Button */
+/* ── Password Eye Toggle Button ── */
+/*
+ * FIX: max-height ensures the toggle button never grows taller than the
+ * 50px input container, preventing vertical misalignment.
+ */
 .eye-toggle-btn {
     -fx-background-color: rgba(0, 242, 254, 0.15);
     -fx-border-color: #00F2FE;
     -fx-border-width: 1px;
-    -fx-border-radius: 12px;
-    -fx-background-radius: 12px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
     -fx-text-fill: #00F2FE;
-    -fx-font-size: 12px;
+    -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-padding: 5px 12px;
+    -fx-padding: 4px 10px;
     -fx-cursor: hand;
+    -fx-max-height: 32px;
+    -fx-min-height: 32px;
+    -fx-alignment: center;
 }
 
 .eye-toggle-btn:hover {
@@ -273,15 +430,23 @@
     -fx-fill: #02121A;
 }
 
-/* Primary Action Button */
+/* FIX: scale eye icon SVG to sit neatly inside the toggle button */
+.eye-svg {
+    -fx-scale-x: 0.72;
+    -fx-scale-y: 0.72;
+}
+
+/* ── Primary Action Button ── */
 .sign-in-btn {
-    -fx-background-color: linear-gradient(to right, #00E5FF, #00C6FF);
-    -fx-text-fill: #02121A;
+    -fx-background-color: linear-gradient(to right, #14dccd, #00e9dc);
+    -fx-text-fill: #ffffff;
     -fx-background-radius: 14px;
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 229, 255, 0.35), 15, 0.3, 0, 4);
+    -fx-pref-height: 48px;
+    -fx-max-width: Infinity;
 }
 
 .sign-in-btn:hover {
@@ -293,7 +458,7 @@
     -fx-translate-y: 1px;
 }
 
-/* Footer Links & Notes */
+/* ── Footer Links & Notes ── */
 .register-prompt {
     -fx-text-fill: #94BCCB;
     -fx-font-size: 13px;
@@ -323,19 +488,20 @@
 
 .security-note {
     -fx-text-fill: #82ACB9;
-    -fx-font-size: 12.5px;
+    -fx-font-size: 12px;
+    -fx-wrap-text: true;
 }
 
-/* Top Right Tagline Accent */
+/* ── Top-Right Tagline Accent (decorative, mouse-transparent) ── */
 .top-right-tagline {
-    -fx-padding: 24px 44px 0 0;
+    -fx-padding: 20px 40px 0 0;
 }
 
 .tagline-bar {
     -fx-background-color: #00F2FE;
-    -fx-min-width: 36px;
-    -fx-pref-width: 36px;
-    -fx-max-width: 36px;
+    -fx-min-width: 32px;
+    -fx-pref-width: 32px;
+    -fx-max-width: 32px;
     -fx-min-height: 2px;
     -fx-pref-height: 2px;
     -fx-max-height: 2px;
@@ -343,7 +509,5 @@
 
 .tagline-text {
     -fx-text-fill: #E0F5FC;
-    -fx-font-size: 13px;
+    -fx-font-size: 12.5px;
 }
-
-

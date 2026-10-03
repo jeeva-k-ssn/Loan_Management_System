@@ -9,18 +9,21 @@
            stylesheets="@../css/login.css" styleClass="login-root">
     
     <!-- Main Split Shell -->
-    <GridPane styleClass="login-shell">
+    <GridPane styleClass="login-shell" prefHeight="900" minHeight="620">
         <columnConstraints>
-            <ColumnConstraints percentWidth="54"/>
-            <ColumnConstraints percentWidth="46"/>
+            <ColumnConstraints percentWidth="54" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="46" hgrow="ALWAYS"/>
         </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" percentHeight="100"/>
+        </rowConstraints>
         
         <!-- Left Hero Panel -->
-        <StackPane fx:id="loginBrandPanel" GridPane.columnIndex="0" styleClass="hero-panel">
+        <StackPane fx:id="loginBrandPanel" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS" styleClass="hero-panel">
             <!-- Ambient Gradient Overlay over Background Image -->
             <Region styleClass="hero-overlay"/>
             
-            <VBox styleClass="hero-content" fillWidth="true">
+            <VBox styleClass="hero-content" fillWidth="true" VBox.vgrow="ALWAYS" StackPane.alignment="CENTER">
                 <!-- Brand Header -->
                 <HBox alignment="CENTER_LEFT" spacing="12">
                     <StackPane styleClass="brand-logo-icon-bg">
@@ -35,11 +38,11 @@
                     </VBox>
                 </HBox>
 
-                <Region VBox.vgrow="ALWAYS"/>
+                <Region prefHeight="58" maxHeight="58"/>
 
                 <!-- Main Hero Copy & Badges -->
-                <VBox spacing="20" maxWidth="620">
-                    <VBox spacing="2">
+                <VBox spacing="24" maxWidth="560">
+                    <VBox spacing="4">
                         <Label text="Smarter Lending." styleClass="hero-heading-white"/>
                         <HBox spacing="10">
                             <Label text="Simpler" styleClass="hero-heading-cyan"/>
@@ -47,32 +50,32 @@
                         </HBox>
                     </VBox>
 
-                    <Label text="Your dreams deserve the right support.&#10;LoanFlow makes loan applications, approvals&#10;and repayments easier, faster and more secure." styleClass="hero-copy" wrapText="true"/>
+                    <Label text="Your dreams deserve the right support.&#10;LoanFlow makes loan applications, approvals&#10;and repayments easier, faster and more secure." styleClass="hero-copy" wrapText="true" maxWidth="500"/>
 
                     <!-- 4 Feature Cards -->
                     <HBox spacing="12" styleClass="feature-row">
-                        <VBox styleClass="feature-card" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                        <VBox styleClass="feature-card" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
                             <StackPane styleClass="feature-icon-badge">
                                 <SVGPath content="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="#00F2FE" styleClass="feature-svg"/>
                             </StackPane>
                             <Label text="Secure&#10;&amp; Reliable" styleClass="feature-text"/>
                         </VBox>
 
-                        <VBox styleClass="feature-card" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                        <VBox styleClass="feature-card" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
                             <StackPane styleClass="feature-icon-badge">
                                 <SVGPath content="M7 2v11h3v9l7-12h-4l4-8z" fill="#00F2FE" styleClass="feature-svg"/>
                             </StackPane>
                             <Label text="Faster&#10;Approvals" styleClass="feature-text"/>
                         </VBox>
 
-                        <VBox styleClass="feature-card" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                        <VBox styleClass="feature-card" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
                             <StackPane styleClass="feature-icon-badge">
                                 <SVGPath content="M5 9.2h3V19H5zM10.6 5h3v14h-3zM16.2 13h3v6h-3z" fill="#00F2FE" styleClass="feature-svg"/>
                             </StackPane>
                             <Label text="Better&#10;Financial Control" styleClass="feature-text"/>
                         </VBox>
 
-                        <VBox styleClass="feature-card" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                        <VBox styleClass="feature-card" alignment="TOP_LEFT" HBox.hgrow="ALWAYS">
                             <StackPane styleClass="feature-icon-badge">
                                 <SVGPath content="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z" fill="#00F2FE" styleClass="feature-svg"/>
                             </StackPane>
@@ -83,23 +86,17 @@
 
                 <Region VBox.vgrow="ALWAYS"/>
 
-                <!-- Bottom Quote Block -->
-                <HBox alignment="CENTER_LEFT" spacing="14" styleClass="quote-box">
+                <HBox styleClass="quote-box" spacing="12" alignment="CENTER_LEFT">
                     <Region styleClass="quote-accent-bar"/>
-                    <Label text="“Better financial decisions today,&#10;a stronger tomorrow.”" styleClass="quote-text"/>
+                    <Label text="&#8220;" styleClass="quote-mark"/>
+                    <Label text="Better financial decisions today,&#10;a stronger tomorrow." styleClass="quote-text" wrapText="true" maxWidth="280"/>
                 </HBox>
             </VBox>
         </StackPane>
 
         <!-- Right Login Panel -->
-        <StackPane GridPane.columnIndex="1" styleClass="login-panel" alignment="CENTER">
-            <!-- Top Right Tagline Header (Anchored at top right of panel) -->
-            <HBox alignment="TOP_RIGHT" spacing="12" mouseTransparent="true" styleClass="top-right-tagline" StackPane.alignment="TOP_RIGHT">
-                <Region styleClass="tagline-bar"/>
-                <Label text="Smarter Lending. Brighter Futures." styleClass="tagline-text"/>
-            </HBox>
-
-            <VBox maxWidth="480" prefWidth="460" spacing="18" styleClass="login-card">
+        <StackPane GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS" styleClass="login-panel" alignment="CENTER">
+            <VBox maxWidth="540" prefWidth="520" maxHeight="-Infinity" spacing="14" styleClass="login-card">
                 <padding>
                     <Insets top="34" right="38" bottom="32" left="38"/>
                 </padding>
@@ -178,6 +175,10 @@
             </VBox>
         </StackPane>
     </GridPane>
+
+    <!-- Top Right Tagline Header (Anchored at root level top right) -->
+    <HBox alignment="TOP_RIGHT" spacing="12" mouseTransparent="true" styleClass="top-right-tagline" StackPane.alignment="TOP_RIGHT">
+        <Region styleClass="tagline-bar"/>
+        <Label text="Smarter Lending. Brighter Futures." styleClass="tagline-text"/>
+    </HBox>
 </StackPane>
-
-

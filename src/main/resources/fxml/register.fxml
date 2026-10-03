@@ -9,14 +9,17 @@
            stylesheets="@../css/login.css" styleClass="login-root">
     
     <!-- Main Split Shell -->
-    <GridPane styleClass="login-shell">
+    <GridPane styleClass="login-shell" prefHeight="900" minHeight="620">
         <columnConstraints>
-            <ColumnConstraints percentWidth="54"/>
-            <ColumnConstraints percentWidth="46"/>
+            <ColumnConstraints percentWidth="54" hgrow="ALWAYS"/>
+            <ColumnConstraints percentWidth="46" hgrow="ALWAYS"/>
         </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" percentHeight="100"/>
+        </rowConstraints>
         
         <!-- Left Hero Panel -->
-        <StackPane GridPane.columnIndex="0" styleClass="hero-panel">
+        <StackPane GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS" styleClass="hero-panel">
             <Region styleClass="hero-overlay"/>
             
             <VBox styleClass="hero-content" fillWidth="true">
@@ -34,11 +37,11 @@
                     </VBox>
                 </HBox>
 
-                <Region VBox.vgrow="ALWAYS"/>
+                <Region prefHeight="58" maxHeight="58"/>
 
                 <!-- Main Hero Copy & Badges -->
-                <VBox spacing="20" maxWidth="620">
-                    <VBox spacing="2">
+                <VBox spacing="24" maxWidth="620">
+                    <VBox spacing="4">
                         <Label text="Start Your Journey." styleClass="hero-heading-white"/>
                         <HBox spacing="10">
                             <Label text="Join" styleClass="hero-heading-cyan"/>
@@ -82,25 +85,19 @@
 
                 <Region VBox.vgrow="ALWAYS"/>
 
-                <!-- Bottom Quote Block -->
-                <HBox alignment="CENTER_LEFT" spacing="14" styleClass="quote-box">
+                <HBox styleClass="quote-box" spacing="12" alignment="CENTER_LEFT">
                     <Region styleClass="quote-accent-bar"/>
-                    <Label text="“Empowering your financial growth,&#10;one step at a time.”" styleClass="quote-text"/>
+                    <Label text="&#8220;" styleClass="quote-mark"/>
+                    <Label text="Better financial decisions today,&#10;a stronger tomorrow." styleClass="quote-text" wrapText="true" maxWidth="280"/>
                 </HBox>
             </VBox>
         </StackPane>
 
         <!-- Right Register Panel -->
-        <StackPane GridPane.columnIndex="1" styleClass="login-panel" alignment="CENTER">
-            <!-- Top Right Tagline Header -->
-            <HBox alignment="TOP_RIGHT" spacing="12" mouseTransparent="true" styleClass="top-right-tagline" StackPane.alignment="TOP_RIGHT">
-                <Region styleClass="tagline-bar"/>
-                <Label text="Smarter Lending. Brighter Futures." styleClass="tagline-text"/>
-            </HBox>
-
-            <VBox maxWidth="490" prefWidth="470" spacing="16" styleClass="login-card">
+        <StackPane GridPane.columnIndex="1" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" GridPane.hgrow="ALWAYS" styleClass="login-panel" alignment="CENTER">
+            <VBox maxWidth="510" prefWidth="490" maxHeight="-Infinity" spacing="8" styleClass="login-card register-card">
                 <padding>
-                    <Insets top="32" right="38" bottom="30" left="38"/>
+                    <Insets top="26" right="34" bottom="26" left="34"/>
                 </padding>
 
                 <!-- Header inside Card -->
@@ -176,5 +173,10 @@
             </VBox>
         </StackPane>
     </GridPane>
-</StackPane>
 
+    <!-- Top Right Tagline Header (Anchored at root level top right) -->
+    <HBox alignment="TOP_RIGHT" spacing="12" mouseTransparent="true" styleClass="top-right-tagline" StackPane.alignment="TOP_RIGHT">
+        <Region styleClass="tagline-bar"/>
+        <Label text="Smarter Lending. Brighter Futures." styleClass="tagline-text"/>
+    </HBox>
+</StackPane>
