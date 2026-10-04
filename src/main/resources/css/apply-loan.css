@@ -697,3 +697,9 @@
 .assessment-description, .assessment-label { -fx-text-fill: #6B7F91; }
 .assessment-value { -fx-text-fill: #123D52; }
 .consent-check { -fx-text-fill: #244B3A; -fx-font-size: 12px; }
+.apply-root { -fx-background-color: #F4F7FA; }
+.top-header { -fx-background-color: #102A43; -fx-border-color: transparent transparent #D8E3EA transparent; -fx-border-width: 0 0 1px 0; }
+.loan-card, .assessment-card, .summary-card, .process-card, .security-card { -fx-effect: dropshadow(gaussian, rgba(16,42,67,.07), 12, .10, 0, 3); }
+.form-field, .form-combo, .form-textarea, .modern-field, .modern-combo { -fx-font-size: 12px; }
+.calculate-button, .submit-button { -fx-background-color: #128C8C; -fx-background-radius: 8px; }
+.calculate-button:hover, .submit-button:hover { -fx-background-color: #0D6F72; }

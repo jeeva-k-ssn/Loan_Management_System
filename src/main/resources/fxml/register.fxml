@@ -102,7 +102,7 @@
 
             <StackPane styleClass="login-card-stage" alignment="CENTER" VBox.vgrow="ALWAYS">
                 <VBox maxWidth="540" prefWidth="520" maxHeight="-Infinity" spacing="14" styleClass="login-card register-card"
-                      style="-fx-background-color: #032332; -fx-border-color: #00E5FF; -fx-border-width: 2px; -fx-border-radius: 22px; -fx-background-radius: 22px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.38), 32, 0.18, 0, 12);">
+                      style="-fx-background-color: white; -fx-border-color: #D8E3EA; -fx-border-width: 1px; -fx-border-radius: 14px; -fx-background-radius: 14px; -fx-effect: dropshadow(gaussian, rgba(16,42,67,0.12), 18, 0.12, 0, 5);">
                 <padding>
                     <Insets top="34" right="38" bottom="32" left="38"/>
                 </padding>

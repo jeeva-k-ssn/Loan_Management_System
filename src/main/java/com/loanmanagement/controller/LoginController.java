@@ -169,7 +169,7 @@ private void openDashboard(User user) {
 }
 
 @FXML
-public void openRegister(ActionEvent event) {
+    public void openRegister(ActionEvent event) {
 
     try {
 
@@ -186,6 +186,32 @@ public void openRegister(ActionEvent event) {
         );
     }
 }
+
+    @FXML
+    public void openForgotPassword() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/forgot-password.fxml"));
+            Parent content = loader.load();
+
+            javafx.scene.control.Dialog<Void> dialog = new javafx.scene.control.Dialog<>();
+            dialog.setTitle("LoanFlow - Reset Password");
+            dialog.setHeaderText(null);
+            dialog.initOwner(emailField.getScene().getWindow());
+            dialog.getDialogPane().getStylesheets().add(
+                    getClass().getResource("/css/login.css").toExternalForm());
+            dialog.getDialogPane().setContent(content);
+            dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.CLOSE);
+            dialog.getDialogPane().lookupButton(javafx.scene.control.ButtonType.CLOSE).setVisible(false);
+            dialog.getDialogPane().lookupButton(javafx.scene.control.ButtonType.CLOSE).setManaged(false);
+
+            ForgotPasswordController controller = loader.getController();
+            controller.setDialog(dialog);
+            dialog.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Password Reset", "Unable to open the password reset window.");
+        }
+    }
 
 private void showError(String title, String message) {
 

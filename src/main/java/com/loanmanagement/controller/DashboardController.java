@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.Locale;
 import com.loanmanagement.navigation.NavigationManager;
+import com.loanmanagement.util.AlertUtil;
 
 /** Displays only the dashboard data and actions available to the signed-in role. */
 public class DashboardController {
@@ -337,6 +338,6 @@ public class DashboardController {
     private void showError(String title, String message) { showAlert(Alert.AlertType.ERROR, title, message); }
     private void showInformation(String title, String message) { showAlert(Alert.AlertType.INFORMATION, title, message); }
     private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type); alert.setTitle(title); alert.setHeaderText(null); alert.setContentText(message); alert.showAndWait();
+        Alert alert = new Alert(type); alert.setTitle(title); alert.setContentText(message); AlertUtil.show(alert);
     }
 }

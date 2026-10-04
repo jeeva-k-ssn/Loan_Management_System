@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import com.loanmanagement.util.AlertUtil;
 import javafx.concurrent.Task;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -93,6 +94,6 @@ public class LoanStatementController {
     @FXML private void refresh() { loadStatementAsync(); }
     @FXML private void back() { try { NavigationManager.navigate((Stage) paymentTable.getScene().getWindow(), "/fxml/loans.fxml", "LoanFlow - Loans & Payments", c -> ((LoanManagementController)c).setCurrentUser(currentUser)); } catch(Exception e){ showError("Navigation error","Unable to return to the loan portfolio."); } }
     private String money(BigDecimal value){return NumberFormat.getCurrencyInstance(new Locale("en","IN")).format(value.setScale(2,RoundingMode.HALF_UP));}
-    private void showError(String title,String message){Alert a=new Alert(Alert.AlertType.ERROR);a.setTitle(title);a.setHeaderText(null);a.setContentText(message);a.showAndWait();}
+    private void showError(String title,String message){Alert a=new Alert(Alert.AlertType.ERROR);a.setTitle(title);a.setContentText(message);AlertUtil.show(a);}
     public static class PaymentRow { private final int id; private final String date,method,reference,status; private final double amount; PaymentRow(int id,String date,double amount,String method,String reference,String status){this.id=id;this.date=date;this.amount=amount;this.method=method;this.reference=reference;this.status=status;} public int getId(){return id;} public String getDate(){return date;} public double getAmount(){return amount;} public String getMethod(){return method;} public String getReference(){return reference;} public String getStatus(){return status;} }
 }

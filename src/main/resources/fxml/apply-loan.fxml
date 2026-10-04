@@ -282,10 +282,10 @@
 
                             </GridPane>
 
-                            <!-- Uses the existing application card to show LoanFlow's academic assessment. -->
+                            <!-- Existing decision-support card, styled as part of the LoanFlow application flow. -->
                             <VBox spacing="10" styleClass="assessment-card">
                                 <Label text="CREDIT ASSESSMENT" styleClass="assessment-title"/>
-                                <Label text="Decision support based on this application and the customer's existing loan relationships."
+                                <Label text="Decision support based on this application and the customer's existing loan relationships. Final approval remains with the loan officer."
                                        wrapText="true" styleClass="assessment-description"/>
                                 <GridPane hgap="18" vgap="8">
                                     <Label text="Credit score" styleClass="assessment-label"/>

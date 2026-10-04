@@ -3,6 +3,7 @@ package com.loanmanagement.controller;
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.model.User;
 import com.loanmanagement.navigation.NavigationManager;
+import com.loanmanagement.util.AlertUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -237,7 +238,7 @@ public class AdminController {
             s.getScene().setRoot(root); s.setMaximized(true);
         } catch (Exception e) { alert(Alert.AlertType.ERROR, "Navigation error", "Unable to return to the dashboard."); }
     }
-    private void alert(Alert.AlertType type, String title, String message) { Alert a = new Alert(type); a.setTitle(title); a.setHeaderText(null); a.setContentText(message); a.showAndWait(); }
+    private void alert(Alert.AlertType type, String title, String message) { Alert a = new Alert(type); a.setTitle(title); a.setContentText(message); AlertUtil.show(a); }
 
     public static class UserRow {
         private final int id; private final String name, email, role;

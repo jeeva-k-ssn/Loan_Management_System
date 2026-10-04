@@ -59,6 +59,31 @@ public boolean registerUser(User user) {
     }
 }
 
+public boolean resetPassword(String email, String role, String newPassword) {
+
+    lastErrorMessage = null;
+
+    String sql = "UPDATE USERS SET PASSWORD = ? WHERE EMAIL = ? AND USER_ROLE = ?";
+
+    try (Connection connection = DatabaseConnection.getConnection();
+         PreparedStatement statement = connection.prepareStatement(sql)) {
+
+        statement.setString(1, PasswordUtil.hash(newPassword));
+        statement.setString(2, email);
+        statement.setString(3, role);
+
+        if (statement.executeUpdate() == 1) {
+            return true;
+        }
+
+        lastErrorMessage = "No account was found for that email and role.";
+        return false;
+    } catch (SQLException e) {
+        lastErrorMessage = toUserMessage(e);
+        return false;
+    }
+}
+
 private String userInsertSql(Connection connection) throws SQLException {
     String metadataSql =
             "SELECT COUNT(*) FROM USER_TAB_COLUMNS " +

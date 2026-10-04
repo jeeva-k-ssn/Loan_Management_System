@@ -55,3 +55,24 @@
 .tab-pane .tab { -fx-background-color: #E8EFF3; -fx-padding: 9px 16px; }
 .tab-pane .tab:selected { -fx-background-color: white; }
 .chart { -fx-background-color: transparent; }
+
+/* Shared enterprise dashboard refinements. */
+.dashboard-root { -fx-background-color: #F4F7FA; }
+.top-bar { -fx-border-color: transparent transparent #D8E3EA transparent; -fx-border-width: 0 0 1px 0; }
+.content-card, .stat-card { -fx-effect: dropshadow(gaussian, rgba(16,42,67,.07), 12, .10, 0, 3); }
+.content-card:hover, .stat-card:hover { -fx-border-color: #B9D9DD; }
+.modern-field, .modern-combo { -fx-font-size: 12px; }
+.modern-field:disabled, .modern-combo:disabled { -fx-opacity: .8; -fx-background-color: #EEF3F5; }
+.table-view { -fx-border-width: 1px; }
+.table-view .table-row-cell:selected .table-cell { -fx-text-fill: #123D52; }
+.tab-pane { -fx-tab-min-height: 38px; -fx-background-color: transparent; }
+.tab-pane .tab-header-area { -fx-padding: 0 0 10px 0; }
+.tab-pane .tab { -fx-background-radius: 8px 8px 0 0; -fx-border-color: transparent; }
+.tab-pane .tab:selected .tab-label { -fx-text-fill: #128C8C; -fx-font-weight: bold; }
+.action-button:disabled, .primary-button:disabled { -fx-opacity: .55; }
+.loanflow-dialog { -fx-background-color: white; -fx-border-color: #D8E3EA; -fx-border-radius: 10px; -fx-background-radius: 10px; }
+.loanflow-dialog .header-panel { -fx-background-color: #F4F7FA; }
+.loanflow-dialog .header-panel .label { -fx-text-fill: #102A43; -fx-font-size: 15px; -fx-font-weight: bold; }
+.loanflow-dialog .content.label { -fx-text-fill: #526B7A; -fx-font-size: 13px; }
+.loanflow-dialog .button-bar .button { -fx-background-color: #128C8C; -fx-text-fill: white; -fx-background-radius: 7px; -fx-padding: 8px 16px; }
+.loanflow-dialog .button-bar .button:hover { -fx-background-color: #0D6F72; }

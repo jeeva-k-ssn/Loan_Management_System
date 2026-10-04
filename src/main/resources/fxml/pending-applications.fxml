@@ -206,7 +206,7 @@
                             <Label text="Eligibility" styleClass="assessment-label"/>
                             <Label fx:id="assessmentEligibilityLabel" text="REQUIRES REVIEW" styleClass="assessment-status"/>
                         </HBox>
-                        <Label fx:id="assessmentReasonLabel" text="Select an application to load its academic credit assessment."
+                        <Label fx:id="assessmentReasonLabel" text="Select an application to load LoanFlow decision support."
                                wrapText="true" styleClass="assessment-description"/>
                         <Label text="Source" styleClass="assessment-label"/>
                         <Label fx:id="creditReportSourceLabel" text="TransUnion CIBIL (SIMULATED)" styleClass="assessment-value"/>

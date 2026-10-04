@@ -284,3 +284,9 @@
 .assessment-label { -fx-font-size: 12px; -fx-text-fill: #718078; }
 .assessment-value { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #244B3A; }
 .assessment-status { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #176B52; }
+.pending-root { -fx-background-color: #F4F7FA; }
+.pending-top-bar { -fx-background-color: #102A43; -fx-border-color: transparent transparent #D8E3EA transparent; -fx-border-width: 0 0 1px 0; }
+.content-card, .assessment-panel { -fx-effect: dropshadow(gaussian, rgba(16,42,67,.07), 12, .10, 0, 3); }
+.application-table, .application-table .column-header-background { -fx-background-radius: 8px; }
+.fetch-credit-report-button { -fx-background-color: #128C8C; -fx-text-fill: white; -fx-background-radius: 8px; -fx-font-weight: bold; }
+.fetch-credit-report-button:hover { -fx-background-color: #0D6F72; }

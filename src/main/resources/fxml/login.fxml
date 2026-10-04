@@ -151,6 +151,10 @@
                     </HBox>
                 </VBox>
 
+                <HBox alignment="CENTER_RIGHT">
+                    <Hyperlink text="Forgot password?" styleClass="forgot-password-link" onAction="#openForgotPassword"/>
+                </HBox>
+
                 <!-- Role Input -->
                 <VBox spacing="6">
                     <Label text="LOGIN AS" styleClass="field-label"/>
