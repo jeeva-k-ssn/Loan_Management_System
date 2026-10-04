@@ -91,11 +91,11 @@ javac -version
 mvn -version
 ```
 
-The current database connection is:
+The default database connection is:
 
 ```text
 jdbc:oracle:thin:@localhost:1521:XE
-username: system
+username: `LMS_DB_USER` if configured, otherwise `system`
 ```
 
 The password is never stored in source code. Configure `LMS_DB_PASSWORD`.
@@ -113,9 +113,13 @@ module3_lifecycle_migration.sql
 module4_notifications_migration.sql
 module5_customer_created_at_migration.sql
 module6_credit_assessment_migration.sql
+module7_credit_verification_migration.sql
+module8_credit_report_upload_migration.sql
+module9_mock_credit_bureau_migration.sql
+module10_quality_hardening_migration.sql
 ```
 
-The later migrations are additive. They enable password upgrades, roles, loan lifecycle fields, notifications, customer creation dates, and persisted academic credit assessments. Module 6 adds optional verified income/academic-score profile fields plus application assessment snapshots; LoanFlow does not retrieve or claim real CIBIL data.
+The migrations are additive and do not delete existing records. Modules 7 and 8 preserve the legacy verification/document-upload capability. Module 9 adds the simulated credit-bureau source, customer consent, applicant identity/employment fields, and application retrieval snapshots. Module 10 adds deterministic demonstration scenarios and officer/admin audit logging. LoanFlow does not retrieve or claim real CIBIL data.
 
 Example connection:
 
@@ -133,6 +137,7 @@ Current terminal only:
 
 ```powershell
 $env:LMS_DB_PASSWORD = "your-oracle-password"
+$env:LMS_DB_USER = "LOANFLOW_APP" # optional; defaults to SYSTEM for local academic setup
 ```
 
 Persist for the Windows user:

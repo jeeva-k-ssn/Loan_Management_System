@@ -153,10 +153,25 @@
                         </VBox>
                     </GridPane>
 
+                    <GridPane hgap="18" vgap="10" styleClass="details-grid">
+                        <Label text="PAN" styleClass="detail-title"/>
+                        <Label fx:id="applicantPanLabel" text="-" styleClass="detail-value" GridPane.columnIndex="1"/>
+                        <Label text="Identity" styleClass="detail-title" GridPane.columnIndex="2"/>
+                        <Label fx:id="applicantIdentityLabel" text="-" styleClass="detail-value" GridPane.columnIndex="3"/>
+                        <Label text="Employment" styleClass="detail-title" GridPane.rowIndex="1"/>
+                        <Label fx:id="applicantEmploymentLabel" text="-" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label text="Monthly income" styleClass="detail-title" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                        <Label fx:id="applicantIncomeLabel" text="-" styleClass="detail-value" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                    </GridPane>
+
                     <VBox spacing="10" styleClass="assessment-panel">
-                        <Label text="CREDIT ASSESSMENT" styleClass="assessment-title"/>
-                        <Label text="Academic decision support for the selected application. Final approval remains with the loan officer."
+                        <Label text="CREDIT INFORMATION" styleClass="assessment-title"/>
+                        <Label text="Credit Bureau: TransUnion CIBIL (SIMULATED). The report is retrieved from LoanFlow's mock bureau data; it is not a live CIBIL connection."
                                wrapText="true" styleClass="assessment-description"/>
+                        <HBox spacing="12" alignment="CENTER_LEFT">
+                            <Label fx:id="creditReportStatusLabel" text="Status: Not Retrieved" styleClass="assessment-status"/>
+                            <Button fx:id="fetchCreditReportButton" text="Fetch Credit Report" onAction="#fetchCreditReport" styleClass="approve-button"/>
+                        </HBox>
                         <GridPane hgap="18" vgap="8">
                             <Label text="Credit score" styleClass="assessment-label"/>
                             <Label fx:id="assessmentScoreLabel" text="NH / Not available" styleClass="assessment-value" GridPane.columnIndex="1"/>
@@ -174,6 +189,18 @@
                             <Label fx:id="assessmentDebtLabel" text="Not available" styleClass="assessment-value" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                             <Label text="Risk" styleClass="assessment-label" GridPane.columnIndex="2" GridPane.rowIndex="3"/>
                             <Label fx:id="assessmentRiskLabel" text="REVIEW" styleClass="assessment-value" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+                            <Label text="Active accounts" styleClass="assessment-label" GridPane.rowIndex="4"/>
+                            <Label fx:id="activeAccountsLabel" text="-" styleClass="assessment-value" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                            <Label text="Payment history" styleClass="assessment-label" GridPane.columnIndex="2" GridPane.rowIndex="4"/>
+                            <Label fx:id="paymentHistoryLabel" text="-" styleClass="assessment-value" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
+                            <Label text="Credit utilization" styleClass="assessment-label" GridPane.rowIndex="5"/>
+                            <Label fx:id="utilizationLabel" text="-" styleClass="assessment-value" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                            <Label text="Recent enquiries" styleClass="assessment-label" GridPane.columnIndex="2" GridPane.rowIndex="5"/>
+                            <Label fx:id="enquiriesLabel" text="-" styleClass="assessment-value" GridPane.columnIndex="3" GridPane.rowIndex="5"/>
+                            <Label text="Defaults" styleClass="assessment-label" GridPane.rowIndex="6"/>
+                            <Label fx:id="defaultsLabel" text="-" styleClass="assessment-value" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                            <Label text="Total outstanding" styleClass="assessment-label" GridPane.columnIndex="2" GridPane.rowIndex="6"/>
+                            <Label fx:id="outstandingLabel" text="-" styleClass="assessment-value" GridPane.columnIndex="3" GridPane.rowIndex="6"/>
                         </GridPane>
                         <HBox spacing="18">
                             <Label text="Eligibility" styleClass="assessment-label"/>
@@ -181,6 +208,10 @@
                         </HBox>
                         <Label fx:id="assessmentReasonLabel" text="Select an application to load its academic credit assessment."
                                wrapText="true" styleClass="assessment-description"/>
+                        <Label text="Source" styleClass="assessment-label"/>
+                        <Label fx:id="creditReportSourceLabel" text="TransUnion CIBIL (SIMULATED)" styleClass="assessment-value"/>
+                        <Label text="Retrieved at" styleClass="assessment-label"/>
+                        <Label fx:id="creditReportRetrievedAtLabel" text="-" styleClass="assessment-value"/>
                     </VBox>
 
                     <HBox alignment="CENTER_RIGHT" spacing="12" styleClass="action-row">

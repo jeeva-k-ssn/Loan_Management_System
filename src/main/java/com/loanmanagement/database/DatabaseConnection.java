@@ -8,7 +8,6 @@ public class DatabaseConnection {
 
     private static final String URL =
             "jdbc:oracle:thin:@localhost:1521:XE";
-    private static final String USERNAME = "system";
 
     private DatabaseConnection() {
         // Utility class.
@@ -29,6 +28,7 @@ public class DatabaseConnection {
             );
         }
 
-        return DriverManager.getConnection(URL, USERNAME, password);
+        String username = System.getenv().getOrDefault("LMS_DB_USER", "system");
+        return DriverManager.getConnection(URL, username, password);
     }
 }

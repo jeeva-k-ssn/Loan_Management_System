@@ -3,6 +3,9 @@ package com.loanmanagement.controller;
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.service.NotificationService;
 import com.loanmanagement.service.CreditAssessmentService;
+import com.loanmanagement.service.CreditBureauService;
+import com.loanmanagement.model.CreditReport;
+import com.loanmanagement.service.AuditService;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -109,6 +112,10 @@ public class PendingApplicationsController {
             assessmentNewEmiLabel, assessmentTotalEmiLabel, assessmentRatioLabel,
             assessmentDebtLabel, assessmentEligibilityLabel, assessmentRiskLabel, assessmentReasonLabel;
 
+    @FXML private Label creditReportStatusLabel, creditReportSourceLabel, creditReportRetrievedAtLabel,
+            activeAccountsLabel, paymentHistoryLabel, utilizationLabel, enquiriesLabel, defaultsLabel, outstandingLabel;
+    @FXML private Label applicantPanLabel, applicantIdentityLabel, applicantEmploymentLabel, applicantIncomeLabel;
+
 
     // ============================================================
     // BUTTONS
@@ -119,6 +126,9 @@ public class PendingApplicationsController {
 
     @FXML
     private Button rejectButton;
+
+    @FXML
+    private Button fetchCreditReportButton;
 
 
     // ============================================================
@@ -356,10 +366,10 @@ public class PendingApplicationsController {
     private void loadPendingApplicationsAsync() {
         Task<ObservableList<LoanApplication>> task = new Task<>() {
             @Override protected ObservableList<LoanApplication> call() throws SQLException {
-                String query = "SELECT la.APPLICATION_ID,lc.FULL_NAME,la.LOAN_TYPE,la.LOAN_AMOUNT,la.LOAN_PURPOSE,la.TENURE_MONTHS,la.INTEREST_RATE,la.EMI_AMOUNT,TO_CHAR(la.APPLICATION_DATE, 'DD-MON-YY') APPLICATION_DATE,la.STATUS FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER lc ON la.CUSTOMER_ID=lc.CUSTOMER_ID WHERE UPPER(la.STATUS)='PENDING' ORDER BY la.APPLICATION_ID";
+                String query = "SELECT la.APPLICATION_ID,la.CUSTOMER_ID,lc.FULL_NAME,la.LOAN_TYPE,la.LOAN_AMOUNT,la.LOAN_PURPOSE,la.TENURE_MONTHS,la.INTEREST_RATE,la.EMI_AMOUNT,TO_CHAR(la.APPLICATION_DATE, 'DD-MON-YY') APPLICATION_DATE,la.STATUS FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER lc ON la.CUSTOMER_ID=lc.CUSTOMER_ID WHERE UPPER(la.STATUS)='PENDING' ORDER BY la.APPLICATION_ID";
                 try (Connection connection=getConnection(); PreparedStatement statement=connection.prepareStatement(query); ResultSet resultSet=statement.executeQuery()) {
                     var rows=FXCollections.<LoanApplication>observableArrayList();
-                    while(resultSet.next()) rows.add(new LoanApplication(resultSet.getInt("APPLICATION_ID"),resultSet.getString("FULL_NAME"),resultSet.getString("LOAN_TYPE"),resultSet.getDouble("LOAN_AMOUNT"),resultSet.getString("LOAN_PURPOSE"),resultSet.getInt("TENURE_MONTHS"),resultSet.getDouble("INTEREST_RATE"),resultSet.getDouble("EMI_AMOUNT"),resultSet.getString("APPLICATION_DATE"),resultSet.getString("STATUS")));
+                    while(resultSet.next()) rows.add(new LoanApplication(resultSet.getInt("APPLICATION_ID"),resultSet.getInt("CUSTOMER_ID"),resultSet.getString("FULL_NAME"),resultSet.getString("LOAN_TYPE"),resultSet.getDouble("LOAN_AMOUNT"),resultSet.getString("LOAN_PURPOSE"),resultSet.getInt("TENURE_MONTHS"),resultSet.getDouble("INTEREST_RATE"),resultSet.getDouble("EMI_AMOUNT"),resultSet.getString("APPLICATION_DATE"),resultSet.getString("STATUS")));
                     return rows;
                 }
             }
@@ -375,7 +385,7 @@ public class PendingApplicationsController {
 
         String query =
                 "SELECT " +
-                "    la.APPLICATION_ID, " +
+                "    la.APPLICATION_ID, la.CUSTOMER_ID, " +
                 "    lc.FULL_NAME, " +
                 "    la.LOAN_TYPE, " +
                 "    la.LOAN_AMOUNT, " +
@@ -407,6 +417,8 @@ public class PendingApplicationsController {
                                 resultSet.getInt(
                                         "APPLICATION_ID"
                                 ),
+
+                                resultSet.getInt("CUSTOMER_ID"),
 
                                 resultSet.getString(
                                         "FULL_NAME"
@@ -548,6 +560,10 @@ public class PendingApplicationsController {
 
         setStatus(statusLabel, application.getStatus());
 
+        loadApplicantInformation(application.getApplicationId());
+
+        clearCreditReport();
+
         clearAssessment();
         int selectedApplicationId = application.getApplicationId();
         Task<CreditAssessmentService.Assessment> assessmentTask = new Task<>() {
@@ -576,8 +592,87 @@ public class PendingApplicationsController {
         rejectButton.setDisable(false);
     }
 
+    private void loadApplicantInformation(int applicationId) {
+        Task<String[]> task = new Task<>() {
+            @Override protected String[] call() throws SQLException {
+                String sql = "SELECT c.PAN_NUMBER,c.IDENTITY_TYPE,c.IDENTITY_NUMBER,c.EMPLOYMENT_STATUS,c.MONTHLY_INCOME " +
+                        "FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID=la.CUSTOMER_ID WHERE la.APPLICATION_ID=?";
+                try (Connection connection=getConnection(); PreparedStatement statement=connection.prepareStatement(sql)) {
+                    statement.setInt(1, applicationId);
+                    try (ResultSet result=statement.executeQuery()) {
+                        if (!result.next()) return new String[]{"-","-","-","-"};
+                        return new String[]{value(result.getString(1)), value(result.getString(2)) + " " + value(result.getString(3)), value(result.getString(4)), result.getBigDecimal(5)==null?"-":money(result.getBigDecimal(5))};
+                    }
+                }
+            }
+        };
+        task.setOnSucceeded(e -> { String[] v=task.getValue(); applicantPanLabel.setText(v[0]); applicantIdentityLabel.setText(v[1]); applicantEmploymentLabel.setText(v[2]); applicantIncomeLabel.setText(v[3]); });
+        task.setOnFailed(e -> { applicantPanLabel.setText("Unavailable"); applicantIdentityLabel.setText("Unavailable"); applicantEmploymentLabel.setText("Unavailable"); applicantIncomeLabel.setText("Unavailable"); });
+        Thread thread=new Thread(task,"loanflow-applicant-information"); thread.setDaemon(true); thread.start();
+    }
+
+    @FXML
+    private void fetchCreditReport() {
+        if (!isLoanOfficer()) return;
+        LoanApplication selected = applicationTable.getSelectionModel().getSelectedItem();
+        if (selected == null) { showWarning("No Application Selected", "Please select an application first."); return; }
+        fetchCreditReportButton.setDisable(true);
+        Task<CreditReport> task = new Task<>() {
+            @Override protected CreditReport call() throws Exception {
+                try (Connection connection = getConnection();
+                     PreparedStatement statement = connection.prepareStatement(
+                             "SELECT CREDIT_CONSENT_GIVEN FROM LOAN_APPLICATION WHERE APPLICATION_ID=?")) {
+                    statement.setInt(1, selected.getApplicationId());
+                    try (ResultSet result = statement.executeQuery()) {
+                        if (!result.next() || !"Y".equalsIgnoreCase(result.getString(1))) {
+                            throw new SQLException("Credit consent was not recorded for this application.");
+                        }
+                    }
+                    CreditReport report = new CreditBureauService().getCreditReport(connection, selected.getCustomerId(),
+                            selected.getApplicationId(), currentUser.getUserId());
+                    if (report != null) AuditService.log(currentUser.getUserId(), "FETCH_CREDIT_REPORT", "LOAN_APPLICATION", selected.getApplicationId(), "Simulated bureau report retrieved");
+                    return report;
+                }
+            }
+        };
+        task.setOnSucceeded(e -> {
+            fetchCreditReportButton.setDisable(false);
+            if (task.getValue() == null) {
+                creditReportStatusLabel.setText("Credit information unavailable. No simulated credit report is available for this customer.");
+            } else showCreditReport(task.getValue());
+        });
+        task.setOnFailed(e -> { fetchCreditReportButton.setDisable(false); creditReportStatusLabel.setText(
+                e.getSource().getException() != null && e.getSource().getException().getMessage().contains("consent")
+                        ? "Credit check cannot be performed because customer consent was not recorded."
+                        : "Credit information is temporarily unavailable. Please try again."); });
+        Thread thread = new Thread(task, "loanflow-fetch-credit-report"); thread.setDaemon(true); thread.start();
+    }
+
+    private void showCreditReport(CreditReport report) {
+        assessmentScoreLabel.setText(String.valueOf(report.cibilScore()));
+        assessmentRiskLabel.setText(report.riskClassification());
+        creditReportStatusLabel.setText("✓ Credit Report Retrieved");
+        creditReportSourceLabel.setText(report.source());
+        creditReportRetrievedAtLabel.setText(report.retrievedAt() == null ? "-" : report.retrievedAt().toString().replace('T', ' '));
+        activeAccountsLabel.setText(String.valueOf(report.activeAccounts()));
+        paymentHistoryLabel.setText(report.paymentHistory() + "%");
+        utilizationLabel.setText(report.creditUtilization() + "%");
+        enquiriesLabel.setText(String.valueOf(report.recentEnquiries()));
+        defaultsLabel.setText(String.valueOf(report.defaults()));
+        outstandingLabel.setText(money(report.totalOutstanding()));
+    }
+
+    private void clearCreditReport() {
+        if (creditReportStatusLabel == null) return;
+        creditReportStatusLabel.setText("Status: Not Retrieved"); creditReportSourceLabel.setText("TransUnion CIBIL (SIMULATED)");
+        creditReportRetrievedAtLabel.setText("-"); activeAccountsLabel.setText("-"); paymentHistoryLabel.setText("-");
+        utilizationLabel.setText("-"); enquiriesLabel.setText("-"); defaultsLabel.setText("-"); outstandingLabel.setText("-");
+        fetchCreditReportButton.setDisable(false);
+    }
+
     private void showAssessment(CreditAssessmentService.Assessment assessment) {
-        assessmentScoreLabel.setText(assessment.getCreditScoreDisplay());
+        // The score and bureau risk are rendered only by fetchCreditReport().
+        // The assessment remains decision support for income and repayment capacity.
         assessmentIncomeLabel.setText(assessment.getIncomeDisplay());
         assessmentExistingEmiLabel.setText(money(assessment.getExistingEmi()));
         assessmentNewEmiLabel.setText(money(assessment.getNewEmi()));
@@ -585,7 +680,6 @@ public class PendingApplicationsController {
         assessmentRatioLabel.setText(assessment.getRatioDisplay());
         assessmentDebtLabel.setText(money(assessment.getOutstandingDebt()));
         assessmentEligibilityLabel.setText(assessment.getEligibilityDisplay());
-        assessmentRiskLabel.setText(assessment.getRisk());
         assessmentReasonLabel.setText(assessment.getReason());
     }
 
@@ -604,6 +698,7 @@ public class PendingApplicationsController {
     }
 
     private String money(java.math.BigDecimal value) { return "₹" + value.setScale(2, java.math.RoundingMode.HALF_UP).toPlainString(); }
+    private String value(String text) { return text == null || text.isBlank() ? "-" : text; }
 
 
     // ============================================================
@@ -1007,6 +1102,7 @@ public class PendingApplicationsController {
             // ----------------------------------------------------
 
             connection.commit();
+            AuditService.log(currentUser.getUserId(), "APPROVE_APPLICATION", "LOAN_APPLICATION", applicationId, "Application approved and active loan created");
 
             try (PreparedStatement notificationStatement = connection.prepareStatement("SELECT c.USER_ID,l.LOAN_ID FROM LMS_CUSTOMER c JOIN LOAN l ON l.CUSTOMER_ID=c.CUSTOMER_ID WHERE l.APPLICATION_ID=?")) {
                 notificationStatement.setInt(1, applicationId);
@@ -1069,6 +1165,7 @@ public class PendingApplicationsController {
             if (rowsUpdated == 1) {
 
                 connection.commit();
+                if ("REJECTED".equalsIgnoreCase(newStatus)) AuditService.log(currentUser.getUserId(), "REJECT_APPLICATION", "LOAN_APPLICATION", applicationId, "Application rejected");
 
                 return true;
             }
@@ -1253,6 +1350,7 @@ public class PendingApplicationsController {
     public static class LoanApplication {
 
         private final int applicationId;
+        private final int customerId;
         private final String customerName;
         private final String loanType;
         private final double loanAmount;
@@ -1265,7 +1363,7 @@ public class PendingApplicationsController {
 
 
         public LoanApplication(
-                int applicationId,
+                int applicationId, int customerId,
                 String customerName,
                 String loanType,
                 double loanAmount,
@@ -1278,6 +1376,7 @@ public class PendingApplicationsController {
         ) {
 
             this.applicationId = applicationId;
+            this.customerId = customerId;
             this.customerName = customerName;
             this.loanType = loanType;
             this.loanAmount = loanAmount;
@@ -1293,6 +1392,8 @@ public class PendingApplicationsController {
         public int getApplicationId() {
             return applicationId;
         }
+
+        public int getCustomerId() { return customerId; }
 
 
         public String getCustomerName() {

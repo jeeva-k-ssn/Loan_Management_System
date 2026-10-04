@@ -78,21 +78,21 @@ public final class CreditAssessmentService {
         BigDecimal outstandingDebt = BigDecimal.ZERO;
         int activeLoans = 0;
         int payments = 0;
+        // Credit scores are supplied only by CreditBureauService. This decision-support
+        // service deliberately does not read the legacy manually verified/profile score.
         Integer creditScore = null;
         BigDecimal monthlyIncome = null;
         String creditHistory = "Insufficient credit history";
-        String profileSql = "SELECT MONTHLY_INCOME, ACADEMIC_CREDIT_SCORE, NVL(CREDIT_HISTORY_STATUS,'INSUFFICIENT'), NVL(VERIFICATION_STATUS,'NOT_VERIFIED') "
+        String profileSql = "SELECT MONTHLY_INCOME, NVL(CREDIT_HISTORY_STATUS,'INSUFFICIENT'), NVL(VERIFICATION_STATUS,'NOT_VERIFIED') "
                 + "FROM LOANFLOW_CREDIT_PROFILE WHERE CUSTOMER_ID=?";
         try (PreparedStatement p = connection.prepareStatement(profileSql)) {
             p.setInt(1, customerId);
             try (ResultSet r = p.executeQuery()) {
                 if (r.next()) {
                     monthlyIncome = r.getBigDecimal(1);
-                    int score = r.getInt(2);
-                    String verificationStatus = r.getString(4);
-                    creditScore = r.wasNull() || !"VERIFIED".equalsIgnoreCase(verificationStatus) ? null : score;
+                    String verificationStatus = r.getString(3);
                     creditHistory = "VERIFIED".equalsIgnoreCase(verificationStatus)
-                            ? r.getString(3)
+                            ? r.getString(2)
                             : "Credit score not verified";
                 }
             }

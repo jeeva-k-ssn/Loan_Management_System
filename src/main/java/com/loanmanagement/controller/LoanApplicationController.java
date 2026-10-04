@@ -14,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -35,6 +36,9 @@ public class LoanApplicationController {
 
     @FXML
     private TextField customerNameField;
+
+    @FXML private TextField panField, identityNumberField, employmentField, monthlyIncomeField;
+    @FXML private ComboBox<String> identityTypeComboBox;
 
     @FXML
     private ComboBox<String> loanTypeComboBox;
@@ -59,6 +63,9 @@ public class LoanApplicationController {
 
     @FXML
     private Button submitButton;
+
+    @FXML
+    private CheckBox creditConsentCheckBox;
 
     @FXML private Label assessmentScoreLabel, assessmentExistingEmiLabel, assessmentTotalEmiLabel,
             assessmentRatioLabel, assessmentEligibilityLabel, assessmentReasonLabel, summaryEmiLabel;
@@ -177,6 +184,7 @@ public class LoanApplicationController {
         customerNameField.setText(
                 user.getFullName()
         );
+        identityTypeComboBox.setItems(FXCollections.observableArrayList("PAN", "AADHAAR", "PASSPORT", "DRIVING LICENSE"));
 
         if (!"CUSTOMER".equalsIgnoreCase(user.getRole())) {
             submitButton.setDisable(true);
@@ -214,6 +222,11 @@ public class LoanApplicationController {
     private void calculateEMI() {
 
         clearValidation();
+
+        if (creditConsentCheckBox == null || !creditConsentCheckBox.isSelected()) {
+            showValidation("Please authorize LoanFlow to retrieve your credit information for this loan application.");
+            return;
+        }
 
         // Loan type
         if (loanTypeComboBox.getValue() == null) {
@@ -450,6 +463,21 @@ public class LoanApplicationController {
             return;
         }
 
+        if (panField.getText().trim().isEmpty() || identityTypeComboBox.getValue() == null
+                || identityNumberField.getText().trim().isEmpty() || employmentField.getText().trim().isEmpty()
+                || monthlyIncomeField.getText().trim().isEmpty()) {
+            showValidation("Please provide PAN, identity, employment, and monthly income information.");
+            return;
+        }
+        BigDecimal monthlyIncome;
+        try {
+            monthlyIncome = new BigDecimal(monthlyIncomeField.getText().trim());
+            if (monthlyIncome.signum() <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException ex) {
+            showValidation("Monthly income must be a valid amount greater than zero.");
+            return;
+        }
+
 
         // Tenure
 
@@ -569,6 +597,17 @@ public class LoanApplicationController {
             }
 
 
+            try (PreparedStatement profile = connection.prepareStatement(
+                    "UPDATE LMS_CUSTOMER SET PAN_NUMBER=?,IDENTITY_TYPE=?,IDENTITY_NUMBER=?,EMPLOYMENT_STATUS=?,MONTHLY_INCOME=? WHERE CUSTOMER_ID=?")) {
+                profile.setString(1, panField.getText().trim().toUpperCase(Locale.ROOT));
+                profile.setString(2, identityTypeComboBox.getValue());
+                profile.setString(3, identityNumberField.getText().trim());
+                profile.setString(4, employmentField.getText().trim());
+                profile.setBigDecimal(5, monthlyIncome);
+                profile.setInt(6, customerId);
+                profile.executeUpdate();
+            }
+
             /*
              * Insert new application.
              *
@@ -583,14 +622,15 @@ public class LoanApplicationController {
                             + "LOAN_AMOUNT, LOAN_PURPOSE, "
                             + "APPLICATION_DATE, STATUS, "
                             + "LOAN_TYPE, TENURE_MONTHS, "
-                            + "INTEREST_RATE, EMI_AMOUNT) "
+                            + "INTEREST_RATE, EMI_AMOUNT, CREDIT_CONSENT_GIVEN, CREDIT_CONSENT_AT) "
                             + "VALUES "
                             + "(?, ?, ?, SYSDATE, 'PENDING', "
-                            + "?, ?, ?, ?)";
+                            + "?, ?, ?, ?, 'Y', SYSTIMESTAMP)";
 
 
+            int applicationId;
             try (PreparedStatement statement =
-                         connection.prepareStatement(sql)) {
+                         connection.prepareStatement(sql, new String[]{"APPLICATION_ID"})) {
 
 
                 statement.setInt(
@@ -638,8 +678,7 @@ public class LoanApplicationController {
                 );
 
 
-                int rows =
-                        statement.executeUpdate();
+                int rows = statement.executeUpdate();
 
 
                 if (rows == 0) {
@@ -651,6 +690,13 @@ public class LoanApplicationController {
 
                     return;
                 }
+                try (ResultSet generated = statement.getGeneratedKeys()) {
+                    if (!generated.next()) {
+                        showError("Submission Failed", "LoanFlow could not identify the submitted application.");
+                        return;
+                    }
+                    applicationId = generated.getInt(1);
+                }
             }
 
 
@@ -658,7 +704,7 @@ public class LoanApplicationController {
                 idStatement.setInt(1, customerId);
                 try (ResultSet result = idStatement.executeQuery()) {
                     if (result.next()) {
-                        int applicationId = result.getInt(1);
+                        applicationId = result.getInt(1);
                         try {
                             CreditAssessmentService.saveAssessment(connection, applicationId,
                                     CreditAssessmentService.loadForCustomer(connection, customerId, BigDecimal.valueOf(emi)));

@@ -696,3 +696,4 @@
 .assessment-title, .assessment-status { -fx-text-fill: #126B71; }
 .assessment-description, .assessment-label { -fx-text-fill: #6B7F91; }
 .assessment-value { -fx-text-fill: #123D52; }
+.consent-check { -fx-text-fill: #244B3A; -fx-font-size: 12px; }

@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -299,6 +300,28 @@
                                     <Label fx:id="assessmentEligibilityLabel" text="REQUIRES REVIEW" styleClass="assessment-status" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
                                 </GridPane>
                                 <Label fx:id="assessmentReasonLabel" text="Calculate EMI to run the academic credit assessment."
+                                       wrapText="true" styleClass="assessment-description"/>
+                            </VBox>
+
+                            <GridPane hgap="14" vgap="8">
+                                <Label text="PAN *" styleClass="field-label" GridPane.columnIndex="0"/>
+                                <TextField fx:id="panField" promptText="ABCDE1234F" styleClass="modern-field" GridPane.columnIndex="1"/>
+                                <Label text="Identity type *" styleClass="field-label" GridPane.columnIndex="2"/>
+                                <ComboBox fx:id="identityTypeComboBox" promptText="Select" maxWidth="Infinity" styleClass="modern-combo" GridPane.columnIndex="3"/>
+                                <Label text="Identity number *" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                <TextField fx:id="identityNumberField" promptText="Government ID number" styleClass="modern-field" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <Label text="Employment *" styleClass="field-label" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                <TextField fx:id="employmentField" promptText="Employer / self-employed" styleClass="modern-field" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                                <Label text="Monthly income *" styleClass="field-label" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                <TextField fx:id="monthlyIncomeField" promptText="e.g. 60000" styleClass="modern-field" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                            </GridPane>
+
+                            <VBox spacing="6" styleClass="assessment-card">
+                                <Label text="CREDIT CHECK CONSENT" styleClass="assessment-title"/>
+                                <CheckBox fx:id="creditConsentCheckBox"
+                                          text="I authorize LoanFlow to retrieve my credit information for evaluating this loan application."
+                                          wrapText="true" styleClass="consent-check"/>
+                                <Label text="Loan officers retrieve credit information from LoanFlow's simulated credit bureau. You do not need to upload a CIBIL report or enter a score."
                                        wrapText="true" styleClass="assessment-description"/>
                             </VBox>
 
