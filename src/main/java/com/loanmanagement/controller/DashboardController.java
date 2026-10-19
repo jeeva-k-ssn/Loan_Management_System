@@ -76,6 +76,7 @@ public class DashboardController {
     @FXML private ScrollPane dashboardScroll;
 
     private User currentUser;
+    private boolean navigationInProgress;
 
     @FXML
     public void initialize() {
@@ -406,15 +407,36 @@ public class DashboardController {
     @FXML private void viewLoans() { if (requireRole("CUSTOMER")) openLoanPortfolio(LoanManagementController.ViewMode.LOANS); }
     @FXML private void viewPayments() { if (requireRole("CUSTOMER")) openLoanPortfolio(LoanManagementController.ViewMode.PAYMENTS); }
     @FXML private void openNotifications() {
-        if (currentUser == null) return;
-        try { FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/notifications.fxml")); Parent root = loader.load(); loader.<NotificationController>getController().setCurrentUser(currentUser); replaceScene(root, "LoanFlow - Notifications"); }
-        catch (Exception exception) { showError("Navigation Error", "Unable to open notifications."); }
+        if (currentUser == null || navigationInProgress) return;
+        navigationInProgress = true;
+        setNavigationButtonsDisabled(true);
+        try {
+            NavigationManager.navigate(currentStage(), "/fxml/notifications.fxml", "LoanFlow - Notifications",
+                    controller -> ((NotificationController) controller).setCurrentUser(currentUser));
+        } catch (Exception exception) {
+            showError("Navigation Error", "Unable to open notifications: " + safeMessage(exception));
+            navigationInProgress = false;
+            setNavigationButtonsDisabled(false);
+        }
     }
     @FXML private void openProfile() {
-        if (!requireRole("CUSTOMER")) return;
-        try { FXMLLoader loader=new FXMLLoader(getClass().getResource("/fxml/profile.fxml")); Parent root=loader.load(); loader.<ProfileController>getController().setCurrentUser(currentUser); replaceScene(root,"LoanFlow - Profile"); }
-        catch(Exception e){showError("Navigation Error","Unable to open your profile.");}
+        if (!requireRole("CUSTOMER") || navigationInProgress) return;
+        navigationInProgress = true;
+        setNavigationButtonsDisabled(true);
+        try {
+            NavigationManager.navigate(currentStage(), "/fxml/profile.fxml", "LoanFlow - Profile",
+                    controller -> ((ProfileController) controller).setCurrentUser(currentUser));
+        } catch (Exception exception) {
+            showError("Navigation Error", "Unable to open your profile: " + safeMessage(exception));
+            navigationInProgress = false;
+            setNavigationButtonsDisabled(false);
+        }
     }
+    private void setNavigationButtonsDisabled(boolean disabled) {
+        if (sidebarNotificationsButton != null) sidebarNotificationsButton.setDisable(disabled);
+        if (sidebarProfileButton != null) sidebarProfileButton.setDisable(disabled);
+    }
+    private String safeMessage(Exception exception) { return exception.getMessage() == null ? exception.getClass().getSimpleName() : exception.getMessage(); }
     @FXML private void openLoanPortfolioPage() { if (currentUser != null) openLoanPortfolio(LoanManagementController.ViewMode.LOANS); }
     @FXML private void openUserManagement() {
         if (!requireRole("ADMIN")) return;
