@@ -215,6 +215,7 @@ module8_credit_report_upload_migration.sql
 module9_mock_credit_bureau_migration.sql
 module10_quality_hardening_migration.sql
 module11_rejection_reason_migration.sql
+module12_emi_tracker_migration.sql
 ```
 
 The migrations are additive and do not delete existing records. Modules 7 and 8 preserve the legacy verification/document-upload capability. Module 9 adds the simulated credit-bureau source, customer consent, applicant identity/employment fields, and application retrieval snapshots. Module 10 adds deterministic demonstration scenarios and officer/admin audit logging. LoanFlow does not retrieve or claim real CIBIL data.

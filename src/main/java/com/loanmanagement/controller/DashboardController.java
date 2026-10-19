@@ -322,13 +322,30 @@ public class DashboardController {
                 return rows;
             }
         };
-        task.setOnSucceeded(e -> { emiTrackerTable.getItems().setAll(task.getValue()); emiScheduleButton.setDisable(emiTrackerTable.getItems().isEmpty()); });
-        task.setOnFailed(e -> { emiTrackerTable.getItems().clear(); emiScheduleButton.setDisable(true); });
+        task.setOnSucceeded(e -> {
+            emiTrackerTable.getItems().setAll(task.getValue());
+            if (!emiTrackerTable.getItems().isEmpty()) {
+                emiTrackerTable.getSelectionModel().selectFirst();
+                emiScheduleButton.setDisable(false);
+            } else {
+                emiScheduleButton.setDisable(true);
+            }
+        });
+        task.setOnFailed(e -> {
+            emiTrackerTable.getItems().clear();
+            emiScheduleButton.setDisable(true);
+            showError("EMI tracker unavailable", "Apply database/module12_emi_tracker_migration.sql, then refresh the dashboard.");
+        });
         Thread t=new Thread(task,"loanflow-emi-tracker-load"); t.setDaemon(true); t.start();
     }
     private String status(BigDecimal paid, BigDecimal due, java.sql.Date dueDate) { return EmiStatusUtil.status(paid,due,dueDate.toLocalDate(),java.time.LocalDate.now()); }
     @FXML private void openEmiSchedule() {
-        EmiRow selected=emiTrackerTable.getSelectionModel().getSelectedItem(); if(selected==null){showInformation("Select a loan","Select a loan to view its installment schedule.");return;}
+        EmiRow selected=emiTrackerTable.getSelectionModel().getSelectedItem();
+        if (selected == null && !emiTrackerTable.getItems().isEmpty()) {
+            selected = emiTrackerTable.getItems().get(0);
+            emiTrackerTable.getSelectionModel().select(selected);
+        }
+        if(selected==null){showInformation("Select a loan","Select a loan to view its installment schedule.");return;}
         TableView<ScheduleRow> table=new TableView<>(); table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); String[] headers={"Installment","Due date","Due","Paid","Remaining","Status"};
         for(int i=0;i<headers.length;i++){ TableColumn<ScheduleRow,String> col=new TableColumn<>(headers[i]); final int n=i; col.setCellValueFactory(d->new javafx.beans.property.SimpleStringProperty(d.getValue().value(n))); table.getColumns().add(col); }
         try(Connection c=DatabaseConnection.getConnection(); PreparedStatement p=c.prepareStatement("SELECT s.INSTALLMENT_NO,s.DUE_DATE,s.DUE_AMOUNT,NVL((SELECT SUM(p.AMOUNT) FROM PAYMENT p WHERE p.INSTALLMENT_ID=s.INSTALLMENT_ID AND p.PAYMENT_STATUS='PAID'),0) PAID FROM LOAN_EMI_SCHEDULE s WHERE s.LOAN_ID=? ORDER BY s.INSTALLMENT_NO")){p.setInt(1,selected.loanId);try(ResultSet r=p.executeQuery()){while(r.next()){BigDecimal due=r.getBigDecimal("DUE_AMOUNT").setScale(2),paid=r.getBigDecimal("PAID").setScale(2);table.getItems().add(new ScheduleRow(r.getInt(1),r.getDate(2),due,paid,status(paid,due,r.getDate(2))));}}}
