@@ -29,7 +29,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.CacheHint;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.Node;
@@ -72,10 +71,11 @@ public class LoanManagementController {
 
     @FXML public void initialize() {
         if (loanScroll != null && loanScroll.getContent() != null) {
-            // The page is a mostly static card surface; caching avoids
-            // repainting every card and table while the outer page scrolls.
-            loanScroll.getContent().setCache(true);
-            loanScroll.getContent().setCacheHint(CacheHint.SPEED);
+            // This page contains live virtualized tables. Caching the entire
+            // surface creates a large bitmap and makes wheel scrolling less
+            // responsive, so let JavaFX scroll the controls natively.
+            loanScroll.setPannable(true);
+            loanScroll.getContent().setCache(false);
         }
         applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         loanTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);

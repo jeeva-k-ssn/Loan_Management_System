@@ -41,6 +41,8 @@
 .table-view .table-row-cell:hover { -fx-background-color: #EEF8F8; }
 .table-view .table-row-cell:selected { -fx-background-color: #CFEDEE; }
 .table-view .table-cell { -fx-text-fill: #31566C; -fx-font-size: 12px; -fx-padding: 0 9px; }
+.loan-table .table-row-cell, .application-table .table-row-cell, .payment-table .table-row-cell { -fx-border-color: transparent; }
+.loan-table .table-cell, .application-table .table-cell, .payment-table .table-cell { -fx-border-color: transparent; }
 .notification-list { -fx-background-color: white; -fx-border-color: #D8E3EA; -fx-background-radius: 10px; }
 .notification-list .list-cell { -fx-background-color: white; -fx-padding: 15px; -fx-border-color: transparent transparent #E5EDF1 transparent; -fx-text-fill: #284D63; }
 .notification-list .list-cell:hover { -fx-background-color: #F0F8F8; }
