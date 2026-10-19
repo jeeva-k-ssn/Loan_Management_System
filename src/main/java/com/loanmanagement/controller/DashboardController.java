@@ -14,6 +14,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.CacheHint;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -71,6 +73,7 @@ public class DashboardController {
     @FXML private TableColumn<EmiRow,Integer> emiLoanIdColumn;
     @FXML private TableColumn<EmiRow,String> emiTypeColumn, emiDueDateColumn, emiStatusColumn;
     @FXML private TableColumn<EmiRow,BigDecimal> emiAmountColumn, emiPaidColumn, emiRemainingColumn;
+    @FXML private ScrollPane dashboardScroll;
 
     private User currentUser;
 
@@ -79,6 +82,12 @@ public class DashboardController {
         configureDefaultButtons();
         summaryGrid.widthProperty().addListener((obs, oldWidth, newWidth) -> configureResponsiveSummaryCards(newWidth.doubleValue()));
         configureResponsiveSummaryCards(0);
+        if (dashboardScroll != null && dashboardScroll.getContent() != null) {
+            // Cache the mostly-static dashboard surface while it is being
+            // scrolled. Dynamic labels/tables still invalidate the cache.
+            dashboardScroll.getContent().setCache(true);
+            dashboardScroll.getContent().setCacheHint(CacheHint.SPEED);
+        }
         if (emiTrackerTable != null) {
             emiTrackerTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
             emiLoanIdColumn.setCellValueFactory(new PropertyValueFactory<>("loanId"));

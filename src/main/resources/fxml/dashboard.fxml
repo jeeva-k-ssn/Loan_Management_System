@@ -102,7 +102,7 @@
 
     <center>
 
-        <ScrollPane fitToWidth="true"
+        <ScrollPane fx:id="dashboardScroll" fitToWidth="true"
                     fitToHeight="true"
                     hbarPolicy="NEVER"
                     styleClass="dashboard-scroll">
