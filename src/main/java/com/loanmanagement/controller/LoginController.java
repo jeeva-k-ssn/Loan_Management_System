@@ -156,9 +156,9 @@ private String convertRoleToDatabaseValue(String role) {
 
 private void openDashboard(User user) {
 
+    Stage stage = (Stage) emailField.getScene().getWindow();
     try {
 
-        Stage stage = (Stage) emailField.getScene().getWindow();
         NavigationManager.navigate(stage, "/fxml/dashboard.fxml", "LoanFlow - " + user.getDisplayRole(),
                 controller -> ((DashboardController) controller).setCurrentUser(user));
 
@@ -166,9 +166,18 @@ private void openDashboard(User user) {
 
         e.printStackTrace();
 
+        // NavigationManager has already installed the dashboard root before
+        // page-specific setup runs. Do not show a misleading login error over
+        // a dashboard that is already visible.
+        if (stage.getScene() != null
+                && stage.getScene().getRoot().getStyleClass().contains("dashboard-root")) {
+            return;
+        }
+
         showError(
                 "Dashboard Error",
-                "Unable to open the dashboard."
+                "Unable to finish dashboard setup: "
+                        + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage())
         );
     }
 }

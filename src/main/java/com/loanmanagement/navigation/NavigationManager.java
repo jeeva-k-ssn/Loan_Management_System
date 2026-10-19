@@ -17,7 +17,6 @@ public final class NavigationManager {
         FXMLLoader loader = new FXMLLoader(NavigationManager.class.getResource(resource));
         Parent root = loader.load();
         T controller = loader.getController();
-        if (controllerSetup != null) controllerSetup.accept(controller);
 
         if (stage.getScene() == null) {
             stage.setScene(new Scene(root));
@@ -26,6 +25,10 @@ public final class NavigationManager {
         }
         stage.setTitle(title);
         stage.setMaximized(true);
+        // Commit the visual navigation before starting page-specific data
+        // loading. A database/setup problem must not leave the user on the
+        // previous page or make a valid FXML page appear unopenable.
+        if (controllerSetup != null) controllerSetup.accept(controller);
         return controller;
     }
 
