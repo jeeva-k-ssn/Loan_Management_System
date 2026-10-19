@@ -4,6 +4,7 @@ import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.model.User;
 import com.loanmanagement.navigation.NavigationManager;
 import com.loanmanagement.util.AlertUtil;
+import com.loanmanagement.util.UiPerformance;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -76,6 +77,7 @@ public class AdminController {
     private ObservableList<PaymentRow> allPayments = FXCollections.observableArrayList();
 
     @FXML public void initialize() {
+        UiPerformance.optimizeAncestor(userTable);
         // The legend already identifies each status. Hiding slice labels avoids
         // JavaFX placing short labels on top of one another when a chart has
         // only one or two application/loan statuses.

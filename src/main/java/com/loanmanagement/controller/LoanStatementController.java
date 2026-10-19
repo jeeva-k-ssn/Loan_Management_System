@@ -10,6 +10,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import com.loanmanagement.util.AlertUtil;
+import com.loanmanagement.util.UiPerformance;
 import javafx.concurrent.Task;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -28,6 +29,7 @@ public class LoanStatementController {
     private int loanId;
 
     @FXML public void initialize() {
+        UiPerformance.optimizeAncestor(paymentTable);
         paymentIdColumn.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("id"));
         dateColumn.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("date"));
         paymentAmountColumn.setCellValueFactory(new javafx.scene.control.cell.PropertyValueFactory<>("amount"));

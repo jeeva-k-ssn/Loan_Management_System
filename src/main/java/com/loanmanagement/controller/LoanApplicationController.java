@@ -6,6 +6,7 @@ import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.util.LoanCalculationUtil;
 import com.loanmanagement.service.NotificationService;
 import com.loanmanagement.service.CreditAssessmentService;
+import com.loanmanagement.util.UiPerformance;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -85,6 +86,7 @@ public class LoanApplicationController {
 
     @FXML
     public void initialize() {
+        UiPerformance.optimizeAncestor(loanTypeComboBox);
 
         // Loan types
         loanTypeComboBox.setItems(

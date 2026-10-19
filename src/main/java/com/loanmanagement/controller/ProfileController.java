@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import com.loanmanagement.util.UiPerformance;
 import javafx.stage.FileChooser;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -35,7 +36,7 @@ public class ProfileController {
     @FXML private ListView<String> activityList;
     private User currentUser; private int targetCustomerId, targetUserId; private ProfileData loadedProfile;
 
-    @FXML public void initialize() { verificationStatusCombo.setItems(FXCollections.observableArrayList("NOT_VERIFIED", "PENDING_REVIEW", "VERIFIED")); reportStatusCombo.setItems(FXCollections.observableArrayList("PENDING_REVIEW", "VERIFIED", "REJECTED")); }
+    @FXML public void initialize() { UiPerformance.optimizeAncestor(activityList); verificationStatusCombo.setItems(FXCollections.observableArrayList("NOT_VERIFIED", "PENDING_REVIEW", "VERIFIED")); reportStatusCombo.setItems(FXCollections.observableArrayList("PENDING_REVIEW", "VERIFIED", "REJECTED")); }
     public void setCurrentUser(User user) { currentUser=user; targetCustomerId=0; configureReportActions(); loadProfile(); }
     public void setCustomer(User viewer, int customerId) { currentUser=viewer; targetCustomerId=customerId; configureReportActions(); loadProfile(); }
     private void configureReportActions(){boolean customer=role("CUSTOMER"),admin=role("ADMIN");uploadReportButton.setVisible(customer);uploadReportButton.setManaged(customer);openReportButton.setVisible(false);openReportButton.setManaged(false);saveReportReviewButton.setVisible(false);saveReportReviewButton.setManaged(false);reportStatusCombo.setDisable(!admin);}

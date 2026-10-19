@@ -7,6 +7,7 @@ import com.loanmanagement.service.CreditAssessmentService;
 import com.loanmanagement.service.CreditBureauService;
 import com.loanmanagement.model.CreditReport;
 import com.loanmanagement.service.AuditService;
+import com.loanmanagement.util.UiPerformance;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -177,6 +178,7 @@ public class PendingApplicationsController {
 
     @FXML
     public void initialize() {
+        UiPerformance.optimizeAncestor(applicationTable);
 
         applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         applicationTable.setFixedCellSize(34);
