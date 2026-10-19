@@ -343,7 +343,13 @@ public class DashboardController {
         task.setOnFailed(e -> {
             emiTrackerTable.getItems().clear();
             emiScheduleButton.setDisable(true);
-            showError("EMI tracker unavailable", "Apply database/module12_emi_tracker_migration.sql, then refresh the dashboard.");
+            // The EMI tracker migration is additive and may not yet exist on
+            // an older schema. Keep the dashboard usable and show the setup
+            // hint in the tracker itself instead of blocking the whole page.
+            Label setupHint = new Label("EMI tracker setup pending — apply database/module12_emi_tracker_migration.sql, then refresh.");
+            setupHint.getStyleClass().add("empty-label");
+            setupHint.setWrapText(true);
+            emiTrackerTable.setPlaceholder(setupHint);
         });
         Thread t=new Thread(task,"loanflow-emi-tracker-load"); t.setDaemon(true); t.start();
     }
