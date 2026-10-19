@@ -28,6 +28,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.CacheHint;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.Node;
@@ -49,6 +51,7 @@ public class LoanManagementController {
     @FXML private TableColumn<LoanRow, String> customerColumn, startColumn, statusColumn;
     @FXML private TableColumn<LoanRow, Double> amountColumn, interestColumn, emiColumn, totalRepayableColumn, totalPaidColumn, outstandingColumn;
     @FXML private TableView<PaymentRow> paymentTable;
+    @FXML private ScrollPane loanScroll;
     @FXML private TableColumn<PaymentRow, Integer> paymentIdColumn;
     @FXML private TableColumn<PaymentRow, String> paymentDateColumn, paymentMethodColumn, paymentReferenceColumn, paymentStatusColumn;
     @FXML private TableColumn<PaymentRow, Integer> paymentLoanIdColumn;
@@ -68,6 +71,12 @@ public class LoanManagementController {
     private ViewMode viewMode = ViewMode.LOANS;
 
     @FXML public void initialize() {
+        if (loanScroll != null && loanScroll.getContent() != null) {
+            // The page is a mostly static card surface; caching avoids
+            // repainting every card and table while the outer page scrolls.
+            loanScroll.getContent().setCache(true);
+            loanScroll.getContent().setCacheHint(CacheHint.SPEED);
+        }
         applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         loanTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         paymentTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
