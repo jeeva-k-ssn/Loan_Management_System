@@ -1,5 +1,6 @@
 package com.loanmanagement.controller;
 
+import javafx.application.Platform;
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.service.NotificationService;
 import com.loanmanagement.service.CreditAssessmentService;
@@ -16,6 +17,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -130,6 +132,9 @@ public class PendingApplicationsController {
     @FXML
     private Button fetchCreditReportButton;
 
+    @FXML
+    private ComboBox<String> rejectionReasonCombo;
+
 
     // ============================================================
     // DATA
@@ -179,6 +184,10 @@ public class PendingApplicationsController {
         applicationTable.setMaxHeight(360);
 
         setupTable();
+
+        rejectionReasonCombo.setItems(FXCollections.observableArrayList(
+                "Insufficient income", "High existing debt", "Low credit score",
+                "High EMI burden", "Incomplete information", "Other"));
 
         disableReviewButtons();
 
@@ -489,8 +498,8 @@ public class PendingApplicationsController {
     }
 
     private void resizeApplicationTable() {
-        int rows = applicationTable.getItems() == null ? 0 : applicationTable.getItems().size();
-        applicationTable.setPrefHeight(Math.min(360, Math.max(84, 32 + rows * applicationTable.getFixedCellSize())));
+        // Keep the review workspace stable when search/filter results change.
+        applicationTable.setPrefHeight(360);
     }
 
 
@@ -565,31 +574,36 @@ public class PendingApplicationsController {
         clearCreditReport();
 
         clearAssessment();
+        rejectionReasonCombo.getSelectionModel().clearSelection();
         int selectedApplicationId = application.getApplicationId();
-        Task<CreditAssessmentService.Assessment> assessmentTask = new Task<>() {
-            @Override protected CreditAssessmentService.Assessment call() throws Exception {
-                try (Connection connection = getConnection()) {
-                    return CreditAssessmentService.loadForApplication(connection, selectedApplicationId);
-                }
-            }
-        };
-        assessmentTask.setOnSucceeded(event -> {
-            LoanApplication current = applicationTable.getSelectionModel().getSelectedItem();
-            if (current != null && current.getApplicationId() == selectedApplicationId) showAssessment(assessmentTask.getValue());
-        });
-        assessmentTask.setOnFailed(event -> {
-            LoanApplication current = applicationTable.getSelectionModel().getSelectedItem();
-            if (current != null && current.getApplicationId() == selectedApplicationId)
-                assessmentReasonLabel.setText("Credit data is unavailable; officer review is required.");
-        });
-        Thread assessmentThread = new Thread(assessmentTask, "loanflow-credit-assessment");
-        assessmentThread.setDaemon(true);
-        assessmentThread.start();
+        loadAssessment(selectedApplicationId);
 
 
         approveButton.setDisable(false);
 
         rejectButton.setDisable(false);
+    }
+
+    private void loadAssessment(int applicationId) {
+        Task<CreditAssessmentService.Assessment> assessmentTask = new Task<>() {
+            @Override protected CreditAssessmentService.Assessment call() throws Exception {
+                try (Connection connection = getConnection()) {
+                    return CreditAssessmentService.loadForApplication(connection, applicationId);
+                }
+            }
+        };
+        assessmentTask.setOnSucceeded(event -> {
+            LoanApplication current = applicationTable.getSelectionModel().getSelectedItem();
+            if (current != null && current.getApplicationId() == applicationId) showAssessment(assessmentTask.getValue());
+        });
+        assessmentTask.setOnFailed(event -> {
+            LoanApplication current = applicationTable.getSelectionModel().getSelectedItem();
+            if (current != null && current.getApplicationId() == applicationId)
+                assessmentReasonLabel.setText("Credit data is unavailable; officer review is required.");
+        });
+        Thread assessmentThread = new Thread(assessmentTask, "loanflow-credit-assessment");
+        assessmentThread.setDaemon(true);
+        assessmentThread.start();
     }
 
     private void loadApplicantInformation(int applicationId) {
@@ -630,7 +644,11 @@ public class PendingApplicationsController {
                     }
                     CreditReport report = new CreditBureauService().getCreditReport(connection, selected.getCustomerId(),
                             selected.getApplicationId(), currentUser.getUserId());
-                    if (report != null) AuditService.log(currentUser.getUserId(), "FETCH_CREDIT_REPORT", "LOAN_APPLICATION", selected.getApplicationId(), "Simulated bureau report retrieved");
+                    if (report != null) {
+                        CreditAssessmentService.saveAssessment(connection, selected.getApplicationId(),
+                                CreditAssessmentService.loadForApplication(connection, selected.getApplicationId()));
+                        AuditService.log(currentUser.getUserId(), "FETCH_CREDIT_REPORT", "LOAN_APPLICATION", selected.getApplicationId(), "Simulated bureau report retrieved and assessed");
+                    }
                     return report;
                 }
             }
@@ -639,7 +657,10 @@ public class PendingApplicationsController {
             fetchCreditReportButton.setDisable(false);
             if (task.getValue() == null) {
                 creditReportStatusLabel.setText("Credit information unavailable. No simulated credit report is available for this customer.");
-            } else showCreditReport(task.getValue());
+            } else {
+                showCreditReport(task.getValue());
+                loadAssessment(selected.getApplicationId());
+            }
         });
         task.setOnFailed(e -> { fetchCreditReportButton.setDisable(false); creditReportStatusLabel.setText(
                 e.getSource().getException() != null && e.getSource().getException().getMessage().contains("consent")
@@ -671,8 +692,6 @@ public class PendingApplicationsController {
     }
 
     private void showAssessment(CreditAssessmentService.Assessment assessment) {
-        // The score and bureau risk are rendered only by fetchCreditReport().
-        // The assessment remains decision support for income and repayment capacity.
         assessmentIncomeLabel.setText(assessment.getIncomeDisplay());
         assessmentExistingEmiLabel.setText(money(assessment.getExistingEmi()));
         assessmentNewEmiLabel.setText(money(assessment.getNewEmi()));
@@ -718,6 +737,7 @@ public class PendingApplicationsController {
         dateLabel.setText("-");
         setStatus(statusLabel, "-");
         clearAssessment();
+        if (rejectionReasonCombo != null) rejectionReasonCombo.getSelectionModel().clearSelection();
 
         disableReviewButtons();
     }
@@ -808,11 +828,17 @@ public class PendingApplicationsController {
             return;
         }
 
-        if (!confirmAction("Reject Application", "Reject application #" + selectedApplication.getApplicationId() + "?")) return;
+        String rejectionReason = rejectionReasonCombo.getValue();
+        if (rejectionReason == null || rejectionReason.isBlank()) {
+            showWarning("Rejection Reason Required", "Please select a reason before rejecting the application.");
+            return;
+        }
+
+        if (!confirmAction("Reject Application", "Reject application #" + selectedApplication.getApplicationId() + "?\nReason: " + rejectionReason)) return;
 
 
         int applicationId=selectedApplication.getApplicationId(); approveButton.setDisable(true); rejectButton.setDisable(true);
-        Task<Boolean> task=new Task<>(){protected Boolean call(){boolean result=updateApplicationStatus(applicationId,"REJECTED");if(result)notifyRejected(applicationId);return result;}};
+        Task<Boolean> task=new Task<>(){protected Boolean call(){boolean result=updateApplicationStatus(applicationId,"REJECTED",rejectionReason);if(result)notifyRejected(applicationId,rejectionReason);return result;}};
         task.setOnSucceeded(e->{disableReviewButtons();if(Boolean.TRUE.equals(task.getValue())){showInformation("Application Rejected","Application #"+applicationId+" has been rejected.");loadPendingApplicationsAsync();}else showWarning("Rejection Incomplete","The application could not be rejected.");});task.setOnFailed(e->{disableReviewButtons();showError("Rejection Failed","Unable to reject the application right now.");});Thread t=new Thread(task,"loanflow-reject-application");t.setDaemon(true);t.start();
     }
 
@@ -823,12 +849,12 @@ public class PendingApplicationsController {
         return confirmation.showAndWait().orElse(javafx.scene.control.ButtonType.CANCEL) == javafx.scene.control.ButtonType.OK;
     }
 
-    private void notifyRejected(int applicationId) {
+    private void notifyRejected(int applicationId, String rejectionReason) {
         String sql = "SELECT c.USER_ID FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID=la.CUSTOMER_ID WHERE la.APPLICATION_ID=?";
         try (Connection connection = getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, applicationId);
             try (ResultSet result = statement.executeQuery()) {
-                if (result.next()) NotificationService.create(result.getInt(1), "Application rejected", "Application #" + applicationId + " has been rejected.", "APPLICATION_REJECTED", applicationId);
+                if (result.next()) NotificationService.create(result.getInt(1), "Application rejected", "Application #" + applicationId + " has been rejected. Reason: " + rejectionReason + ".", "APPLICATION_REJECTED", applicationId);
             }
         } catch (SQLException ignored) { }
     }
@@ -1094,6 +1120,21 @@ public class PendingApplicationsController {
 
                     return false;
                 }
+                // Keep the installment schedule in the same approval transaction.
+                // The migration backfills legacy loans; this covers new loans.
+                try (PreparedStatement schedule = connection.prepareStatement(
+                        "INSERT INTO LOAN_EMI_SCHEDULE (LOAN_ID,INSTALLMENT_NO,DUE_DATE,DUE_AMOUNT) " +
+                        "SELECT l.LOAN_ID,x.INSTALLMENT_NO,ADD_MONTHS(TRUNC(l.START_DATE),x.INSTALLMENT_NO-1),ROUND(l.EMI_AMOUNT,2) " +
+                        "FROM LOAN l JOIN (SELECT LEVEL INSTALLMENT_NO FROM dual CONNECT BY LEVEL<=600) x ON x.INSTALLMENT_NO<=l.TENURE_MONTHS " +
+                        "WHERE l.APPLICATION_ID=? AND NOT EXISTS (SELECT 1 FROM LOAN_EMI_SCHEDULE s WHERE s.LOAN_ID=l.LOAN_ID AND s.INSTALLMENT_NO=x.INSTALLMENT_NO)")) {
+                    schedule.setInt(1, applicationId);
+                    schedule.executeUpdate();
+                } catch (SQLException scheduleUnavailable) {
+                    // The additive migration may be applied after the core
+                    // workflow. Do not make legacy approvals fail solely
+                    // because the optional tracker table is not installed.
+                    if (scheduleUnavailable.getErrorCode() != 942) throw scheduleUnavailable;
+                }
             }
 
 
@@ -1132,19 +1173,22 @@ public class PendingApplicationsController {
 
     private boolean updateApplicationStatus(
             int applicationId,
-            String newStatus
+            String newStatus,
+            String rejectionReason
     ) {
 
         String query =
                 "UPDATE LOAN_APPLICATION "
-                        + "SET STATUS = ? "
+                        + "SET STATUS = ?, REJECTION_REASON = ? "
                         + "WHERE APPLICATION_ID = ? "
-                        + "AND UPPER(STATUS) = 'PENDING'";
+                        + "AND UPPER(TRIM(STATUS)) = 'PENDING'";
 
 
         try (Connection connection = getConnection();
              PreparedStatement statement =
                      connection.prepareStatement(query)) {
+
+            connection.setAutoCommit(false);
 
 
             statement.setString(
@@ -1152,8 +1196,10 @@ public class PendingApplicationsController {
                     newStatus
             );
 
+            statement.setString(2, "REJECTED".equalsIgnoreCase(newStatus) ? rejectionReason : null);
+
             statement.setInt(
-                    2,
+                    3,
                     applicationId
             );
 
@@ -1171,9 +1217,10 @@ public class PendingApplicationsController {
             }
 
 
+            connection.rollback();
             showWarning(
                     "Application Not Updated",
-                    "This application is no longer pending."
+                    "Application #" + applicationId + " is no longer pending. Refresh the applications list."
             );
 
             return false;
@@ -1286,6 +1333,11 @@ public class PendingApplicationsController {
             String message
     ) {
 
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> showInformation(title, message));
+            return;
+        }
+
         Alert alert =
                 new Alert(
                         Alert.AlertType.INFORMATION
@@ -1308,6 +1360,11 @@ public class PendingApplicationsController {
             String message
     ) {
 
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> showWarning(title, message));
+            return;
+        }
+
         Alert alert =
                 new Alert(
                         Alert.AlertType.WARNING
@@ -1329,6 +1386,11 @@ public class PendingApplicationsController {
             String title,
             String message
     ) {
+
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> showError(title, message));
+            return;
+        }
 
         Alert alert =
                 new Alert(

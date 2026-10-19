@@ -9,6 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -19,10 +24,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.Locale;
 import com.loanmanagement.navigation.NavigationManager;
 import com.loanmanagement.util.AlertUtil;
+import com.loanmanagement.util.EmiStatusUtil;
 
 /** Displays only the dashboard data and actions available to the signed-in role. */
 public class DashboardController {
@@ -58,6 +66,11 @@ public class DashboardController {
     @FXML private Button sidebarUsersButton;
     @FXML private Button sidebarNotificationsButton;
     @FXML private Button sidebarProfileButton;
+    @FXML private TableView<EmiRow> emiTrackerTable;
+    @FXML private Button emiScheduleButton;
+    @FXML private TableColumn<EmiRow,Integer> emiLoanIdColumn;
+    @FXML private TableColumn<EmiRow,String> emiTypeColumn, emiDueDateColumn, emiStatusColumn;
+    @FXML private TableColumn<EmiRow,BigDecimal> emiAmountColumn, emiPaidColumn, emiRemainingColumn;
 
     private User currentUser;
 
@@ -66,6 +79,18 @@ public class DashboardController {
         configureDefaultButtons();
         summaryGrid.widthProperty().addListener((obs, oldWidth, newWidth) -> configureResponsiveSummaryCards(newWidth.doubleValue()));
         configureResponsiveSummaryCards(0);
+        if (emiTrackerTable != null) {
+            emiTrackerTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            emiLoanIdColumn.setCellValueFactory(new PropertyValueFactory<>("loanId"));
+            emiTypeColumn.setCellValueFactory(new PropertyValueFactory<>("loanType"));
+            emiAmountColumn.setCellValueFactory(new PropertyValueFactory<>("emi"));
+            emiDueDateColumn.setCellValueFactory(new PropertyValueFactory<>("dueDate"));
+            emiPaidColumn.setCellValueFactory(new PropertyValueFactory<>("paid"));
+            emiRemainingColumn.setCellValueFactory(new PropertyValueFactory<>("remaining"));
+            emiStatusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+            emiTrackerTable.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            emiStatusColumn.setCellFactory(c -> new javafx.scene.control.TableCell<>() { protected void updateItem(String v, boolean empty){super.updateItem(v,empty);setText(empty?null:v);getStyleClass().removeIf(s->s.startsWith("status-"));if(!empty&&v!=null){getStyleClass().add("status-badge");getStyleClass().add("status-"+v.toLowerCase().replace(' ','-'));}} });
+        }
     }
 
     private void configureResponsiveSummaryCards(double width) {
@@ -92,6 +117,7 @@ public class DashboardController {
         roleLabel.setText(user.getDisplayRole());
         configureRoleView();
         loadDashboardData();
+        if (hasRole("CUSTOMER")) loadCurrentEmis();
     }
 
     private void configureRoleView() {
@@ -178,7 +204,17 @@ public class DashboardController {
             var activity = new java.util.ArrayList<String>();
             String sql = hasRole("CUSTOMER") ? "SELECT message FROM (SELECT 'Application #' || la.APPLICATION_ID || ' is ' || la.STATUS || ' - ' || TO_CHAR(la.APPLICATION_DATE, 'DD Mon YYYY') AS message FROM LOAN_APPLICATION la JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID = la.CUSTOMER_ID WHERE c.USER_ID = ? ORDER BY la.APPLICATION_DATE DESC) WHERE ROWNUM <= 5" : "SELECT message FROM (SELECT 'Application #' || APPLICATION_ID || ' is ' || STATUS || ' - ' || TO_CHAR(APPLICATION_DATE, 'DD Mon YYYY') AS message FROM LOAN_APPLICATION ORDER BY APPLICATION_DATE DESC) WHERE ROWNUM <= 5";
             try (PreparedStatement statement=connection.prepareStatement(sql)) { if (hasRole("CUSTOMER")) statement.setInt(1,currentUser.getUserId()); try(ResultSet rs=statement.executeQuery()){while(rs.next()) activity.add(rs.getString(1));} }
-            return new DashboardSnapshot(first, second, third, fourth, activity);
+            int unreadNotifications = 0;
+            try (PreparedStatement notificationQuery = connection.prepareStatement(
+                    "SELECT COUNT(*) FROM LOANFLOW_NOTIFICATION WHERE USER_ID=? AND IS_READ='N'")) {
+                notificationQuery.setInt(1, currentUser.getUserId());
+                try (ResultSet result = notificationQuery.executeQuery()) {
+                    if (result.next()) unreadNotifications = result.getInt(1);
+                }
+            } catch (SQLException ignored) {
+                // Keep the dashboard usable if the optional notification migration is absent.
+            }
+            return new DashboardSnapshot(first, second, third, fourth, activity, unreadNotifications);
         }
     }
 
@@ -188,14 +224,19 @@ public class DashboardController {
             loansValueLabel.setText(NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(snapshot.third / 100.0));
             paymentsValueLabel.setText(NumberFormat.getCurrencyInstance(new Locale("en", "IN")).format(snapshot.fourth / 100.0));
         } else setMetricValues(snapshot.first, snapshot.second, snapshot.third, snapshot.fourth);
+        if (sidebarNotificationsButton != null) {
+            sidebarNotificationsButton.setText(snapshot.unreadNotifications > 0
+                    ? "Notifications (" + snapshot.unreadNotifications + ")"
+                    : "Notifications");
+        }
         activityContainer.getChildren().clear();
         if (snapshot.activity.isEmpty()) showEmptyActivity("No recent activity yet.");
         else for (String message : snapshot.activity) { Label item=new Label(message); item.setWrapText(true); item.setMaxWidth(Double.MAX_VALUE); item.getStyleClass().add("activity-item"); activityContainer.getChildren().add(item); }
     }
 
     private static final class DashboardSnapshot {
-        final int first, second, third, fourth; final java.util.List<String> activity;
-        DashboardSnapshot(int first,int second,int third,int fourth,java.util.List<String> activity){this.first=first;this.second=second;this.third=third;this.fourth=fourth;this.activity=activity;}
+        final int first, second, third, fourth, unreadNotifications; final java.util.List<String> activity;
+        DashboardSnapshot(int first,int second,int third,int fourth,java.util.List<String> activity,int unreadNotifications){this.first=first;this.second=second;this.third=third;this.fourth=fourth;this.activity=activity;this.unreadNotifications=unreadNotifications;}
     }
 
     private void loadCustomerMetrics(Connection connection) throws SQLException {
@@ -263,6 +304,37 @@ public class DashboardController {
     }
 
     @FXML private void refreshDashboard() { if (currentUser != null) loadDashboardData(); }
+    private void loadCurrentEmis() {
+        Task<java.util.List<EmiRow>> task = new Task<>() {
+            @Override protected java.util.List<EmiRow> call() throws SQLException {
+                java.util.List<EmiRow> rows = new java.util.ArrayList<>();
+                String sql = "SELECT l.LOAN_ID,NVL(la.LOAN_TYPE,'-') LOAN_TYPE,l.EMI_AMOUNT,s.DUE_DATE,s.DUE_AMOUNT," +
+                        "NVL((SELECT SUM(p.AMOUNT) FROM PAYMENT p WHERE p.INSTALLMENT_ID=s.INSTALLMENT_ID AND p.PAYMENT_STATUS='PAID'),0) PAID " +
+                        "FROM LOAN l JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID=l.CUSTOMER_ID " +
+                        "JOIN LOAN_APPLICATION la ON la.APPLICATION_ID=l.APPLICATION_ID " +
+                        "JOIN LOAN_EMI_SCHEDULE s ON s.LOAN_ID=l.LOAN_ID " +
+                        "WHERE c.USER_ID=? AND l.STATUS='ACTIVE' AND TRUNC(s.DUE_DATE,'MM')=TRUNC(SYSDATE,'MM') " +
+                        "ORDER BY l.LOAN_ID";
+                try (Connection c=DatabaseConnection.getConnection(); PreparedStatement p=c.prepareStatement(sql)) {
+                    p.setInt(1,currentUser.getUserId());
+                    try (ResultSet r=p.executeQuery()) { while(r.next()) { BigDecimal due=r.getBigDecimal("DUE_AMOUNT").setScale(2,RoundingMode.HALF_UP); BigDecimal paid=r.getBigDecimal("PAID").setScale(2,RoundingMode.HALF_UP); rows.add(new EmiRow(r.getInt("LOAN_ID"),r.getString("LOAN_TYPE"),r.getBigDecimal("EMI_AMOUNT"),r.getDate("DUE_DATE"),due,paid,status(paid,due,r.getDate("DUE_DATE")))); } }
+                }
+                return rows;
+            }
+        };
+        task.setOnSucceeded(e -> { emiTrackerTable.getItems().setAll(task.getValue()); emiScheduleButton.setDisable(emiTrackerTable.getItems().isEmpty()); });
+        task.setOnFailed(e -> { emiTrackerTable.getItems().clear(); emiScheduleButton.setDisable(true); });
+        Thread t=new Thread(task,"loanflow-emi-tracker-load"); t.setDaemon(true); t.start();
+    }
+    private String status(BigDecimal paid, BigDecimal due, java.sql.Date dueDate) { return EmiStatusUtil.status(paid,due,dueDate.toLocalDate(),java.time.LocalDate.now()); }
+    @FXML private void openEmiSchedule() {
+        EmiRow selected=emiTrackerTable.getSelectionModel().getSelectedItem(); if(selected==null){showInformation("Select a loan","Select a loan to view its installment schedule.");return;}
+        TableView<ScheduleRow> table=new TableView<>(); table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY); String[] headers={"Installment","Due date","Due","Paid","Remaining","Status"};
+        for(int i=0;i<headers.length;i++){ TableColumn<ScheduleRow,String> col=new TableColumn<>(headers[i]); final int n=i; col.setCellValueFactory(d->new javafx.beans.property.SimpleStringProperty(d.getValue().value(n))); table.getColumns().add(col); }
+        try(Connection c=DatabaseConnection.getConnection(); PreparedStatement p=c.prepareStatement("SELECT s.INSTALLMENT_NO,s.DUE_DATE,s.DUE_AMOUNT,NVL((SELECT SUM(p.AMOUNT) FROM PAYMENT p WHERE p.INSTALLMENT_ID=s.INSTALLMENT_ID AND p.PAYMENT_STATUS='PAID'),0) PAID FROM LOAN_EMI_SCHEDULE s WHERE s.LOAN_ID=? ORDER BY s.INSTALLMENT_NO")){p.setInt(1,selected.loanId);try(ResultSet r=p.executeQuery()){while(r.next()){BigDecimal due=r.getBigDecimal("DUE_AMOUNT").setScale(2),paid=r.getBigDecimal("PAID").setScale(2);table.getItems().add(new ScheduleRow(r.getInt(1),r.getDate(2),due,paid,status(paid,due,r.getDate(2))));}}}
+        catch(SQLException ex){showError("Schedule unavailable","Apply database/module12_emi_tracker_migration.sql before viewing installment schedules.");return;}
+        javafx.scene.control.Dialog<Void> dialog=new javafx.scene.control.Dialog<>(); dialog.setTitle("Loan #"+selected.loanId+" · EMI schedule"); dialog.getDialogPane().setContent(table); dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.CLOSE); dialog.showAndWait();
+    }
     @FXML private void applyLoan() { if (requireRole("CUSTOMER")) openLoanApplication(); }
     @FXML private void viewLoans() { if (requireRole("CUSTOMER")) openLoanPortfolio(LoanManagementController.ViewMode.LOANS); }
     @FXML private void viewPayments() { if (requireRole("CUSTOMER")) openLoanPortfolio(LoanManagementController.ViewMode.PAYMENTS); }
@@ -314,8 +386,8 @@ public class DashboardController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/loans.fxml"));
             Parent root = loader.load();
             LoanManagementController controller = loader.getController();
-            controller.setCurrentUser(currentUser);
             controller.setViewMode(viewMode);
+            controller.setCurrentUser(currentUser);
             replaceScene(root, "LoanFlow - Loans & Payments");
         } catch (Exception exception) { showError("Navigation Error", "Unable to open the loan portfolio."); }
     }
@@ -340,4 +412,6 @@ public class DashboardController {
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type); alert.setTitle(title); alert.setContentText(message); AlertUtil.show(alert);
     }
+    public static final class EmiRow { final int loanId; final String loanType,status; final BigDecimal emi,due,paid; final java.sql.Date dueDate; EmiRow(int i,String t,BigDecimal e,java.sql.Date d,BigDecimal due,BigDecimal paid,String s){loanId=i;loanType=t;emi=e;dueDate=d;this.due=due;this.paid=paid;status=s;} public int getLoanId(){return loanId;} public String getLoanType(){return loanType;} public BigDecimal getEmi(){return emi;} public java.sql.Date getDueDate(){return dueDate;} public BigDecimal getDue(){return due;} public BigDecimal getPaid(){return paid;} public BigDecimal getRemaining(){return due.subtract(paid).max(BigDecimal.ZERO);} public String getStatus(){return status;} }
+    private record ScheduleRow(int no, java.sql.Date date, BigDecimal due, BigDecimal paid, String status) { String value(int n){return switch(n){case 0->String.valueOf(no);case 1->date.toString();case 2->format(due);case 3->format(paid);case 4->format(due.subtract(paid).max(BigDecimal.ZERO));default->status;};} private static String format(BigDecimal v){return NumberFormat.getCurrencyInstance(new Locale("en","IN")).format(v);}}
 }

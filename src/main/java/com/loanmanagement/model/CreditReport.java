@@ -9,6 +9,6 @@ public record CreditReport(int customerId, int cibilScore, int activeAccounts,
                            int recentEnquiries, int defaults, BigDecimal totalOutstanding,
                            LocalDateTime retrievedAt, String source) {
     public String riskClassification() {
-        return cibilScore >= 750 ? "LOW" : cibilScore >= 650 ? "MEDIUM" : "HIGH";
+        return cibilScore >= 750 ? "STRONG" : cibilScore >= 650 ? "MODERATE" : cibilScore >= 600 ? "WEAK" : "HIGH RISK";
     }
 }

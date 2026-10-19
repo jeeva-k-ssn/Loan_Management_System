@@ -31,6 +31,15 @@ class CreditAssessmentServiceTest {
     }
 
     @Test
+    void keepsNewApplicantsInOfficerReviewWhenLoanFlowRepaymentHistoryIsEmpty() {
+        var result = CreditAssessmentService.assess(782, BigDecimal.valueOf(100000),
+                BigDecimal.ZERO, BigDecimal.valueOf(20000), BigDecimal.ZERO, 0, 0);
+
+        assertEquals(CreditAssessmentService.Eligibility.REQUIRES_REVIEW, result.getEligibility());
+        org.junit.jupiter.api.Assertions.assertTrue(result.getReason().contains("No prior LoanFlow repayment history"));
+    }
+
+    @Test
     void marksExcessiveRepaymentBurdenNotEligible() {
         var result = CreditAssessmentService.assess(782, BigDecimal.valueOf(30000),
                 BigDecimal.valueOf(12000), BigDecimal.valueOf(8000),

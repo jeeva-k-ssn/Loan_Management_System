@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -215,6 +216,8 @@
                     </VBox>
 
                     <HBox alignment="CENTER_RIGHT" spacing="12" styleClass="action-row">
+                        <Label text="Rejection reason" styleClass="field-label"/>
+                        <ComboBox fx:id="rejectionReasonCombo" promptText="Select a reason" prefWidth="220" styleClass="modern-combo"/>
                         <Button fx:id="rejectButton"
                                 text="✕  Reject Application"
                                 prefWidth="220"

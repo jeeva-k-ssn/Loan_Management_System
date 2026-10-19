@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -271,6 +273,30 @@
                     </VBox>
 
                 </GridPane>
+
+                <VBox fx:id="emiTrackerSection" spacing="12" styleClass="content-card">
+                    <padding><Insets top="22" right="22" bottom="22" left="22"/></padding>
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <VBox spacing="3">
+                            <Label text="Monthly EMI Tracker" styleClass="section-title"/>
+                            <Label text="This month's installment status across your active loans" styleClass="section-description"/>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="emiScheduleButton" text="View full schedule" onAction="#openEmiSchedule" styleClass="secondary-action-button" disable="true"/>
+                    </HBox>
+                    <TableView fx:id="emiTrackerTable" prefHeight="180" styleClass="table-view">
+                        <placeholder><Label text="No active loan has an installment due this month." styleClass="empty-label"/></placeholder>
+                        <columns>
+                            <TableColumn fx:id="emiLoanIdColumn" text="Loan ID"/>
+                            <TableColumn fx:id="emiTypeColumn" text="Loan type"/>
+                            <TableColumn fx:id="emiAmountColumn" text="Monthly EMI"/>
+                            <TableColumn fx:id="emiDueDateColumn" text="Due date"/>
+                            <TableColumn fx:id="emiPaidColumn" text="Paid"/>
+                            <TableColumn fx:id="emiRemainingColumn" text="Remaining"/>
+                            <TableColumn fx:id="emiStatusColumn" text="Status"/>
+                        </columns>
+                    </TableView>
+                </VBox>
 
 
                 <!-- ================================================= -->

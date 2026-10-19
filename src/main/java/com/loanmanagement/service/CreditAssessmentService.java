@@ -1,5 +1,6 @@
 package com.loanmanagement.service;
 
+import com.loanmanagement.model.CreditReport;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -74,13 +75,17 @@ public final class CreditAssessmentService {
 
     /** Assesses a customer using current database relationships and the already calculated new EMI. */
     public static Assessment loadForCustomer(Connection connection, int customerId, BigDecimal newEmi) throws SQLException {
+        return loadForCustomer(connection, customerId, newEmi, null);
+    }
+
+    private static Assessment loadForCustomer(Connection connection, int customerId, BigDecimal newEmi,
+                                              CreditReport retrievedReport) throws SQLException {
         BigDecimal existingEmi = BigDecimal.ZERO;
         BigDecimal outstandingDebt = BigDecimal.ZERO;
         int activeLoans = 0;
         int payments = 0;
-        // Credit scores are supplied only by CreditBureauService. This decision-support
-        // service deliberately does not read the legacy manually verified/profile score.
-        Integer creditScore = null;
+        // Use only the immutable simulated-bureau snapshot retrieved for this application.
+        Integer creditScore = retrievedReport == null ? null : retrievedReport.cibilScore();
         BigDecimal monthlyIncome = null;
         String creditHistory = "Insufficient credit history";
         String profileSql = "SELECT MONTHLY_INCOME, NVL(CREDIT_HISTORY_STATUS,'INSUFFICIENT'), NVL(VERIFICATION_STATUS,'NOT_VERIFIED') "
@@ -129,7 +134,13 @@ public final class CreditAssessmentService {
             p.setInt(1, applicationId);
             try (ResultSet r = p.executeQuery()) {
                 if (!r.next()) throw new SQLException("Application not found: " + applicationId);
-                return loadForCustomer(connection, r.getInt(1), decimal(r.getBigDecimal(2)));
+                CreditReport retrievedReport = null;
+                try {
+                    retrievedReport = new CreditBureauService().getRetrievedCreditReport(connection, applicationId);
+                } catch (SQLException ignored) {
+                    // The additive credit migration may not yet be installed.
+                }
+                return loadForCustomer(connection, r.getInt(1), decimal(r.getBigDecimal(2)), retrievedReport);
             }
         }
     }
@@ -159,10 +170,14 @@ public final class CreditAssessmentService {
             result = Eligibility.NOT_ELIGIBLE;
             risk = "HIGH";
             reason = "Configured LoanFlow limits indicate excessive repayment burden or weak credit data.";
-        } else if (creditScore == null || monthlyIncome == null || paymentCount == 0) {
+        } else if (creditScore == null || monthlyIncome == null) {
             result = Eligibility.REQUIRES_REVIEW;
             risk = activeLoanCount > 0 ? "MEDIUM" : "REVIEW";
-            reason = "Income, score, or sufficient repayment history is not available; officer verification is required.";
+            reason = "Income or CIBIL score is not available; officer verification is required.";
+        } else if (paymentCount == 0) {
+            result = Eligibility.REQUIRES_REVIEW;
+            risk = activeLoanCount > 0 ? "MEDIUM" : "REVIEW";
+            reason = "No prior LoanFlow repayment history is available; officer review is required even though income and CIBIL checks are available.";
         } else if (ratio.compareTo(BigDecimal.valueOf(35)) <= 0 && creditScore >= 700) {
             result = Eligibility.ELIGIBLE;
             risk = "LOW";

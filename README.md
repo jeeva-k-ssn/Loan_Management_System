@@ -15,6 +15,7 @@ LoanFlow is a JavaFX desktop application for managing lending operations from lo
 - Payment recording and loan closure
 - Loan statements, repayment history, and outstanding balances
 - In-app notifications
+- Credit decision support combines simulated CIBIL data, EMI-to-income burden, and LoanFlow repayment history. Applicants with no prior LoanFlow repayments are not automatically rejected; they remain `REQUIRES_REVIEW` for officer verification.
 - Admin user, customer, application, loan, and payment monitoring
 - Admin statistics and charts
 - Maximized desktop presentation with responsive JavaFX layouts
@@ -57,6 +58,102 @@ Login → Officer Dashboard → Pending Applications
 Login → Admin Dashboard → Review Users, Customers, Applications and Payments
      → Inspect Metrics and Charts → Open Customer Profile → Refresh or Log Out
 ```
+
+## Credit information sources
+
+LoanFlow intentionally supports two separate credit-information sources.
+
+### Simulated external bureau
+
+The mock TransUnion CIBIL integration represents an external credit-bureau connection. After customer consent is recorded, a loan officer retrieves the simulated report for the selected application. The report is stored as an immutable application snapshot and contributes to the academic credit assessment.
+
+The simulated report includes:
+
+- CIBIL score
+- Payment history percentage
+- Credit utilization
+- Active accounts
+- Recent enquiries
+- Defaults
+- Total outstanding amount
+
+### Customer-uploaded supporting report
+
+The customer-uploaded report is an additional supporting document, not a replacement for the simulated bureau integration. A customer may upload a PDF, and an administrator can review and mark it as verified or rejected. This represents manual document verification, while the simulated CIBIL report represents an external bureau workflow used during loan assessment.
+
+In short:
+
+```text
+Uploaded report     -> Optional supporting document -> Admin verification
+Simulated CIBIL     -> External bureau simulation   -> Officer assessment
+```
+
+LoanFlow does not connect to or claim live CIBIL data.
+
+## Credit assessment workflow
+
+The intended assessment sequence is:
+
+```text
+Customer submits application
+        -> Credit consent is recorded
+        -> Application enters PENDING status
+        -> Officer opens the application
+        -> Officer retrieves the simulated CIBIL report
+        -> LoanFlow combines CIBIL, income, EMI burden, and repayment history
+        -> Officer reviews the decision-support assessment
+        -> Officer approves or rejects the application
+```
+
+The customer-entered monthly income is synchronized into `LOANFLOW_CREDIT_PROFILE` when the application is submitted. The assessment uses the latest profile income and the CIBIL snapshot retrieved for that application.
+
+## Assessment policy
+
+The assessment is decision support only; the loan officer makes the final decision.
+
+| Condition | Result | Meaning |
+| --- | --- | --- |
+| EMI-to-income ratio above 50%, or CIBIL below 600 | `NOT_ELIGIBLE` / `HIGH` | A configured LoanFlow limit has failed |
+| Income or CIBIL score is unavailable | `REQUIRES_REVIEW` | Required information needs officer verification |
+| No prior LoanFlow repayment history | `REQUIRES_REVIEW` | The applicant is not automatically rejected, but has no internal repayment evidence |
+| EMI-to-income ratio at or below 35%, CIBIL at least 700, and repayment history available | `ELIGIBLE` / `LOW` | The configured score and affordability checks are within the strong range |
+| Other combinations within broad limits | `REQUIRES_REVIEW` / `MEDIUM` | The complete profile needs officer judgment |
+
+The absence of prior LoanFlow repayments is therefore a review condition, not an automatic rejection. A new applicant may have a strong simulated CIBIL score and affordable EMI while still requiring manual review because LoanFlow has no repayment history for that customer.
+
+## Consent and application integrity
+
+- EMI calculation requires the customer to authorize credit retrieval.
+- Submission checks the consent checkbox again, so consent cannot become stale after EMI calculation.
+- `CREDIT_CONSENT_GIVEN` is written from the current submission state.
+- The generated application ID from the database insert is used directly for notifications and downstream processing.
+- Rejection reasons are stored with rejected applications and included in customer notifications.
+
+## Rejection reasons
+
+When rejecting an application, the officer selects one of the configured reasons:
+
+- Insufficient income
+- High existing debt
+- Low credit score
+- High EMI burden
+- Incomplete information
+- Other
+
+The selected reason is stored in `LOAN_APPLICATION.REJECTION_REASON` and is visible in the customer application history.
+
+## Data integrity and concurrency safeguards
+
+- Approval and loan creation are handled as a transactional workflow.
+- Payment processing locks the selected loan row before checking the outstanding balance, preventing concurrent payments from passing the same stale balance check.
+- Payment validation prevents payments greater than the current outstanding balance.
+- A fully repaid loan is marked `CLOSED` after the payment transaction completes.
+- Changing a user to `CUSTOMER` creates an `LMS_CUSTOMER` profile when one does not already exist, preventing role/profile inconsistencies.
+- Database-heavy operations run through JavaFX background tasks, while alerts, validation messages, navigation, and other UI changes are marshalled to the JavaFX Application Thread.
+
+## Academic-project scope
+
+LoanFlow is designed as an academic lending-system demonstration. The CIBIL source is deterministic mock data, uploaded reports are local supporting documents, and the assessment is not a regulated lending or credit-scoring decision. A production system would require stronger identity verification, secure document storage, audit controls, authorization hardening, database isolation review, monitoring, and formal compliance review.
 
 ## Technology stack
 
@@ -117,6 +214,7 @@ module7_credit_verification_migration.sql
 module8_credit_report_upload_migration.sql
 module9_mock_credit_bureau_migration.sql
 module10_quality_hardening_migration.sql
+module11_rejection_reason_migration.sql
 ```
 
 The migrations are additive and do not delete existing records. Modules 7 and 8 preserve the legacy verification/document-upload capability. Module 9 adds the simulated credit-bureau source, customer consent, applicant identity/employment fields, and application retrieval snapshots. Module 10 adds deterministic demonstration scenarios and officer/admin audit logging. LoanFlow does not retrieve or claim real CIBIL data.

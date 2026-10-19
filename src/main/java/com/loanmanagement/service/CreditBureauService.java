@@ -23,6 +23,12 @@ public class CreditBureauService {
         return reportDAO.findByCustomerId(connection, customerId);
     }
 
+    /** Returns the immutable report snapshot already retrieved for an application. */
+    public CreditReport getRetrievedCreditReport(Connection connection, int applicationId) throws SQLException {
+        if (applicationId <= 0) throw new IllegalArgumentException("A valid application is required.");
+        return reportDAO.findByApplicationId(connection, applicationId);
+    }
+
     /** Returns the immutable application snapshot if already fetched; otherwise records one fetch. */
     public CreditReport getCreditReport(Connection connection, int customerId, int applicationId, int officerId) throws SQLException {
         CreditReport existing = reportDAO.findByApplicationId(connection, applicationId);

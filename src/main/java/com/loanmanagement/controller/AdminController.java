@@ -76,6 +76,11 @@ public class AdminController {
     private ObservableList<PaymentRow> allPayments = FXCollections.observableArrayList();
 
     @FXML public void initialize() {
+        // The legend already identifies each status. Hiding slice labels avoids
+        // JavaFX placing short labels on top of one another when a chart has
+        // only one or two application/loan statuses.
+        applicationChart.setLabelsVisible(false);
+        loanChart.setLabelsVisible(false);
         userTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         applicationTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         customerTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -124,6 +129,43 @@ public class AdminController {
         paymentFilterCombo.setItems(FXCollections.observableArrayList("ALL", "PAID", "PENDING", "FAILED")); paymentFilterCombo.getSelectionModel().selectFirst(); paymentFilterCombo.valueProperty().addListener((o,a,b)->applyPaymentFilter());
     }
 
+    /** Keeps identifier columns compact and gives text columns enough room to read. */
+    private void configureAdminTableColumns() {
+        setColumnWidth(idColumn, 70, 80, 95);
+        setColumnWidth(nameColumn, 150, 190, 260);
+        setColumnWidth(emailColumn, 220, 280, 360);
+        setColumnWidth(roleColumn, 130, 160, 220);
+        setColumnWidth(applicationIdColumn, 110, 125, 150);
+        setColumnWidth(applicationCustomerColumn, 160, 210, 300);
+        setColumnWidth(applicationTypeColumn, 120, 150, 220);
+        setColumnWidth(applicationAmountColumn, 120, 140, 180);
+        setColumnWidth(applicationDateColumn, 120, 140, 170);
+        setColumnWidth(applicationStatusColumn, 110, 130, 170);
+        setColumnWidth(customerIdColumn, 80, 90, 110);
+        setColumnWidth(customerNameColumn, 150, 190, 260);
+        setColumnWidth(customerEmailColumn, 210, 260, 360);
+        setColumnWidth(customerPhoneColumn, 120, 145, 190);
+        setColumnWidth(customerAddressColumn, 180, 240, 360);
+        setColumnWidth(customerApplicationsColumn, 105, 120, 150);
+        setColumnWidth(customerLoansColumn, 90, 105, 140);
+        setColumnWidth(customerBorrowedColumn, 130, 155, 200);
+        setColumnWidth(customerOutstandingColumn, 135, 165, 220);
+        setColumnWidth(paymentIdColumn, 90, 105, 125);
+        setColumnWidth(paymentLoanIdColumn, 90, 105, 125);
+        setColumnWidth(paymentCustomerColumn, 150, 200, 300);
+        setColumnWidth(paymentDateColumn, 120, 140, 170);
+        setColumnWidth(paymentAmountColumn, 120, 140, 180);
+        setColumnWidth(paymentMethodColumn, 120, 145, 190);
+        setColumnWidth(paymentReferenceColumn, 170, 220, 320);
+        setColumnWidth(paymentStatusColumn, 110, 130, 170);
+    }
+
+    private void setColumnWidth(TableColumn<?, ?> column, double minimum, double preferred, double maximum) {
+        column.setMinWidth(minimum);
+        column.setPrefWidth(preferred);
+        column.setMaxWidth(maximum);
+    }
+
     public void setCurrentUser(User user) {
         currentUser = user;
         if (!isAdmin()) {
@@ -131,6 +173,7 @@ public class AdminController {
             alert(Alert.AlertType.ERROR, "Access denied", "Only administrators can access this workspace.");
             return;
         }
+        configureAdminTableColumns();
         refresh();
     }
 
@@ -186,8 +229,30 @@ public class AdminController {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION, "Change " + row.name + "'s role to " + roleCombo.getValue() + "?", javafx.scene.control.ButtonType.OK, javafx.scene.control.ButtonType.CANCEL);
         confirmation.setTitle("Confirm role change"); confirmation.setHeaderText("Sensitive access change");
         if (confirmation.showAndWait().orElse(javafx.scene.control.ButtonType.CANCEL) != javafx.scene.control.ButtonType.OK) return;
-        try (Connection c = DatabaseConnection.getConnection(); PreparedStatement p = c.prepareStatement("UPDATE USERS SET USER_ROLE=? WHERE USER_ID=?")) {
-            p.setString(1, roleCombo.getValue()); p.setInt(2, row.id); p.executeUpdate(); loadUsers();
+        try (Connection c = DatabaseConnection.getConnection()) {
+            try {
+                c.setAutoCommit(false);
+                try (PreparedStatement p = c.prepareStatement("UPDATE USERS SET USER_ROLE=? WHERE USER_ID=?")) {
+                    p.setString(1, roleCombo.getValue());
+                    p.setInt(2, row.id);
+                    p.executeUpdate();
+                }
+                if ("CUSTOMER".equalsIgnoreCase(roleCombo.getValue())) {
+                    try (PreparedStatement p = c.prepareStatement(
+                            "INSERT INTO LMS_CUSTOMER (USER_ID,FULL_NAME,EMAIL) " +
+                                    "SELECT u.USER_ID,u.FULL_NAME,u.EMAIL FROM USERS u " +
+                                    "WHERE u.USER_ID=? AND NOT EXISTS " +
+                                    "(SELECT 1 FROM LMS_CUSTOMER existing WHERE existing.USER_ID=u.USER_ID)")) {
+                        p.setInt(1, row.id);
+                        p.executeUpdate();
+                    }
+                }
+                c.commit();
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            }
+            loadUsers();
             alert(Alert.AlertType.INFORMATION, "Role updated", "The user role was updated.");
         } catch (SQLException e) { alert(Alert.AlertType.ERROR, "Update failed", "Unable to update the user role."); }
     }
@@ -230,7 +295,11 @@ public class AdminController {
     private void loadPayments(){String sql="SELECT p.PAYMENT_ID,p.LOAN_ID,c.FULL_NAME,TO_CHAR(p.PAYMENT_DATE,'DD Mon YYYY') PAYMENT_DATE,p.AMOUNT,NVL(p.PAYMENT_METHOD,'-'),NVL(p.PAYMENT_REFERENCE,'-'),p.PAYMENT_STATUS FROM PAYMENT p JOIN LOAN l ON l.LOAN_ID=p.LOAN_ID JOIN LMS_CUSTOMER c ON c.CUSTOMER_ID=l.CUSTOMER_ID ORDER BY p.PAYMENT_DATE DESC,p.PAYMENT_ID DESC";Task<ObservableList<PaymentRow>> task=new Task<>(){protected ObservableList<PaymentRow> call() throws SQLException{try(Connection c=DatabaseConnection.getConnection();PreparedStatement p=c.prepareStatement(sql);ResultSet r=p.executeQuery()){var rows=FXCollections.<PaymentRow>observableArrayList();while(r.next())rows.add(new PaymentRow(r.getInt(1),r.getInt(2),r.getString(3),r.getString(4),r.getDouble(5),r.getString(6),r.getString(7),r.getString(8)));return rows;}}};task.setOnSucceeded(e->{allPayments=task.getValue();applyPaymentFilter();});task.setOnFailed(e->paymentTable.setItems(FXCollections.observableArrayList()));start(task,"loanflow-admin-payments");}
     private void applyPaymentFilter(){String q=paymentSearchField==null?"":paymentSearchField.getText().trim().toLowerCase();String status=paymentFilterCombo==null||paymentFilterCombo.getValue()==null?"ALL":paymentFilterCombo.getValue();paymentTable.setItems(new FilteredList<>(allPayments,row->("ALL".equals(status)||row.status.equalsIgnoreCase(status))&&(q.isEmpty()||String.valueOf(row.id).contains(q)||String.valueOf(row.loanId).contains(q)||row.customer.toLowerCase().contains(q)||row.reference.toLowerCase().contains(q))));resizeTable(paymentTable,82,360);}
     private void configureDynamicHeight(TableView<?> table,double minimum,double maximum){table.setFixedCellSize(34);table.setMinHeight(minimum);table.setMaxHeight(maximum);resizeTable(table,minimum,maximum);}
-    private void resizeTable(TableView<?> table,double minimum,double maximum){int rows=table.getItems()==null?0:table.getItems().size();table.setPrefHeight(Math.min(maximum,Math.max(minimum,32+rows*table.getFixedCellSize())));}
+    private void resizeTable(TableView<?> table,double minimum,double maximum){
+        // Keep the table footprint stable; changing height for every filter
+        // result causes the surrounding dashboard to jump and re-layout.
+        table.setPrefHeight(maximum);
+    }
     @FXML private void back() {
         try {
             FXMLLoader l = new FXMLLoader(getClass().getResource("/fxml/dashboard.fxml")); Parent root = l.load();

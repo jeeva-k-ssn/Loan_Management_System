@@ -54,7 +54,12 @@ public void initialize() {
 public void loginUser() {
 
     String email = emailField.getText().trim();
-    String password = passwordField.getText();
+    // Read the field currently being used. When Show is enabled, the visible
+    // text field is the active password input; the hidden PasswordField is not
+    // updated while the user types.
+    String password = passwordToggle.isSelected()
+            ? visiblePasswordField.getText()
+            : passwordField.getText();
     String selectedRole = roleComboBox.getValue();
 
     if (email.isEmpty()) {

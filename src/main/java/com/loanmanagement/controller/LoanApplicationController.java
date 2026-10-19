@@ -1,5 +1,6 @@
 package com.loanmanagement.controller;
 
+import javafx.application.Platform;
 import com.loanmanagement.model.User;
 import com.loanmanagement.database.DatabaseConnection;
 import com.loanmanagement.util.LoanCalculationUtil;
@@ -370,10 +371,16 @@ public class LoanApplicationController {
 
     @FXML
     private void submitApplication() {
+        boolean creditConsentGiven = creditConsentCheckBox != null && creditConsentCheckBox.isSelected();
+        if (!creditConsentGiven) {
+            if (submitButton != null) submitButton.setDisable(false);
+            showValidation("Please authorize LoanFlow to retrieve your credit information for this loan application.");
+            return;
+        }
         if (submitButton != null) submitButton.setDisable(true);
         javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<>() {
             @Override protected Void call() {
-                submitApplicationDatabaseWork();
+                submitApplicationDatabaseWork(creditConsentGiven);
                 return null;
             }
         };
@@ -411,7 +418,7 @@ public class LoanApplicationController {
         }
     }
 
-    private void submitApplicationDatabaseWork() {
+    private void submitApplicationDatabaseWork(boolean creditConsentGiven) {
 
         clearValidation();
 
@@ -608,6 +615,22 @@ public class LoanApplicationController {
                 profile.executeUpdate();
             }
 
+            // Keep the assessment profile synchronized with the latest application income.
+            // Existing bureau/verification fields remain unchanged until the officer workflow updates them.
+            try (PreparedStatement creditProfile = connection.prepareStatement(
+                    "MERGE INTO LOANFLOW_CREDIT_PROFILE target " +
+                            "USING (SELECT ? CUSTOMER_ID, ? MONTHLY_INCOME FROM DUAL) source " +
+                            "ON (target.CUSTOMER_ID=source.CUSTOMER_ID) " +
+                            "WHEN MATCHED THEN UPDATE SET MONTHLY_INCOME=source.MONTHLY_INCOME,UPDATED_AT=SYSDATE " +
+                            "WHEN NOT MATCHED THEN INSERT (CUSTOMER_ID,MONTHLY_INCOME,CREDIT_HISTORY_STATUS) " +
+                            "VALUES (source.CUSTOMER_ID,source.MONTHLY_INCOME,'Insufficient credit history')")) {
+                creditProfile.setInt(1, customerId);
+                creditProfile.setBigDecimal(2, monthlyIncome);
+                creditProfile.executeUpdate();
+            } catch (SQLException ignored) {
+                // The credit migration is additive; legacy applications remain submit-capable if it is not installed.
+            }
+
             /*
              * Insert new application.
              *
@@ -625,7 +648,7 @@ public class LoanApplicationController {
                             + "INTEREST_RATE, EMI_AMOUNT, CREDIT_CONSENT_GIVEN, CREDIT_CONSENT_AT) "
                             + "VALUES "
                             + "(?, ?, ?, SYSDATE, 'PENDING', "
-                            + "?, ?, ?, ?, 'Y', SYSTIMESTAMP)";
+                            + "?, ?, ?, ?, ?, SYSTIMESTAMP)";
 
 
             int applicationId;
@@ -677,6 +700,8 @@ public class LoanApplicationController {
                         emi
                 );
 
+                statement.setString(8, creditConsentGiven ? "Y" : "N");
+
 
                 int rows = statement.executeUpdate();
 
@@ -700,21 +725,13 @@ public class LoanApplicationController {
             }
 
 
-            try (PreparedStatement idStatement = connection.prepareStatement("SELECT MAX(APPLICATION_ID) FROM LOAN_APPLICATION WHERE CUSTOMER_ID=?")) {
-                idStatement.setInt(1, customerId);
-                try (ResultSet result = idStatement.executeQuery()) {
-                    if (result.next()) {
-                        applicationId = result.getInt(1);
-                        try {
-                            CreditAssessmentService.saveAssessment(connection, applicationId,
-                                    CreditAssessmentService.loadForCustomer(connection, customerId, BigDecimal.valueOf(emi)));
-                        } catch (SQLException ignored) {
-                            // Assessment persistence is additive; legacy applications remain submit-capable until migration 6 is run.
-                        }
-                        NotificationService.create(currentUser.getUserId(), "Application submitted", "Application #" + applicationId + " for ₹" + String.format(Locale.US, "%,.2f", loanAmount) + " is now PENDING.", "APPLICATION_SUBMITTED", applicationId);
-                    }
-                }
-            }
+            NotificationService.create(currentUser.getUserId(), "Application submitted", "Application #" + applicationId + " for ₹" + String.format(Locale.US, "%,.2f", loanAmount) + " is now PENDING.", "APPLICATION_SUBMITTED", applicationId);
+
+            NotificationService.createForRoles(
+                    "New application received",
+                    "Application #" + applicationId + " is waiting for loan-officer review.",
+                    "APPLICATION_REVIEW_REQUIRED", applicationId,
+                    "LOAN_OFFICER", "ADMIN");
 
             // ====================================================
             // SUCCESS
@@ -728,7 +745,7 @@ public class LoanApplicationController {
             );
 
 
-            handleBack();
+            Platform.runLater(this::handleBack);
 
 
         } catch (SQLException e) {
@@ -941,6 +958,11 @@ public class LoanApplicationController {
             String message
     ) {
 
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> showValidation(message));
+            return;
+        }
+
         validationLabel.setText(
                 message
         );
@@ -960,6 +982,11 @@ public class LoanApplicationController {
             String message
     ) {
 
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> showSuccessValidation(message));
+            return;
+        }
+
         validationLabel.setText(
                 message
         );
@@ -976,6 +1003,11 @@ public class LoanApplicationController {
     // ============================================================
 
     private void clearValidation() {
+
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::clearValidation);
+            return;
+        }
 
         if (validationLabel != null) {
 
@@ -996,6 +1028,11 @@ public class LoanApplicationController {
             String title,
             String message
     ) {
+
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> showInformation(title, message));
+            return;
+        }
 
         Alert alert =
                 new Alert(
@@ -1021,6 +1058,11 @@ public class LoanApplicationController {
             String title,
             String message
     ) {
+
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> showError(title, message));
+            return;
+        }
 
         Alert alert =
                 new Alert(

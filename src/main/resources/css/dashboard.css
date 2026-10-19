@@ -70,6 +70,10 @@
 .tab-pane .tab { -fx-background-radius: 8px 8px 0 0; -fx-border-color: transparent; }
 .tab-pane .tab:selected .tab-label { -fx-text-fill: #128C8C; -fx-font-weight: bold; }
 .action-button:disabled, .primary-button:disabled { -fx-opacity: .55; }
+.admin-tabs .tab-header-area { -fx-padding: 0 0 8px 0; }
+.admin-tabs .tab-header-background { -fx-background-color: transparent; }
+.admin-tabs .headers-region { -fx-spacing: 6px; }
+.admin-tabs .tab { -fx-min-width: 125px; -fx-pref-width: 125px; -fx-max-width: 125px; -fx-padding: 10px 12px; }
 .loanflow-dialog { -fx-background-color: white; -fx-border-color: #D8E3EA; -fx-border-radius: 10px; -fx-background-radius: 10px; }
 .loanflow-dialog .header-panel { -fx-background-color: #F4F7FA; }
 .loanflow-dialog .header-panel .label { -fx-text-fill: #102A43; -fx-font-size: 15px; -fx-font-weight: bold; }
