@@ -340,6 +340,41 @@ public class DashboardController {
     }
     private String status(BigDecimal paid, BigDecimal due, java.sql.Date dueDate) { return EmiStatusUtil.status(paid,due,dueDate.toLocalDate(),java.time.LocalDate.now()); }
     @FXML private void openEmiSchedule() {
+        EmiRow selected = emiTrackerTable.getSelectionModel().getSelectedItem();
+        if (selected == null && !emiTrackerTable.getItems().isEmpty()) selected = emiTrackerTable.getItems().get(0);
+        if (selected == null) { showInformation("Select a loan", "Select a loan to view its installment schedule."); return; }
+        final int loanId = selected.loanId;
+        emiScheduleButton.setDisable(true);
+        emiScheduleButton.setText("Loading schedule...");
+        Task<java.util.List<ScheduleRow>> task = new Task<>() {
+            @Override protected java.util.List<ScheduleRow> call() throws SQLException {
+                java.util.List<ScheduleRow> rows = new java.util.ArrayList<>();
+                String sql = "SELECT s.INSTALLMENT_NO,s.DUE_DATE,s.DUE_AMOUNT,NVL((SELECT SUM(p.AMOUNT) FROM PAYMENT p WHERE p.INSTALLMENT_ID=s.INSTALLMENT_ID AND p.PAYMENT_STATUS='PAID'),0) PAID FROM LOAN_EMI_SCHEDULE s WHERE s.LOAN_ID=? ORDER BY s.INSTALLMENT_NO";
+                try (Connection c=DatabaseConnection.getConnection(); PreparedStatement p=c.prepareStatement(sql)) {
+                    p.setInt(1, loanId);
+                    try (ResultSet r=p.executeQuery()) {
+                        while (r.next()) {
+                            BigDecimal due=r.getBigDecimal("DUE_AMOUNT").setScale(2,RoundingMode.HALF_UP), paid=r.getBigDecimal("PAID").setScale(2,RoundingMode.HALF_UP);
+                            rows.add(new ScheduleRow(r.getInt(1),r.getDate(2),due,paid,status(paid,due,r.getDate(2))));
+                        }
+                    }
+                }
+                return rows;
+            }
+        };
+        task.setOnSucceeded(e -> {
+            emiScheduleButton.setDisable(false); emiScheduleButton.setText("View full schedule");
+            TableView<ScheduleRow> table=new TableView<>(); table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            String[] headers={"Installment","Due date","Due","Paid","Remaining","Status"};
+            for(int i=0;i<headers.length;i++){ TableColumn<ScheduleRow,String> col=new TableColumn<>(headers[i]); final int n=i; col.setCellValueFactory(d->new javafx.beans.property.SimpleStringProperty(d.getValue().value(n))); table.getColumns().add(col); }
+            table.getItems().setAll(task.getValue());
+            javafx.scene.control.Dialog<Void> dialog=new javafx.scene.control.Dialog<>(); dialog.setTitle("Loan #"+loanId+" - EMI schedule"); dialog.getDialogPane().setContent(table); dialog.getDialogPane().getButtonTypes().add(javafx.scene.control.ButtonType.CLOSE); dialog.showAndWait();
+        });
+        task.setOnFailed(e -> { emiScheduleButton.setDisable(false); emiScheduleButton.setText("View full schedule"); showError("Schedule unavailable","Apply database/module12_emi_tracker_migration.sql before viewing installment schedules."); });
+        Thread t=new Thread(task,"loanflow-emi-schedule-load"); t.setDaemon(true); t.start();
+    }
+
+    private void openEmiScheduleLegacy() {
         EmiRow selected=emiTrackerTable.getSelectionModel().getSelectedItem();
         if (selected == null && !emiTrackerTable.getItems().isEmpty()) {
             selected = emiTrackerTable.getItems().get(0);
